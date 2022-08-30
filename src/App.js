@@ -1,111 +1,180 @@
 import React, { useState } from "react";
-import './App.css';
-import Ticker from "./components/Ticker"
+import env from "react-dotenv";
+import './App.scss';
+import Arbitrage from "./components/Arbitrage";
+import { pad } from './utils'
+import { getWebsocketEndpoint } from './params'
 
 
 
+const tableStyleForBestArbitrage = {width: "300px", marginLeft: '2rem', borderStyle:'solid', borderColor:"green"}
+const tableStyleArbitrage = {width: "300px", marginLeft: '2rem', marginRight: '-1rem', borderStyle:'solid', borderColor:"#aaaaaa"}
 
+const arbitragesTables = (arbitrages, initArb) => {
+  let tables = []
+  let marketPairs = Object.keys(arbitrages).sort()
+  for(let i=0 ; i<marketPairs.length-2 ; i+=3) {
+    tables.push(
+      <table>
+        <tr>
+          <td align="center">
+            <Arbitrage
+              header={marketPairs[i]} 
+              arbitrage={arbitrages[marketPairs[i]]?arbitrages[marketPairs[i]]:initArb[0]}
+              tableStyle={tableStyleArbitrage}
+            />
+          </td>
+          <td align="center">
+            <Arbitrage 
+              header={marketPairs[i+1]}
+              arbitrage={arbitrages[marketPairs[i+1]]?arbitrages[marketPairs[i+1]]:initArb[0]}
+              tableStyle={tableStyleArbitrage}
+            />
+          </td>
+          <td align="center">
+            <Arbitrage 
+              header={marketPairs[i+2]}
+              arbitrage={arbitrages[marketPairs[i+2]]?arbitrages[marketPairs[i+2]]:initArb[0]}
+              tableStyle={tableStyleArbitrage}
+            />
+          </td>
+          {/* <td align="center">
+            <Arbitrage 
+              header={marketPairs[i+3]}
+              arbitrage={arbitrages[marketPairs[i+3]]?arbitrages[marketPairs[i+3]]:initArb[0]}
+              tableStyle={tableStyleArbitrage}
+            />
+          </td> */}
+        </tr>
+      </table>
+    )
+  }
+  return tables
+}
+
+let ws = null
 const App = () => {
 
-  const init = {
-    transactions: [
-      {
-        type: "BUY",
-        market: null,
-        pair: null,
-        price: null
-      },
-      {
-        type: "SELL",
-        market: null,
-        pair: null,
-        price: null
-      }
-    ],
-    profitPerUnit: 0,
-    profitPercentage: 0,
-    date: null
-  }
-  const [arbitrage, setArbitrage] = useState(init);
+  // console.log("window.env: ", window.env)
+  console.log("env: ", env)
+  console.log("process.env: ", process.env)
+  console.log("process.env.NODE_ENV : ", process.env.NODE_ENV )
 
-  const ws = new WebSocket("ws://localhost:3001");
-  const request = { 
-    channel:"arbitrages",
+  const initArb = [
+      {
+        transactions: [
+          {
+            type: "BUY",
+            market: null,
+            pair: null,
+            price: ""
+          },
+          {
+            type: "SELL",
+            market: null,
+            pair: null,
+            price: ""
+          }
+        ],
+      profitPerUnit: 0,
+      profitPercentage: 0,
+      date: null
+    }
+  ]
+
+  const initMarketPrices = [
+    {
+      market: "",
+      price: ""
+    }
+  ]
+
+  const [arbitrages, setArbitrages] = useState(initArb);
+  const [marketPrices, setMarketPrices] = useState(initMarketPrices);
+
+  
+  if(!ws) {
+    ws = new WebSocket(getWebsocketEndpoint());
+  }
+  
+  // const arbitrageRequest = { 
+  //   channel:"arbitrages",
+  //   ticker:"btc-usdt"
+  // };
+  // const marketPricesRequest = { 
+  //   channel:"prices",
+  //   ticker:"btc-usdt"
+  // };
+
+  const allRequest = { 
+    channel:"all",
     ticker:"btc-usdt"
   };
 
   ws.onopen = (event) => {
-    ws.send(JSON.stringify(request));
+    ws.send(JSON.stringify(allRequest));
   };
 
   ws.onmessage = function (event) {
-
-    console.log(`[message] Data received from server: ${JSON.stringify(event)}`);
-    console.log(`${JSON.stringify(event.data)}`);
     
     const response = JSON.parse(event.data);
-
-    console.log("response.arbitrage[0]: ", response.arbitrage);
-    if(!!response.arbitrage && !!response.arbitrage[0]) {
-      setArbitrage(response.arbitrage[0])
-    } else {
-      setArbitrage(prev=>prev)
+    
+    if(response.channel==='arbitrages') {
+      if(!!response.arbitrage && !!response.arbitrage) {
+        setArbitrages(response.arbitrage)
+      } else {
+        setArbitrages(prev=>prev)
+      }
     }
 
+    if(response.channel==='prices') {
+      if(!!response.marketPrices) {
+        setMarketPrices(response.marketPrices)
+      } else {
+        setMarketPrices(prev=>prev)
+      }
+    }
 
-
-    
   };
 
-  const displayedArbitrage = (arbitrage.transactions)?arbitrage:init
+
+
+  const displayedMarketPrices = (marketPrices)?marketPrices:initMarketPrices;
   return (
-    <>
-     <br/>
-      <br/>
-      <br/>
-      <br/>
-      <div className="App" style={{display:"flex","justify-content":"center","align-items":"center"}}>
-        <table class="centered" >
-          <tr align="center">
-            <table class="center">
-              <thead>
-                <tr>
-                  <th textAlign="center" colspan="3">BTC-USDT</th>
-                </tr>
-              </thead>
-              
+    <div className="container" style={{maxWidth: '1600px'}}>
+      <header style={{fontWeight: 'bold', fontSize:"2.5rem", textAlign:"center"}}>BTC-USDT Arbitrage</header>
+      <table>
+        <td> { arbitragesTables(arbitrages, initArb) } </td>
+        <td style={{verticalAlign:"top"}}>
+          <table className="table" 
+            style={{width: "300px", borderStyle:'solid', borderColor:"blue", marginLeft:"2rem"}}>
+            <thead>
               <tr>
-                <td align="center">Market</td>
-                <td align="center">Operation</td>
-                <td align="center">Price</td>
+                <th>Market</th>
+                <th>Price</th>
               </tr>
-              <tr>             
-                <td>{displayedArbitrage.transactions[0].market}</td>
-                <td align="center">{displayedArbitrage.transactions[0].type}</td>
-                <td>{displayedArbitrage.transactions[0].price}</td>
-              </tr>
-              <tr>
-                <td>{displayedArbitrage.transactions[1].market}</td>
-                <td align="center">{displayedArbitrage.transactions[1].type}</td>
-                <td>{displayedArbitrage.transactions[1].price}</td>
-              </tr>
-            </table>
-          </tr>
-          <tr align="center">
-            <table>
-              <tr>
-                <td align="center">Profit percentage</td>
-                <td align="center">Profit per unit</td>
-              </tr>
-              <tr>
-                <td align="center">{displayedArbitrage.profitPercentage.toFixed(3)}</td>
-                <td align="center">{displayedArbitrage.profitPerUnit.toFixed(3)}</td>
-              </tr>
-            </table>
-          </tr>
-        </table>
-      </div>
-    </>
+            </thead>
+            <tbody>
+              {
+                displayedMarketPrices.map(marketPrice => {
+                  return (
+                    <tr key={marketPrice.market}>
+                      <td style={{ textAlign:"left", fontWeight: 'bold' }}>{ marketPrice.market }</td>
+                      <td style={{ textAlign:"right", fontWeight: 'bold' }}>{ pad(marketPrice.price.toLocaleString(navigator.language, {maximumFractionDigits:2})) }</td>
+                    </tr>
+                  );
+                })
+              }
+            </tbody>
+          </table>
+          <Arbitrage 
+            header={"Best Arbitrage"}
+            arbitrage={arbitrages[Object.keys(arbitrages)[0]]?arbitrages[Object.keys(arbitrages)[0]]:initArb[0]}
+            tableStyle= {tableStyleForBestArbitrage}
+          />
+        </td>
+      </table>
+    </div>
   )
 };
 
