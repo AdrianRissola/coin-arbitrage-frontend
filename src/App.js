@@ -2,12 +2,12 @@ import React, { useState } from "react";
 import env from "react-dotenv";
 import './App.scss';
 import Arbitrage from "./components/Arbitrage";
-import { pad } from './utils'
 import { getWebsocketEndpoint } from './params'
+import MarketPrices from "./components/MarketPrices";
 
 
 
-const tableStyleForBestArbitrage = {width: "300px", marginLeft: '2rem', borderStyle:'solid', borderColor:"green"}
+const tableStyleForBestArbitrage = {borderRadius: "40px", width: "300px", marginLeft: '2rem', borderStyle:'solid', borderColor:"green"}
 const tableStyleArbitrage = {width: "300px", marginLeft: '2rem', marginRight: '-1rem', borderStyle:'solid', borderColor:"#aaaaaa"}
 
 const arbitragesTables = (arbitrages, initArb) => {
@@ -91,6 +91,8 @@ const App = () => {
 
   const [arbitrages, setArbitrages] = useState(initArb);
   const [marketPrices, setMarketPrices] = useState(initMarketPrices);
+  const [arbitrageChannelMessage, setArbitrageChannelMessage] = useState()
+  const [marketPriceChannelMessage, setMarketPriceChannelMessage] = useState()
 
   
   if(!ws) {
@@ -120,18 +122,20 @@ const App = () => {
     const response = JSON.parse(event.data);
     
     if(response.channel==='arbitrages') {
-      if(!!response.arbitrage && !!response.arbitrage) {
+      if(!!response.arbitrage) {
         setArbitrages(response.arbitrage)
       } else {
         setArbitrages(prev=>prev)
+        setArbitrageChannelMessage(response.message)
       }
     }
 
     if(response.channel==='prices') {
-      if(!!response.marketPrices) {
+      if(!!response.marketPrices && !!response.marketPrices.length>0) {
         setMarketPrices(response.marketPrices)
       } else {
         setMarketPrices(prev=>prev)
+        setMarketPriceChannelMessage(response.message)
       }
     }
 
@@ -139,34 +143,15 @@ const App = () => {
 
 
 
-  const displayedMarketPrices = (marketPrices)?marketPrices:initMarketPrices;
   return (
     <div className="container" style={{maxWidth: '1600px'}}>
       <header style={{fontWeight: 'bold', fontSize:"2.5rem", textAlign:"center"}}>BTC-USDT Arbitrage</header>
+      <header>{arbitrageChannelMessage}</header>
+      <header>{marketPriceChannelMessage}</header>
       <table>
         <td> { arbitragesTables(arbitrages, initArb) } </td>
         <td style={{verticalAlign:"top"}}>
-          <table className="table" 
-            style={{width: "300px", borderStyle:'solid', borderColor:"blue", marginLeft:"2rem"}}>
-            <thead>
-              <tr>
-                <th>Market</th>
-                <th>Price</th>
-              </tr>
-            </thead>
-            <tbody>
-              {
-                displayedMarketPrices.map(marketPrice => {
-                  return (
-                    <tr key={marketPrice.market}>
-                      <td style={{ textAlign:"left", fontWeight: 'bold' }}>{ marketPrice.market }</td>
-                      <td style={{ textAlign:"right", fontWeight: 'bold' }}>{ pad(marketPrice.price.toLocaleString(navigator.language, {maximumFractionDigits:2})) }</td>
-                    </tr>
-                  );
-                })
-              }
-            </tbody>
-          </table>
+          <MarketPrices marketPrices={marketPrices} />
           <Arbitrage 
             header={"Best Arbitrage"}
             arbitrage={arbitrages[Object.keys(arbitrages)[0]]?arbitrages[Object.keys(arbitrages)[0]]:initArb[0]}

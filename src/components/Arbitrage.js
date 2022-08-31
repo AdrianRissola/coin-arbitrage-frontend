@@ -1,6 +1,7 @@
 import React from 'react'
 import {pad} from '../utils'
 
+
 const Arbitrage = (props)=> {
     const tableStyle = props.tableStyle
     const header = props.header
@@ -8,7 +9,7 @@ const Arbitrage = (props)=> {
     return(
         <table className="table" style={tableStyle}>
             <tr align="center">
-                <table className="table">
+                <table className="table" style={{borderRadius: "40px"}}>
                     <thead>
                         <tr>
                             <th colSpan="3">{header}</th>
