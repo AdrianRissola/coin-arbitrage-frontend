@@ -1,11 +1,13 @@
-import React, { useState } from "react";
+import React, { useImperativeHandle, useState } from "react";
 import env from "react-dotenv";
 import './App.scss';
 import Arbitrage from "./components/Arbitrage";
 import { getWebsocketEndpoint } from './params'
 import MarketPrices from "./components/MarketPrices";
 
-
+console.log("window.env: ", window.env)
+console.log("env: ", env)
+console.log("process.env: ", process.env)
 
 const tableStyleForBestArbitrage = {borderRadius: "40px", width: "300px", marginLeft: '2rem', borderStyle:'solid', borderColor:"green"}
 const tableStyleArbitrage = {width: "300px", marginLeft: '2rem', marginRight: '-1rem', borderStyle:'solid', borderColor:"#aaaaaa"}
@@ -45,9 +47,13 @@ const arbitragesTables = (arbitrages, initArb) => {
   return tables
 }
 
-console.log("window.env: ", window.env)
-console.log("env: ", env)
-console.log("process.env: ", process.env)
+const tickerButtons = (tickers, HandleChangeTickerSubscriptionClick) => {
+  return tickers.map(ticker=>{
+    return <button class="btn btn-dark" style={{marginRight: '1rem'}} onClick={()=>{HandleChangeTickerSubscriptionClick(ticker)}} >{ticker}</button>
+  })
+}
+
+
 
 
 
@@ -149,6 +155,12 @@ const App = () => {
       <button class="btn btn-dark" style={{marginRight: '1rem'}} onClick={()=>{HandleChangeTickerSubscriptionClick('ETH-USDT')}} >ETH-USDT</button>
       <button class="btn btn-dark" style={{marginRight: '1rem'}} onClick={()=>{HandleChangeTickerSubscriptionClick('ETH-BTC')}} >ETH-BTC</button>
       <button class="btn btn-dark" style={{marginRight: '1rem'}} onClick={()=>{HandleChangeTickerSubscriptionClick('ADA-USDT')}} >ADA-USDT</button>
+      <button class="btn btn-dark" style={{marginRight: '1rem'}} onClick={()=>{HandleChangeTickerSubscriptionClick('SOL-USDT')}} >SOL-USDT</button>
+      <button class="btn btn-dark" style={{marginRight: '1rem'}} onClick={()=>{HandleChangeTickerSubscriptionClick('LTC-USDT')}} >LTC-USDT</button>
+      <button class="btn btn-dark" style={{marginRight: '1rem'}} onClick={()=>{HandleChangeTickerSubscriptionClick('XRP-USDT')}} >XRP-USDT</button>
+      <button class="btn btn-dark" style={{marginRight: '1rem'}} onClick={()=>{HandleChangeTickerSubscriptionClick('DOGE-USDT')}} >DOGE-USDT</button>
+      
+      {/* { tickerButtons(["BTC-USDT","ETH-USDT"], HandleChangeTickerSubscriptionClick) } */}
       <header style={{fontWeight: 'bold', fontSize:"2.5rem", textAlign:"center"}}>{ticker} Arbitrage</header>
       <header>{arbitrageChannelMessage}</header>
       <header>{marketPriceChannelMessage}</header>
