@@ -38,13 +38,6 @@ const arbitragesTables = (arbitrages, initArb) => {
               tableStyle={tableStyleArbitrage}
             />
           </td>
-          {/* <td align="center">
-            <Arbitrage 
-              header={marketPairs[i+3]}
-              arbitrage={arbitrages[marketPairs[i+3]]?arbitrages[marketPairs[i+3]]:initArb[0]}
-              tableStyle={tableStyleArbitrage}
-            />
-          </td> */}
         </tr>
       </table>
     )
@@ -52,13 +45,15 @@ const arbitragesTables = (arbitrages, initArb) => {
   return tables
 }
 
+console.log("window.env: ", window.env)
+console.log("env: ", env)
+console.log("process.env: ", process.env)
+
+
+
+
 let ws = null
 const App = () => {
-
-  // console.log("window.env: ", window.env)
-  console.log("env: ", env)
-  console.log("process.env: ", process.env)
-  console.log("process.env.NODE_ENV : ", process.env.NODE_ENV )
 
   const initArb = [
       {
@@ -91,22 +86,23 @@ const App = () => {
 
   const [arbitrages, setArbitrages] = useState(initArb);
   const [marketPrices, setMarketPrices] = useState(initMarketPrices);
+  const [ticker, setTicker] = useState()
   const [arbitrageChannelMessage, setArbitrageChannelMessage] = useState()
   const [marketPriceChannelMessage, setMarketPriceChannelMessage] = useState()
+  const [tickerSubscription, setTickerSubscription] = useState("BTC-USDT")
 
+  const HandleChangeTickerSubscriptionClick = (tickerSubscriptionSelected) =>{
+    if(tickerSubscription !== tickerSubscriptionSelected) {
+      setTickerSubscription(tickerSubscriptionSelected);
+      allRequest.ticker=tickerSubscriptionSelected
+      ws.send(JSON.stringify(allRequest));
+    }
+      
+  }
   
   if(!ws) {
     ws = new WebSocket(getWebsocketEndpoint());
   }
-  
-  // const arbitrageRequest = { 
-  //   channel:"arbitrages",
-  //   ticker:"btc-usdt"
-  // };
-  // const marketPricesRequest = { 
-  //   channel:"prices",
-  //   ticker:"btc-usdt"
-  // };
 
   const allRequest = { 
     channel:"all",
@@ -122,8 +118,11 @@ const App = () => {
     const response = JSON.parse(event.data);
     
     if(response.channel==='arbitrages') {
-      if(!!response.arbitrage) {
-        setArbitrages(response.arbitrage)
+      if(response.arbitrages && Object.keys(response.arbitrages).length>0) {
+        let ticker = Object.keys(response.arbitrages)[0]
+        setTicker(ticker)
+        setArbitrages(response.arbitrages[ticker])
+        setArbitrageChannelMessage(null)
       } else {
         setArbitrages(prev=>prev)
         setArbitrageChannelMessage(response.message)
@@ -131,8 +130,9 @@ const App = () => {
     }
 
     if(response.channel==='prices') {
-      if(!!response.marketPrices && !!response.marketPrices.length>0) {
-        setMarketPrices(response.marketPrices)
+      if(!!response.marketPrices) {
+        let ticker = Object.keys(response.marketPrices)[0]
+        setMarketPrices(response.marketPrices[ticker])
       } else {
         setMarketPrices(prev=>prev)
         setMarketPriceChannelMessage(response.message)
@@ -144,8 +144,12 @@ const App = () => {
 
 
   return (
-    <div className="container" style={{maxWidth: '1600px'}}>
-      <header style={{fontWeight: 'bold', fontSize:"2.5rem", textAlign:"center"}}>BTC-USDT Arbitrage</header>
+    <div className="container" style={{maxWidth: '1600px', marginTop: '25px'}}>
+      <button class="btn btn-dark" style={{marginRight: '1rem'}} onClick={()=>{HandleChangeTickerSubscriptionClick('BTC-USDT')}} >BTC-USDT</button>
+      <button class="btn btn-dark" style={{marginRight: '1rem'}} onClick={()=>{HandleChangeTickerSubscriptionClick('ETH-USDT')}} >ETH-USDT</button>
+      <button class="btn btn-dark" style={{marginRight: '1rem'}} onClick={()=>{HandleChangeTickerSubscriptionClick('ETH-BTC')}} >ETH-BTC</button>
+      <button class="btn btn-dark" style={{marginRight: '1rem'}} onClick={()=>{HandleChangeTickerSubscriptionClick('ADA-USDT')}} >ADA-USDT</button>
+      <header style={{fontWeight: 'bold', fontSize:"2.5rem", textAlign:"center"}}>{ticker} Arbitrage</header>
       <header>{arbitrageChannelMessage}</header>
       <header>{marketPriceChannelMessage}</header>
       <table>

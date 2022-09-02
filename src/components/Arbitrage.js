@@ -23,12 +23,12 @@ const Arbitrage = (props)=> {
                     <tr>
                         <td align="center">{displayedArbitrage.transactions[0].type}</td>             
                         <td>{displayedArbitrage.transactions[0].market}</td>
-                        <td>{ pad(displayedArbitrage.transactions[0].price.toLocaleString(navigator.language, {maximumFractionDigits:2})) }</td>
+                        <td>{ displayedArbitrage.transactions[0].price.toLocaleString(navigator.language, {maximumFractionDigits:4}) }</td>
                     </tr>
                     <tr>
                         <td align="center">{displayedArbitrage.transactions[1].type}</td>
                         <td>{displayedArbitrage.transactions[1].market}</td>
-                        <td>{ pad(displayedArbitrage.transactions[1].price.toLocaleString(navigator.language, {maximumFractionDigits:2})) }</td>
+                        <td>{ displayedArbitrage.transactions[1].price.toLocaleString(navigator.language, {maximumFractionDigits:4}) }</td>
                     </tr>
                 </table>
             </tr>
