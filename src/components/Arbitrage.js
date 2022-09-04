@@ -39,7 +39,7 @@ const Arbitrage = (props)=> {
                             Profit: <span style={{color:'green'}}>{displayedArbitrage.profitPercentage.toFixed(3).toLocaleString(navigator.language, {maximumFractionDigits:2})}%</span>
                         </td>
                         <td style = {{fontWeight: 'bold', textAlign:"center"}}>
-                            Profit per unit: <span style={{color:'green'}}>{displayedArbitrage.profitPerUnit.toFixed(3).toLocaleString(navigator.language, {maximumFractionDigits:2})}</span>
+                            Profit per unit: <span style={{color:'green'}}>{displayedArbitrage.profitPerUnit.toFixed(8).toLocaleString(navigator.language)}</span>
                         </td>
                     </tr>
                 </table>

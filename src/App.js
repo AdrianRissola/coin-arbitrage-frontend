@@ -49,7 +49,11 @@ const arbitragesTables = (arbitrages, initArb) => {
 
 const tickerButtons = (tickers, HandleChangeTickerSubscriptionClick) => {
   return tickers.map(ticker=>{
-    return <button class="btn btn-dark" style={{marginRight: '1rem'}} onClick={()=>{HandleChangeTickerSubscriptionClick(ticker)}} >{ticker}</button>
+    return (
+      <td>
+        <button class="btn btn-dark" style={{marginRight: '1rem', width: "120px"}} onClick={()=>{HandleChangeTickerSubscriptionClick(ticker)}} >{ticker}</button>
+      </td>
+    )
   })
 }
 
@@ -96,6 +100,7 @@ const App = () => {
   const [arbitrageChannelMessage, setArbitrageChannelMessage] = useState()
   const [marketPriceChannelMessage, setMarketPriceChannelMessage] = useState()
   const [tickerSubscription, setTickerSubscription] = useState("BTC-USDT")
+  const [availableTickers, setAvailableTickers] = useState([])
 
   const HandleChangeTickerSubscriptionClick = (tickerSubscriptionSelected) =>{
     if(tickerSubscription !== tickerSubscriptionSelected) {
@@ -103,7 +108,6 @@ const App = () => {
       allRequest.ticker=tickerSubscriptionSelected
       ws.send(JSON.stringify(allRequest));
     }
-      
   }
   
   if(!ws) {
@@ -122,6 +126,13 @@ const App = () => {
   ws.onmessage = function (event) {
     
     const response = JSON.parse(event.data);
+
+    if(response.availableTickers) {
+      if(!availableTickers || availableTickers.length===0) {
+        setAvailableTickers(response.availableTickers)
+      }
+    }
+
     
     if(response.channel==='arbitrages') {
       if(response.arbitrages && Object.keys(response.arbitrages).length>0) {
@@ -150,17 +161,13 @@ const App = () => {
 
 
   return (
-    <div className="container" style={{maxWidth: '1600px', marginTop: '25px'}}>
-      <button class="btn btn-dark" style={{marginRight: '1rem'}} onClick={()=>{HandleChangeTickerSubscriptionClick('BTC-USDT')}} >BTC-USDT</button>
-      <button class="btn btn-dark" style={{marginRight: '1rem'}} onClick={()=>{HandleChangeTickerSubscriptionClick('ETH-USDT')}} >ETH-USDT</button>
-      <button class="btn btn-dark" style={{marginRight: '1rem'}} onClick={()=>{HandleChangeTickerSubscriptionClick('ETH-BTC')}} >ETH-BTC</button>
-      <button class="btn btn-dark" style={{marginRight: '1rem'}} onClick={()=>{HandleChangeTickerSubscriptionClick('ADA-USDT')}} >ADA-USDT</button>
-      <button class="btn btn-dark" style={{marginRight: '1rem'}} onClick={()=>{HandleChangeTickerSubscriptionClick('SOL-USDT')}} >SOL-USDT</button>
-      <button class="btn btn-dark" style={{marginRight: '1rem'}} onClick={()=>{HandleChangeTickerSubscriptionClick('LTC-USDT')}} >LTC-USDT</button>
-      <button class="btn btn-dark" style={{marginRight: '1rem'}} onClick={()=>{HandleChangeTickerSubscriptionClick('XRP-USDT')}} >XRP-USDT</button>
-      <button class="btn btn-dark" style={{marginRight: '1rem'}} onClick={()=>{HandleChangeTickerSubscriptionClick('DOGE-USDT')}} >DOGE-USDT</button>
-      
-      {/* { tickerButtons(["BTC-USDT","ETH-USDT"], HandleChangeTickerSubscriptionClick) } */}
+    <div className="container" style={{maxWidth: '1600px', marginTop: '25px'}}>   
+      <table>
+        <td> 
+          <tr>{ tickerButtons(availableTickers.filter(at=>{return at.split("-")[1]==="USDT"}), HandleChangeTickerSubscriptionClick) } </tr>
+          <tr>{ tickerButtons(availableTickers.filter(at=>{return at.split("-")[1]==="BTC"}), HandleChangeTickerSubscriptionClick) } </tr>
+        </td>
+      </table>
       <header style={{fontWeight: 'bold', fontSize:"2.5rem", textAlign:"center"}}>{ticker} Arbitrage</header>
       <header>{arbitrageChannelMessage}</header>
       <header>{marketPriceChannelMessage}</header>
