@@ -10,11 +10,9 @@ const Arbitrage = (props)=> {
         <table className="table" style={tableStyle}>
             <tr align="center">
                 <table className="table" style={{borderRadius: "40px"}}>
-                    <thead>
-                        <tr>
-                            <th colSpan="3">{header}</th>
-                        </tr>
-                    </thead>
+                    <tr>
+                        <th colSpan="3">{header}</th>
+                    </tr>
                     <tr>
                         <td align="center">Operation</td>
                         <td align="center">Market</td>

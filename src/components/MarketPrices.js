@@ -3,28 +3,29 @@ import {pad} from '../utils'
 
 
 const MarketPrices = (props)=> {
+    const ticker = props.ticker
     const marketPrices = props.marketPrices
     return(
         <table className="table" 
-        style={{width: "300px", borderStyle:'solid', borderColor:"blue", marginLeft:"2rem"}}>
-        <thead>
-          <tr>
-            <th>Market</th>
-            <th>Price</th>
-          </tr>
-        </thead>
-        <tbody>
-          {
-            marketPrices.map(marketPrice => {
-              return (
-                <tr key={marketPrice.market}>
-                  <td style={{ textAlign:"left", fontWeight: 'bold' }}>{ marketPrice.market }</td>
-                  <td style={{ textAlign:"right", fontWeight: 'bold' }}>{ marketPrice.price }</td>
+            style={{width: "300px", borderStyle:'solid', borderColor:"purple", marginLeft:"2rem"}}>
+            <thead>
+                <tr>
+                    <th>{ticker.split('-')[0]} Markets ({props.marketPrices.length})</th>
+                    <th>Price ({ticker.split('-')[1]})</th>
                 </tr>
-              );
-            })
-          }
-        </tbody>
+            </thead>
+            <tbody>
+                {
+                    marketPrices.map(marketPrice => {
+                        return (
+                            <tr key={marketPrice.market}>
+                                <td style={{ textAlign:"left", fontWeight: 'bold' }}>{ marketPrice.market }</td>
+                                <td style={{ color:'green', textAlign:"right", fontWeight: 'bold' }}>{ marketPrice.price }</td>
+                            </tr>
+                        );
+                    })
+                }
+            </tbody>
       </table>
     )
 }
