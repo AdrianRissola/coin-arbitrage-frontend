@@ -1,14 +1,24 @@
-import React from 'react'
-import {pad} from '../utils'
+import { useState } from "react";
 
 
 const MarketPrices = (props)=> {
+    const [order, setOrder] = useState(false);
     const ticker = props.ticker
-    const marketPrices = props.marketPrices
+    const marketPrices = order ? props.marketPrices.sort((a,b)=>a.price - b.price) : props.marketPrices
     return(
-        <table className="table" 
-            style={{width: "300px", borderStyle:'solid', borderColor:"purple", marginLeft:"2rem"}}>
+        
+        <table className="table" style={{width: "300px", borderStyle:'solid', borderColor:"purple", marginLeft:"2rem"}}>
             <thead>
+                <tr>
+                    <th></th>
+                    <th style={{ textAlign:"center", padding: '0rem'}}>
+                        <input
+                            type="checkbox" className="form-check-input" id="sortCheck"
+                            onClick={ evt => {setOrder(evt.target.checked)} }
+                        />
+                        <label className="form-check-label" htmlFor="sortCheck">Sort down</label>
+                    </th>
+                </tr>
                 <tr>
                     <th>{ticker.split('-')[0]} Markets ({props.marketPrices.length})</th>
                     <th>Price ({ticker.split('-')[1]})</th>

@@ -82,7 +82,9 @@ const arbitragesTables = (ticker, arbitrages, initArb, marketFilter, minProfitFi
 const tickerButtons = (tickers, HandleChangeTickerSubscriptionClick) => {
   return tickers.map(ticker=>{
     return (
-      <button className="btn btn-dark" style={{marginRight: '1rem', width: "120px"}} onClick={()=>{HandleChangeTickerSubscriptionClick(ticker)}} >{ticker}</button>
+      <button className="btn btn-dark" style={{marginRight: '1rem', width: "120px"}} onClick={()=>{HandleChangeTickerSubscriptionClick(ticker)}}>
+        {ticker}
+      </button>
     )
   })
 }

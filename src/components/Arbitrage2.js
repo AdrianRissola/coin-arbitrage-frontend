@@ -14,21 +14,21 @@ const Arbitrage = (props)=> {
             </thead>
             <tbody>
                 <tr>
-                    <td align="center">Operation</td>
-                    <td align="center">Market</td>
+                    <td align="center" style={{width: "100px"}}>Operation</td>
+                    <td align="center" style={{width: "80px"}}>Market</td>
                     <td align="center">Price</td>
                 </tr>
                 <tr>
                     <td align="center">{displayedArbitrage.transactions[0].type}</td>             
                     <td>{displayedArbitrage.transactions[0].market}</td>
-                    <td style={{color:'green'}} title={displayedArbitrage.transactions[0].price}>
+                    <td align="center" style={{color:'green'}} title={displayedArbitrage.transactions[0].price}>
                         { displayedArbitrage.transactions[0].price.toLocaleString(navigator.language, {maximumSignificantDigits:7}) }
                     </td>
                 </tr>
                 <tr>
                     <td align="center">{displayedArbitrage.transactions[1].type}</td>
                     <td>{displayedArbitrage.transactions[1].market}</td>
-                    <td style={{color:'green'}} title={displayedArbitrage.transactions[1].price}>
+                    <td align="center" style={{color:'green'}} title={displayedArbitrage.transactions[1].price}>
                         { displayedArbitrage.transactions[1].price.toLocaleString(navigator.language, {maximumSignificantDigits:7}) }
                     </td>
                 </tr>
@@ -41,9 +41,14 @@ const Arbitrage = (props)=> {
                             Non Profitable
                         </td>
                         :
-                        <td title={displayedArbitrage.profitPercentage + " %"} style = {{fontWeight: 'bold', textAlign:"center", textDecorationLine: displayedArbitrage.profitPercentage===0?'line-through':'none'}} colSpan="3">
-                            Profit: <span style={{color:'green'}}>{displayedArbitrage.profitPercentage.toLocaleString(navigator.language, {maximumSignificantDigits:3})}% {ticker.split('-')[1]}</span>
-                        </td>
+                        <>
+                            <td title={displayedArbitrage.profitPercentage + " %"} style = {{fontWeight: 'bold', textAlign:"center", textDecorationLine: displayedArbitrage.profitPercentage===0?'line-through':'none'}} colSpan="1">
+                                Profit: 
+                            </td>
+                            <td title={displayedArbitrage.profitPercentage + " %"} style = {{fontWeight: 'bold', textAlign:"center", textDecorationLine: displayedArbitrage.profitPercentage===0?'line-through':'none'}} colSpan="2">
+                                <span style={{color:'green'}}>{displayedArbitrage.profitPercentage.toLocaleString(navigator.language, {maximumSignificantDigits:3})}% {ticker.split('-')[1]}</span>
+                            </td>
+                        </>
                     }
                 </tr>
                 <tr>
@@ -53,9 +58,14 @@ const Arbitrage = (props)=> {
                             Non Profitable
                         </td>
                         :
-                        <td style = {{fontWeight: 'bold', textAlign:"center"}} colSpan="3" title={displayedArbitrage.profitPerUnit + ' ' + ticker.split('-')[1]}>
-                            Profit per {ticker.split('-')[0]} unit: <span style={{color:'green'}}>{displayedArbitrage.profitPerUnit.toLocaleString(navigator.language,{maximumSignificantDigits: 8})} {ticker.split('-')[1]}</span>
-                        </td>
+                        <>
+                            <td style = {{fontWeight: 'bold', textAlign:"center"}} colSpan="2" title={displayedArbitrage.profitPerUnit + ' ' + ticker.split('-')[1]}>
+                                Profit per {ticker.split('-')[0]} unit: 
+                            </td>
+                            <td style = {{fontWeight: 'bold', textAlign:"center"}} colSpan="1" title={displayedArbitrage.profitPerUnit + ' ' + ticker.split('-')[1]}>
+                                <span style={{color:'green'}}>{displayedArbitrage.profitPerUnit.toLocaleString(navigator.language,{maximumSignificantDigits: 8})} {ticker.split('-')[1]}</span>
+                            </td>
+                        </>
                     }
                 </tr>
             </tfoot>
