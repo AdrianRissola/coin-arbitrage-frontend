@@ -20,7 +20,9 @@ const MarketPrices = (props)=> {
                         return (
                             <tr key={marketPrice.market}>
                                 <td style={{ textAlign:"left", fontWeight: 'bold' }}>{ marketPrice.market }</td>
-                                <td style={{ color:'green', textAlign:"right", fontWeight: 'bold' }}>{ marketPrice.price }</td>
+                                <td style={{ color:'green', textAlign:"right", fontWeight: 'bold' }} title={marketPrice.price}>
+                                    { marketPrice.price.toLocaleString(navigator.language, {maximumSignificantDigits:7}) }
+                                </td>
                             </tr>
                         );
                     })

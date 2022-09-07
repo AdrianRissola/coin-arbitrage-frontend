@@ -10,12 +10,21 @@ console.log("window.env: ", window.env)
 console.log("env: ", env)
 console.log("process.env: ", process.env)
 
-const tableStyleForBestArbitrage = {borderRadius: "40px", width: "300px", marginLeft: '2rem', marginRight: '-1rem', borderStyle:'solid', borderColor:"green"}
-const tableStyleArbitrage = {borderBottomRightRadius: "10px", width: "300px", marginLeft: '2rem', marginRight: '-1rem', borderStyle:'solid', borderColor:"#aaaaaa"}
+const tableStyleForBestArbitrage = {
+  borderRadius: "40px", width: "350px", 
+  marginLeft: '2rem', marginRight: '-1rem', 
+  borderStyle:'solid', borderColor:"green"
+}
+const tableStyleArbitrage = {
+  borderBottomRightRadius: "10px", 
+  width: "350px", marginLeft: '2rem', 
+  marginRight: '-1rem', 
+  borderStyle:'solid', borderColor:"#aaaaaa",
+}
 
 const arbitragesTables = (ticker, arbitrages, initArb, marketFilter, minProfitFilter, arbitrageFilters) => {
-  let tables = []
-  let marketPairs = Object.keys(arbitrages).sort()
+  const tables = []
+  const marketPairs = Object.keys(arbitrages).sort()
   const arbitrageComponents = []
   arbitrageComponents.push(
     <Arbitrage2
@@ -114,7 +123,7 @@ const allRequest = {
 };
 
 
-let ws = null
+let ws = null;
 const App = () => {
 
   const [arbitrages, setArbitrages] = useState(initArb);
@@ -148,6 +157,11 @@ const App = () => {
   ws.onopen = (event) => {
     ws.send(JSON.stringify(allRequest));
   };
+
+  ws.onerror = (event) => {
+    setArbitrageChannelMessage("Arbitrage service not available")
+    setMarketPriceChannelMessage("Market prices service not available")
+  } 
 
   ws.onmessage = function (event) {
     
@@ -240,8 +254,8 @@ const App = () => {
         </tbody>
       </table>
 
-      <header>{arbitrageChannelMessage}</header>
-      <header>{marketPriceChannelMessage}</header>
+      <header style={{color:'red'}}>{arbitrageChannelMessage}</header>
+      <header style={{color:'red'}}>{marketPriceChannelMessage}</header>
       <table>
         <tbody>
           <tr>
