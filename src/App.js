@@ -82,7 +82,9 @@ const arbitragesTables = (ticker, arbitrages, initArb, marketFilter, minProfitFi
 const tickerButtons = (tickers, HandleChangeTickerSubscriptionClick) => {
   return tickers.map(ticker=>{
     return (
-      <button className="btn btn-dark" style={{marginRight: '1rem', width: "120px"}} onClick={()=>{HandleChangeTickerSubscriptionClick(ticker)}}>
+      <button className="btn btn-dark" 
+        style={{marginRight: '0.3rem', marginTop: '0.3rem',  fontSize:'90%'}} 
+        onClick={()=>{HandleChangeTickerSubscriptionClick(ticker)}}>
         {ticker}
       </button>
     )
@@ -206,14 +208,19 @@ const App = () => {
     <div className="container" style={{maxWidth: '1600px', marginTop: '25px'}}>   
       <table>
       <tbody>
-          <tr> 
-            <td>{ tickerButtons(availableTickers.filter(at=>{return at.split("-")[1]==="USDT"}), HandleChangeTickerSubscriptionClick) }</td>
+          <tr>
+            <div className="w-100 p-3" style={{backgroundColor: "#eee"}}>
+              <td>{ tickerButtons(availableTickers.filter(at=>{return at.split("-")[1]==="USDT"}), HandleChangeTickerSubscriptionClick) }</td>
+            </div>
           </tr>
           <tr> 
-            <td>{ tickerButtons(availableTickers.filter(at=>{return at.split("-")[1]==="BTC"}), HandleChangeTickerSubscriptionClick) }</td>
+            <div className="w-100 p-3" style={{backgroundColor: "#eee", marginTop:'1rem'}}>
+              <td>{ tickerButtons(availableTickers.filter(at=>{return at.split("-")[1]==="BTC"}), HandleChangeTickerSubscriptionClick) }</td>
+            </div>
           </tr>
         </tbody>
       </table>
+
       <header style={{fontWeight: 'bold', fontSize:"2.5rem", textAlign:"center"}}>{ticker} Arbitrage</header>
 
       <table>
