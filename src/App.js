@@ -112,7 +112,6 @@ const App = () => {
         setAvailableTickers(response.availableTickers)
       }
     }
-
     
     if(response.channel==='arbitrages') {
       if(response.arbitrages && Object.keys(response.arbitrages).length>0) {
@@ -147,7 +146,7 @@ const App = () => {
           <tr>
             <td className="w-100 p-3" style={{backgroundColor: "#eee"}}>
               <TickerButtons 
-                tickers={availableTickers.filter(at=>{return at.split("-")[1]==="USDT"})} 
+                tickers={availableTickers.filter(at=>{return at.name.split("-")[1]==="USDT"})} 
                 HandleChangeTickerSubscriptionClick={HandleChangeTickerSubscriptionClick}
               >
               </TickerButtons>
@@ -156,7 +155,7 @@ const App = () => {
           <tr> 
             <td className="w-100 p-3" style={{backgroundColor: "#eee"}}>
               <TickerButtons 
-                tickers={availableTickers.filter(at=>{return at.split("-")[1]==="BTC"})} 
+                tickers={availableTickers.filter(at=>{return at.name.split("-")[1]==="BTC"})} 
                 HandleChangeTickerSubscriptionClick={HandleChangeTickerSubscriptionClick}
               >
               </TickerButtons>
