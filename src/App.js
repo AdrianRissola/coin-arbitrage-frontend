@@ -1,95 +1,14 @@
 import React, { useState } from "react";
 import env from "react-dotenv";
 import './App.scss';
-import Arbitrage from "./components/Arbitrage";
-import Arbitrage2 from "./components/Arbitrage2";
+import Arbitrages from "./components/Arbitrages";
+import TickerButtons from "./components/TickerButtons";
 import { getWebsocketEndpoint } from './params'
 import MarketPrices from "./components/MarketPrices";
 
 console.log("window.env: ", window.env)
 console.log("env: ", env)
 console.log("process.env: ", process.env)
-
-const tableStyleForBestArbitrage = {
-  borderRadius: "40px", width: "350px", 
-  marginLeft: '2rem', marginRight: '-1rem', 
-  borderStyle:'solid', borderColor:"green"
-}
-const tableStyleArbitrage = {
-  borderBottomRightRadius: "10px", 
-  width: "350px", marginLeft: '2rem', 
-  marginRight: '-1rem', 
-  borderStyle:'solid', borderColor:"#aaaaaa",
-}
-
-const arbitragesTables = (ticker, arbitrages, initArb, marketFilter, minProfitFilter, arbitrageFilters) => {
-  const tables = []
-  const marketPairs = Object.keys(arbitrages).sort()
-  const arbitrageComponents = []
-  arbitrageComponents.push(
-    <Arbitrage2
-      key={0}
-      header={"Best Arbitrage"}
-      ticker={ticker}
-      arbitrage={arbitrages[Object.keys(arbitrages)[0]]?arbitrages[Object.keys(arbitrages)[0]]:initArb[0]}
-      tableStyle= {tableStyleForBestArbitrage}
-    />
-  )
-  marketPairs.forEach((marketPair, index) => {
-    if( (!marketFilter || marketPair.toUpperCase().includes(marketFilter.toUpperCase())) 
-        && (!minProfitFilter || arbitrages[marketPair].profitPercentage>=minProfitFilter)
-      )
-      arbitrageComponents.push(
-        <Arbitrage2
-          key={index+1}
-          ticker={ticker}
-          header={marketPair} 
-          arbitrage={arbitrages[marketPair]?arbitrages[marketPair]:initArb[0]}
-          tableStyle={tableStyleArbitrage}
-        />
-      )
-  })
-  for(let i=0 ; i<arbitrageComponents.length ; i+=3) {
-    tables.push(
-      <table>
-        <tbody>
-          <tr>
-            <td align="center" key={i}>
-              {arbitrageComponents[i]}
-            </td>
-            {
-              arbitrageComponents[i+1]?
-              <td align="center" key={i+1}>
-                {arbitrageComponents[i+1]}
-              </td>
-              :null
-            }
-            { 
-              arbitrageComponents[i+2]?
-              <td align="center" key={i+2}>
-                {arbitrageComponents[i+2]}
-              </td>
-              :null
-            }
-          </tr>
-        </tbody>
-      </table>
-    )
-  }
-  return tables
-}
-
-const tickerButtons = (tickers, HandleChangeTickerSubscriptionClick) => {
-  return tickers.map(ticker=>{
-    return (
-      <button className="btn btn-dark" 
-        style={{marginRight: '0.3rem', marginTop: '0.3rem',  fontSize:'90%'}} 
-        onClick={()=>{HandleChangeTickerSubscriptionClick(ticker)}}>
-        {ticker}
-      </button>
-    )
-  })
-}
 
 
 const initArb = [
@@ -127,6 +46,7 @@ const allRequest = {
 };
 
 
+
 let ws = null;
 const App = () => {
 
@@ -139,10 +59,6 @@ const App = () => {
   const [availableTickers, setAvailableTickers] = useState([])
   const [marketFilter, setMarketFilter] = useState()
   const [minProfitFilter, setMinProfitFilter] = useState()
-  const [arbitrageFilters, setArbitrageFilters] = useState({
-    markets:"",
-    minProfit:0
-  })
 
   const HandleChangeTickerSubscriptionClick = (tickerSubscriptionSelected) =>{
     if(tickerSubscription !== tickerSubscriptionSelected) {
@@ -151,12 +67,32 @@ const App = () => {
       ws.send(JSON.stringify(allRequest));
     }
   }
+
+  const FilterInput = (props) => {
+    const label = props.label
+    const inputType = props.inputType
+    const value = props.value
+    const onChange = props.onChange
+    return(
+      <div className="input-group mb-3" style={{width: '250px', marginLeft:'2rem'}}>
+        <div className="input-group-prepend">
+          <span className="input-group-text" id="basic-addon3">{label}</span>
+        </div>
+        <input
+          input = {inputType}
+          className = "form-control" 
+          id = "markets" 
+          aria-describedby = "basic-addon3" 
+          value = {value}
+          onChange = {onChange}
+        />
+      </div>
+    )
+  }
   
   if(!ws) {
     ws = new WebSocket(getWebsocketEndpoint());
   }
-
-
 
   ws.onopen = (event) => {
     ws.send(JSON.stringify(allRequest));
@@ -206,17 +142,25 @@ const App = () => {
 
   return (
     <div className="container" style={{maxWidth: '1600px', marginTop: '25px'}}>   
-      <table>
-      <tbody>
+      <table style={{borderCollapse: "separate", borderSpacing: "0 10px", }}>
+        <tbody>
           <tr>
-            <div className="w-100 p-3" style={{backgroundColor: "#eee"}}>
-              <td>{ tickerButtons(availableTickers.filter(at=>{return at.split("-")[1]==="USDT"}), HandleChangeTickerSubscriptionClick) }</td>
-            </div>
+            <td className="w-100 p-3" style={{backgroundColor: "#eee"}}>
+              <TickerButtons 
+                tickers={availableTickers.filter(at=>{return at.split("-")[1]==="USDT"})} 
+                HandleChangeTickerSubscriptionClick={HandleChangeTickerSubscriptionClick}
+              >
+              </TickerButtons>
+            </td>
           </tr>
           <tr> 
-            <div className="w-100 p-3" style={{backgroundColor: "#eee", marginTop:'1rem'}}>
-              <td>{ tickerButtons(availableTickers.filter(at=>{return at.split("-")[1]==="BTC"}), HandleChangeTickerSubscriptionClick) }</td>
-            </div>
+            <td className="w-100 p-3" style={{backgroundColor: "#eee"}}>
+              <TickerButtons 
+                tickers={availableTickers.filter(at=>{return at.split("-")[1]==="BTC"})} 
+                HandleChangeTickerSubscriptionClick={HandleChangeTickerSubscriptionClick}
+              >
+              </TickerButtons>
+            </td>
           </tr>
         </tbody>
       </table>
@@ -227,6 +171,12 @@ const App = () => {
         <tbody>
           <tr>
             <td>
+              {/* <FilterInput
+                label = "Markets"
+                value = {marketFilter}
+                onChange = {evt => setMarketFilter(evt.target.value)}
+              >
+              </FilterInput> */}
               <div className="input-group mb-3" style={{width: '250px', marginLeft:'2rem'}}>
                 <div className="input-group-prepend">
                   <span className="input-group-text" id="basic-addon3">Markets</span>
@@ -237,7 +187,6 @@ const App = () => {
                   aria-describedby="basic-addon3" 
                   value={marketFilter}
                   onChange={evt => setMarketFilter(evt.target.value)}
-                  // onChange={evt => {arbitrageFilters.markets=evt.target.value; setArbitrageFilters(arbitrageFilters)}}
                 />
               </div>
             </td>
@@ -252,7 +201,6 @@ const App = () => {
                   step="0.01"
                   value={minProfitFilter}
                   onChange={evt => setMinProfitFilter(evt.target.value)}
-                  // onChange={evt => {arbitrageFilters.minProfit=evt.target.value; setArbitrageFilters(arbitrageFilters)}}
                   className="form-control" 
                   id="minProfit" 
                   aria-describedby="basic-addon3"
@@ -268,7 +216,16 @@ const App = () => {
       <table>
         <tbody>
           <tr>
-            <td> { arbitragesTables(ticker, arbitrages, initArb, marketFilter, minProfitFilter, arbitrageFilters) } </td>
+            <td> 
+              <Arbitrages
+                ticker = {ticker}
+                arbitrages = {arbitrages}
+                initArb = {initArb}
+                marketFilter = {marketFilter}
+                minProfitFilter = {minProfitFilter}
+              >
+              </Arbitrages>
+            </td>
             <td style={{verticalAlign:"top"}}>
               <MarketPrices ticker={ticker} marketPrices={marketPrices} />
             </td>
