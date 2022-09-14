@@ -142,32 +142,8 @@ const App = () => {
 
   return (
     <div className="container" style={{maxWidth: '1600px', marginTop: '25px'}}>   
-      {/* <table style={{borderCollapse: "separate", borderSpacing: "0 10px", }}>
-        <tbody>
-          <tr>
-            <td className="w-100 p-3" style={{backgroundColor: "#eee"}}>
-              <TickerButtons 
-                tickers={availableTickers.filter(at=>{return at.name.split("-")[1]==="USDT"})} 
-                HandleChangeTickerSubscriptionClick={HandleChangeTickerSubscriptionClick}
-                darkMode = {darkMode}
-              >
-              </TickerButtons>
-            </td>
-          </tr>
-          <tr> 
-            <td className="w-100 p-3" style={{backgroundColor: "#eee"}}>
-              <TickerButtons 
-                tickers={availableTickers.filter(at=>{return at.name.split("-")[1]==="BTC"})} 
-                HandleChangeTickerSubscriptionClick={HandleChangeTickerSubscriptionClick}
-                darkMode = {darkMode}
-              >
-              </TickerButtons>
-            </td>
-          </tr>
-        </tbody>
-      </table> */}
 
-      <div className="w-100 p-3 row" style={{backgroundColor: "#eee", margin: '10px'}}>
+      <div className="w-100 p-3 row" style={{backgroundColor: "#eee", margin: '10px', marginLeft: '10px', marginRight:'10px', flexWrap:'nowrap'}}>
         <TickerButtons 
           tickers={availableTickers.filter(at=>{return at.name.split("-")[1]==="BTC"})} 
           HandleChangeTickerSubscriptionClick={HandleChangeTickerSubscriptionClick}
@@ -175,7 +151,7 @@ const App = () => {
         >
         </TickerButtons>
       </div>
-      <div className="w-100 p-3 row" style={{backgroundColor: "#eee", margin: '10px'}}>
+      <div className="w-100 p-3 row" style={{backgroundColor: "#eee", margin: '10px', marginLeft: '10px', marginRight:'10px', flexWrap:'nowrap'}}>
         <TickerButtons 
           tickers={availableTickers.filter(at=>{return at.name.split("-")[1]==="USDT"})} 
           HandleChangeTickerSubscriptionClick={HandleChangeTickerSubscriptionClick}
@@ -202,72 +178,58 @@ const App = () => {
       </div>
 
 
-      <table>
-        <tbody>
-          <tr>
-            <td>
-              {/* <FilterInput
-                label = "Markets"
-                value = {marketFilter}
-                onChange = {evt => setMarketFilter(evt.target.value)}
-              >
-              </FilterInput> */}
-              <div className="input-group mb-3" style={{width: '250px', marginLeft:'2rem'}}>
-                <div className="input-group-prepend">
-                  <span className="input-group-text" id="basic-addon3">Markets</span>
-                </div>
-                <input 
-                  className="form-control" 
-                  id="markets" 
-                  aria-describedby="basic-addon3" 
-                  value={marketFilter}
-                  onChange={evt => setMarketFilter(evt.target.value)}
-                />
-              </div>
-            </td>
-            <td>
-              <div className="input-group mb-3" style={{width: '200px', marginLeft:'2rem'}}>
-                <div className="input-group-prepend">
-                  <span className="input-group-text" id="basic-addon3">Min Profit %</span>
-                </div>
-                <input 
-                  type="number" 
-                  min="0" 
-                  step="0.01"
-                  value={minProfitFilter}
-                  onChange={evt => setMinProfitFilter(evt.target.value)}
-                  className="form-control" 
-                  id="minProfit" 
-                  aria-describedby="basic-addon3"
-                />
-              </div>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+      <div className="row">
+        <div className="column">
+          <div className="input-group mb-3" style={{width: '250px', marginLeft:'2rem'}}>
+            <div className="input-group-prepend">
+              <span className="input-group-text" id="basic-addon3">Markets</span>
+            </div>
+            <input 
+              className="form-control" 
+              id="markets" 
+              aria-describedby="basic-addon3" 
+              value={marketFilter}
+              onChange={evt => setMarketFilter(evt.target.value)}
+            />
+          </div>
+        </div>
+        <div className="column">
+          <div className="input-group mb-3" style={{width: '200px', marginLeft:'2rem'}}>
+            <div className="input-group-prepend">
+              <span className="input-group-text" id="basic-addon3">Min Profit %</span>
+            </div>
+            <input 
+              type="number" 
+              min="0" 
+              step="0.01"
+              value={minProfitFilter}
+              onChange={evt => setMinProfitFilter(evt.target.value)}
+              className="form-control" 
+              id="minProfit" 
+              aria-describedby="basic-addon3"
+            />
+          </div>
+        </div>
+      </div>
 
       <header style={{color:'red'}}>{arbitrageChannelMessage}</header>
       <header style={{color:'red'}}>{marketPriceChannelMessage}</header>
-      <table>
-        <tbody>
-          <tr>
-            <td> 
-              <Arbitrages
-                ticker = {ticker}
-                arbitrages = {arbitrages}
-                initArb = {initArb}
-                marketFilter = {marketFilter}
-                minProfitFilter = {minProfitFilter}
-                darkMode = {darkMode}
-              >
-              </Arbitrages>
-            </td>
-            <td style={{verticalAlign:"top"}}>
-              <MarketPrices ticker={ticker} marketPrices={marketPrices} darkMode = {darkMode}/>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+      <div className="row">
+        <div className="column"> 
+          <Arbitrages
+            ticker = {ticker}
+            arbitrages = {arbitrages}
+            initArb = {initArb}
+            marketFilter = {marketFilter}
+            minProfitFilter = {minProfitFilter}
+            darkMode = {darkMode}
+          >
+          </Arbitrages>
+        </div>
+        <div className="column" style={{verticalAlign:"top"}}>
+          <MarketPrices ticker={ticker} marketPrices={marketPrices} darkMode = {darkMode}/>
+        </div>
+      </div>
     </div>
   )
 };
