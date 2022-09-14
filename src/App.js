@@ -141,120 +141,134 @@ const App = () => {
 
 
   return (
-    <>
-      <head>
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"/>
-      </head>
-      <div className="container" style={{maxWidth: '1600px', marginTop: '25px'}}>   
-        <table style={{borderCollapse: "separate", borderSpacing: "0 10px", }}>
-          <tbody>
-            <tr>
-              <td className="w-100 p-3" style={{backgroundColor: "#eee"}}>
-                <TickerButtons 
-                  tickers={availableTickers.filter(at=>{return at.name.split("-")[1]==="USDT"})} 
-                  HandleChangeTickerSubscriptionClick={HandleChangeTickerSubscriptionClick}
-                >
-                </TickerButtons>
-              </td>
-            </tr>
-            <tr> 
-              <td className="w-100 p-3" style={{backgroundColor: "#eee"}}>
-                <TickerButtons 
-                  tickers={availableTickers.filter(at=>{return at.name.split("-")[1]==="BTC"})} 
-                  HandleChangeTickerSubscriptionClick={HandleChangeTickerSubscriptionClick}
-                >
-                </TickerButtons>
-              </td>
-            </tr>
-          </tbody>
-        </table>
+    <div className="container" style={{maxWidth: '1600px', marginTop: '25px'}}>   
+      {/* <table style={{borderCollapse: "separate", borderSpacing: "0 10px", }}>
+        <tbody>
+          <tr>
+            <td className="w-100 p-3" style={{backgroundColor: "#eee"}}>
+              <TickerButtons 
+                tickers={availableTickers.filter(at=>{return at.name.split("-")[1]==="USDT"})} 
+                HandleChangeTickerSubscriptionClick={HandleChangeTickerSubscriptionClick}
+                darkMode = {darkMode}
+              >
+              </TickerButtons>
+            </td>
+          </tr>
+          <tr> 
+            <td className="w-100 p-3" style={{backgroundColor: "#eee"}}>
+              <TickerButtons 
+                tickers={availableTickers.filter(at=>{return at.name.split("-")[1]==="BTC"})} 
+                HandleChangeTickerSubscriptionClick={HandleChangeTickerSubscriptionClick}
+                darkMode = {darkMode}
+              >
+              </TickerButtons>
+            </td>
+          </tr>
+        </tbody>
+      </table> */}
 
-        <div className="row">
-            <div className="column">
-              <header style={{width:"1300px", fontWeight: 'bold', fontSize:"2.5rem", textAlign:"center"}}>{ticker} Arbitrage</header>
-            </div>
-            <div className="column">
-              { darkMode?
-                <button className="btn btn-light" onClick={()=>{setDarkMode(false)}}>
-                  <i className="fa fa-sun-o"></i> | Light
-                </button>
-                :
-                <button className="btn btn-dark" onClick={()=>{setDarkMode(true)}}>
-                  <i className="fa fa-moon-o"></i> | Dark
-                </button>
-              }
-            </div>
-        </div>
-
-
-        <table>
-          <tbody>
-            <tr>
-              <td>
-                {/* <FilterInput
-                  label = "Markets"
-                  value = {marketFilter}
-                  onChange = {evt => setMarketFilter(evt.target.value)}
-                >
-                </FilterInput> */}
-                <div className="input-group mb-3" style={{width: '250px', marginLeft:'2rem'}}>
-                  <div className="input-group-prepend">
-                    <span className="input-group-text" id="basic-addon3">Markets</span>
-                  </div>
-                  <input 
-                    className="form-control" 
-                    id="markets" 
-                    aria-describedby="basic-addon3" 
-                    value={marketFilter}
-                    onChange={evt => setMarketFilter(evt.target.value)}
-                  />
-                </div>
-              </td>
-              <td>
-                <div className="input-group mb-3" style={{width: '200px', marginLeft:'2rem'}}>
-                  <div className="input-group-prepend">
-                    <span className="input-group-text" id="basic-addon3">Min Profit %</span>
-                  </div>
-                  <input 
-                    type="number" 
-                    min="0" 
-                    step="0.01"
-                    value={minProfitFilter}
-                    onChange={evt => setMinProfitFilter(evt.target.value)}
-                    className="form-control" 
-                    id="minProfit" 
-                    aria-describedby="basic-addon3"
-                  />
-                </div>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-
-        <header style={{color:'red'}}>{arbitrageChannelMessage}</header>
-        <header style={{color:'red'}}>{marketPriceChannelMessage}</header>
-        <table>
-          <tbody>
-            <tr>
-              <td> 
-                <Arbitrages
-                  ticker = {ticker}
-                  arbitrages = {arbitrages}
-                  initArb = {initArb}
-                  marketFilter = {marketFilter}
-                  minProfitFilter = {minProfitFilter}
-                  darkMode = {darkMode}
-                >
-                </Arbitrages>
-              </td>
-              <td style={{verticalAlign:"top"}}>
-                <MarketPrices ticker={ticker} marketPrices={marketPrices} darkMode = {darkMode}/>
-              </td>
-            </tr>
-          </tbody>
-        </table>
+      <div className="w-100 p-3 row" style={{backgroundColor: "#eee", margin: '10px'}}>
+        <TickerButtons 
+          tickers={availableTickers.filter(at=>{return at.name.split("-")[1]==="BTC"})} 
+          HandleChangeTickerSubscriptionClick={HandleChangeTickerSubscriptionClick}
+          darkMode = {darkMode}
+        >
+        </TickerButtons>
       </div>
-    </>
+      <div className="w-100 p-3 row" style={{backgroundColor: "#eee", margin: '10px'}}>
+        <TickerButtons 
+          tickers={availableTickers.filter(at=>{return at.name.split("-")[1]==="USDT"})} 
+          HandleChangeTickerSubscriptionClick={HandleChangeTickerSubscriptionClick}
+          darkMode = {darkMode}
+        >
+        </TickerButtons>
+      </div>
+
+      <div className="row">
+          <div className="column">
+            <header style={{width:"1300px", fontWeight: 'bold', fontSize:"2.5rem", textAlign:"center"}}>{ticker} Arbitrage</header>
+          </div>
+          <div className="column">
+            { darkMode?
+              <button className="btn btn-light" onClick={()=>{setDarkMode(false)}}>
+                <i className="fa fa-sun-o"></i> | Light
+              </button>
+              :
+              <button className="btn btn-dark" onClick={()=>{setDarkMode(true)}}>
+                <i className="fa fa-moon-o"></i> | Dark
+              </button>
+            }
+          </div>
+      </div>
+
+
+      <table>
+        <tbody>
+          <tr>
+            <td>
+              {/* <FilterInput
+                label = "Markets"
+                value = {marketFilter}
+                onChange = {evt => setMarketFilter(evt.target.value)}
+              >
+              </FilterInput> */}
+              <div className="input-group mb-3" style={{width: '250px', marginLeft:'2rem'}}>
+                <div className="input-group-prepend">
+                  <span className="input-group-text" id="basic-addon3">Markets</span>
+                </div>
+                <input 
+                  className="form-control" 
+                  id="markets" 
+                  aria-describedby="basic-addon3" 
+                  value={marketFilter}
+                  onChange={evt => setMarketFilter(evt.target.value)}
+                />
+              </div>
+            </td>
+            <td>
+              <div className="input-group mb-3" style={{width: '200px', marginLeft:'2rem'}}>
+                <div className="input-group-prepend">
+                  <span className="input-group-text" id="basic-addon3">Min Profit %</span>
+                </div>
+                <input 
+                  type="number" 
+                  min="0" 
+                  step="0.01"
+                  value={minProfitFilter}
+                  onChange={evt => setMinProfitFilter(evt.target.value)}
+                  className="form-control" 
+                  id="minProfit" 
+                  aria-describedby="basic-addon3"
+                />
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <header style={{color:'red'}}>{arbitrageChannelMessage}</header>
+      <header style={{color:'red'}}>{marketPriceChannelMessage}</header>
+      <table>
+        <tbody>
+          <tr>
+            <td> 
+              <Arbitrages
+                ticker = {ticker}
+                arbitrages = {arbitrages}
+                initArb = {initArb}
+                marketFilter = {marketFilter}
+                minProfitFilter = {minProfitFilter}
+                darkMode = {darkMode}
+              >
+              </Arbitrages>
+            </td>
+            <td style={{verticalAlign:"top"}}>
+              <MarketPrices ticker={ticker} marketPrices={marketPrices} darkMode = {darkMode}/>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
   )
 };
 

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { marketPricesDarkCardStyle, marketPricesCardStyle } from "../styleUtil";
+import { marketPricesCardStyle } from "../styleUtil";
 
 const greenHex = "#0ecb81"
 
@@ -7,12 +7,12 @@ const MarketPrices = (props)=> {
     const [order, setOrder] = useState(false);
     const ticker = props.ticker
     const marketPrices = order ? props.marketPrices.sort((a,b)=>a.price - b.price) : props.marketPrices
-    const styles = props.darkMode ? marketPricesDarkCardStyle : marketPricesCardStyle
+    const styles = marketPricesCardStyle(props.darkMode)
 
     return(
         <div className={styles.cardClassName} style={styles.cardStyle}>
             <div className={styles.cardBodyClassName}>
-                <table className="table" style={styles.tableStyle}>
+                <table className="table">
                     <thead>
                         <tr>
                             <th></th>

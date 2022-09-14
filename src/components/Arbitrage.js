@@ -1,5 +1,5 @@
 import React from 'react'
-import { arbitrageDarkCardStyle, arbitrageCardStyle } from '../styleUtil'
+import { arbitrageCardStyle } from '../styleUtil'
 
 const greenHex = "#0ecb81"
 
@@ -11,10 +11,7 @@ const Arbitrage = (props)=> {
     const displayedArbitrage = props.arbitrage
     const darkCardMode = props.darkMode
 
-    let styles = arbitrageCardStyle
-    if (darkCardMode) {
-        styles = isBestArbitrage ? arbitrageDarkCardStyle("40px") : arbitrageDarkCardStyle()
-    } 
+    let styles = isBestArbitrage ? arbitrageCardStyle("40px", darkCardMode) : arbitrageCardStyle("20px", darkCardMode)
 
     const getHeader = (header) => { return(
         <div className={styles.cardHeaderClassName} style={{ color: isBestArbitrage ? greenHex: null}}>
@@ -25,20 +22,9 @@ const Arbitrage = (props)=> {
 
     return(
         <div className={styles.cardClassName} style={styles.cardStyle}>
-            { darkCardMode?
-                getHeader(header)
-                : null
-            }
+            {getHeader(header)}
             <div className={styles.cardBodyClassName}>
-                <table className="table" style={styles.tableStyle}>
-                    { !darkCardMode?
-                        <thead>
-                            <tr align="center">
-                                <th colSpan="3">{header}</th>
-                            </tr>
-                        </thead>
-                        : null
-                    }
+                <table className="table">
                     <tbody>
                         <tr>
                             <td align="center" style={{width: "100px"}}>Operation</td>
