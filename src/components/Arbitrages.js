@@ -1,19 +1,20 @@
 import Arbitrage from "./Arbitrage";
 
 const tableStyleForBestArbitrage = {
-    borderRadius: "40px", width: "350px", 
+    borderRadius: "40px", width: "400px", 
     marginLeft: '2rem', marginRight: '-1rem', 
     borderStyle:'solid', borderColor:"green"
 }
 
 const tableStyleArbitrage = {
-    borderBottomRightRadius: "10px", 
-    width: "350px", marginLeft: '2rem', 
+    borderRadius: "20px", 
+    width: "400px", marginLeft: '2rem', 
     marginRight: '-1rem', 
     borderStyle:'solid', borderColor:"#aaaaaa",
 }
 
 const Arbitrages = (props) => {
+    const darkMode = props.darkMode
     const arbitrages = props.arbitrages
     const ticker = props.ticker
     const initArb = props.initArb
@@ -24,18 +25,20 @@ const Arbitrages = (props) => {
     const arbitrageComponents = []
     arbitrageComponents.push(
       <Arbitrage
+        darkMode = {darkMode}
         header={"Best Arbitrage"}
         ticker={ticker}
         arbitrage={arbitrages[Object.keys(arbitrages)[0]]?arbitrages[Object.keys(arbitrages)[0]]:initArb[0]}
         tableStyle= {tableStyleForBestArbitrage}
       />
     )
-    marketPairs.forEach((marketPair, index) => {
+    marketPairs.forEach((marketPair) => {
       if( (!marketFilter || marketPair.toUpperCase().includes(marketFilter.toUpperCase())) 
           && (!minProfitFilter || arbitrages[marketPair].profitPercentage>=minProfitFilter)
         )
         arbitrageComponents.push(
           <Arbitrage
+            darkMode = {darkMode}
             ticker={ticker}
             header={marketPair} 
             arbitrage={arbitrages[marketPair]?arbitrages[marketPair]:initArb[0]}
