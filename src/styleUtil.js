@@ -1,5 +1,5 @@
 const marketPricesCardClassName = "card text-#{color} bg-#{mode} mb-3"
-const marketPricesCardStyle = {width: "315px", marginLeft:"1.5rem", borderRadius: "20px"}
+const marketPricesCardStyle = {width: "330px", marginLeft:"-1.5rem", borderRadius: "20px"}
 const marketPricesCardBodyClassName = "card-body"
 
 exports.marketPricesCardStyle = (isDarkMode) => { 
@@ -17,7 +17,8 @@ exports.marketPricesCardStyle = (isDarkMode) => {
 const arbitrageCardClassName = "card text-#{color} bg-#{mode} mb-3"
 const arbitrageCardStyle = (borderRadius) => {
     return {
-        width: "350px", marginLeft:"1.5rem", borderRadius: borderRadius ? borderRadius : "20px"
+        width: "350px", marginLeft:"1rem", padding: "0rem",
+        borderRadius: borderRadius ? borderRadius : "20px"
     }
 }
 const arbitrageCardHeaderClassName = "card-header"
@@ -31,6 +32,6 @@ exports.arbitrageCardStyle = (borderRadius, isDarkMode) => {
         cardStyle : arbitrageCardStyle(borderRadius),
         cardHeaderClassName : arbitrageCardHeaderClassName,
         cardBodyClassName : arbitrageCardBodyClassName,
-        cardBodyStyle: {color: !isDarkMode ? "black" : null},
+        cardBodyStyle: {padding: "0rem", color: !isDarkMode ? "black" : null},
     }
 }

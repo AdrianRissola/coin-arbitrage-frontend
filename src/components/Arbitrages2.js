@@ -1,4 +1,4 @@
-import Arbitrage from "./Arbitrage2";
+import Arbitrage from "./Arbitrage";
 
 const tableStyleForBestArbitrage = {
     borderRadius: "40px", width: "400px", 
@@ -20,7 +20,6 @@ const Arbitrages = (props) => {
     const initArb = props.initArb
     const marketFilter = props.marketFilter
     const minProfitFilter = props.minProfitFilter
-    const tables = []
     const marketPairs = Object.keys(arbitrages).sort()
     const arbitrageComponents = []
     arbitrageComponents.push(
@@ -46,34 +45,31 @@ const Arbitrages = (props) => {
           />
         )
     })
-    for(let i=0 ; i<arbitrageComponents.length ; i+=3) {
-      tables.push(
-        <table key={i}>
-          <tbody>
-            <tr>
-              <td align="center">
-                {arbitrageComponents[i]}
-              </td>
-              {
-                arbitrageComponents[i+1]?
-                <td align="center">
-                  {arbitrageComponents[i+1]}
-                </td>
-                :null
-              }
-              { 
-                arbitrageComponents[i+2]?
-                <td align="center">
-                  {arbitrageComponents[i+2]}
-                </td>
-                :null
-              }
-            </tr>
-          </tbody>
-        </table>
-      )
-    }
-    return tables
+    // const tables = []
+    // for(let i=0 ; i<arbitrageComponents.length ; i+=3) {
+    //   tables.push(
+    //         <div className="row" key={i}>
+    //           <div className="col" align="center">
+    //             {arbitrageComponents[i]}
+    //           </div>
+    //           {
+    //             arbitrageComponents[i+1]?
+    //             <div className="col" align="center">
+    //               {arbitrageComponents[i+1]}
+    //             </div>
+    //             :null
+    //           }
+    //           { 
+    //             arbitrageComponents[i+2]?
+    //             <div className="col" align="center">
+    //               {arbitrageComponents[i+2]}
+    //             </div>
+    //             :null
+    //           }
+    //         </div>
+    //   )
+    // }
+    return arbitrageComponents
 }
 
 export default Arbitrages

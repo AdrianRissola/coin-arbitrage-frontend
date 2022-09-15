@@ -22,7 +22,7 @@ const Arbitrage = (props)=> {
 
     return(
         <div className={styles.cardClassName} style={styles.cardStyle}>
-            {getHeader(header)}
+            { getHeader(header) }
             <div className={styles.cardBodyClassName}>
                 <table className="table">
                     <tbody>

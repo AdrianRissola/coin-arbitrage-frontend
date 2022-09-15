@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import env from "react-dotenv";
 import './App.scss';
-import Arbitrages from "./components/Arbitrages";
+import Arbitrages from "./components/Arbitrages2";
 import TickerButtons from "./components/TickerButtons";
 import { getWebsocketEndpoint } from './params'
 import MarketPrices from "./components/MarketPrices";
@@ -143,7 +143,7 @@ const App = () => {
   return (
     <div className="container" style={{maxWidth: '1600px', marginTop: '25px'}}>   
 
-      <div className="w-100 p-3 row" style={{backgroundColor: "#eee", margin: '10px', marginLeft: '10px', marginRight:'10px', flexWrap:'nowrap'}}>
+      <div className="w-100 p-3 row" style={{backgroundColor: "#eee", margin: '10px', marginLeft: '10px', marginRight:'10px'}}>
         <TickerButtons 
           tickers={availableTickers.filter(at=>{return at.name.split("-")[1]==="BTC"})} 
           HandleChangeTickerSubscriptionClick={HandleChangeTickerSubscriptionClick}
@@ -151,7 +151,7 @@ const App = () => {
         >
         </TickerButtons>
       </div>
-      <div className="w-100 p-3 row" style={{backgroundColor: "#eee", margin: '10px', marginLeft: '10px', marginRight:'10px', flexWrap:'nowrap'}}>
+      <div className="w-100 p-3 row" style={{backgroundColor: "#eee", margin: '10px', marginLeft: '10px', marginRight:'10px'}}>
         <TickerButtons 
           tickers={availableTickers.filter(at=>{return at.name.split("-")[1]==="USDT"})} 
           HandleChangeTickerSubscriptionClick={HandleChangeTickerSubscriptionClick}
@@ -161,16 +161,16 @@ const App = () => {
       </div>
 
       <div className="row">
-          <div className="column">
-            <header style={{width:"1300px", fontWeight: 'bold', fontSize:"2.5rem", textAlign:"center"}}>{ticker} Arbitrage</header>
+          <div className="col" style={{textAlign: "right"}}>
+            <span style={{width:"1300px", fontWeight: 'bold', fontSize:"2.5rem"}}>{ticker} Arbitrage</span>
           </div>
-          <div className="column">
+          <div className="col" style={{alignSelf: "center", marginRight:"50px"}}>
             { darkMode?
-              <button className="btn btn-light" onClick={()=>{setDarkMode(false)}}>
+              <button className="btn btn-light" style={{float: "right"}} onClick={()=>{setDarkMode(false)}}>
                 <i className="fa fa-sun-o"></i> | Light
               </button>
               :
-              <button className="btn btn-dark" onClick={()=>{setDarkMode(true)}}>
+              <button className="btn btn-dark" style={{float: "right"}} onClick={()=>{setDarkMode(true)}}>
                 <i className="fa fa-moon-o"></i> | Dark
               </button>
             }
@@ -179,43 +179,39 @@ const App = () => {
 
 
       <div className="row">
-        <div className="column">
-          <div className="input-group mb-3" style={{width: '250px', marginLeft:'2rem'}}>
-            <div className="input-group-prepend">
-              <span className="input-group-text" id="basic-addon3">Markets</span>
-            </div>
-            <input 
-              className="form-control" 
-              id="markets" 
-              aria-describedby="basic-addon3" 
-              value={marketFilter}
-              onChange={evt => setMarketFilter(evt.target.value)}
-            />
+        <div className="input-group mb-3" style={{width: '250px', marginLeft:'2rem'}}>
+          <div className="input-group-prepend">
+            <span className="input-group-text" id="basic-addon3">Markets</span>
           </div>
+          <input 
+            className="form-control" 
+            id="markets" 
+            aria-describedby="basic-addon3" 
+            value={marketFilter}
+            onChange={evt => setMarketFilter(evt.target.value)}
+          />
         </div>
-        <div className="column">
-          <div className="input-group mb-3" style={{width: '200px', marginLeft:'2rem'}}>
-            <div className="input-group-prepend">
-              <span className="input-group-text" id="basic-addon3">Min Profit %</span>
-            </div>
-            <input 
-              type="number" 
-              min="0" 
-              step="0.01"
-              value={minProfitFilter}
-              onChange={evt => setMinProfitFilter(evt.target.value)}
-              className="form-control" 
-              id="minProfit" 
-              aria-describedby="basic-addon3"
-            />
+        <div className="input-group mb-3" style={{width: '200px', marginLeft:'2rem'}}>
+          <div className="input-group-prepend">
+            <span className="input-group-text" id="basic-addon3">Min Profit %</span>
           </div>
+          <input 
+            type="number" 
+            min="0" 
+            step="0.01"
+            value={minProfitFilter}
+            onChange={evt => setMinProfitFilter(evt.target.value)}
+            className="form-control" 
+            id="minProfit" 
+            aria-describedby="basic-addon3"
+          />
         </div>
       </div>
 
-      <header style={{color:'red'}}>{arbitrageChannelMessage}</header>
-      <header style={{color:'red'}}>{marketPriceChannelMessage}</header>
+      <span style={{color:'red'}}>{arbitrageChannelMessage}</span>
+      <span style={{color:'red'}}>{marketPriceChannelMessage}</span>
       <div className="row">
-        <div className="column"> 
+        <div className="col-sm-9" style={{display: "flex", flexDirection: "row", flexWrap: "wrap"}}> 
           <Arbitrages
             ticker = {ticker}
             arbitrages = {arbitrages}
@@ -226,7 +222,7 @@ const App = () => {
           >
           </Arbitrages>
         </div>
-        <div className="column" style={{verticalAlign:"top"}}>
+        <div className="col-3" style={{verticalAlign:"top"}}>
           <MarketPrices ticker={ticker} marketPrices={marketPrices} darkMode = {darkMode}/>
         </div>
       </div>
