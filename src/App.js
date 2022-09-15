@@ -145,7 +145,7 @@ const App = () => {
 
       <div className="w-100 p-3 row" style={{backgroundColor: "#eee", margin: '10px', marginLeft: '10px', marginRight:'10px'}}>
         <TickerButtons 
-          tickers={availableTickers.filter(at=>{return at.name.split("-")[1]==="BTC"})} 
+          tickers={availableTickers.filter(at=>{return at.name.split("-")[1]==="USDT"})} 
           HandleChangeTickerSubscriptionClick={HandleChangeTickerSubscriptionClick}
           darkMode = {darkMode}
         >
@@ -153,27 +153,17 @@ const App = () => {
       </div>
       <div className="w-100 p-3 row" style={{backgroundColor: "#eee", margin: '10px', marginLeft: '10px', marginRight:'10px'}}>
         <TickerButtons 
-          tickers={availableTickers.filter(at=>{return at.name.split("-")[1]==="USDT"})} 
+          tickers={availableTickers.filter(at=>{return at.name.split("-")[1]==="BTC"})} 
           HandleChangeTickerSubscriptionClick={HandleChangeTickerSubscriptionClick}
           darkMode = {darkMode}
         >
         </TickerButtons>
       </div>
 
+
       <div className="row">
-          <div className="col" style={{textAlign: "right"}}>
+          <div className="col" style={{textAlign: "center"}}>
             <span style={{width:"1300px", fontWeight: 'bold', fontSize:"2.5rem"}}>{ticker} Arbitrage</span>
-          </div>
-          <div className="col" style={{alignSelf: "center", marginRight:"50px"}}>
-            { darkMode?
-              <button className="btn btn-light" style={{float: "right"}} onClick={()=>{setDarkMode(false)}}>
-                <i className="fa fa-sun-o"></i> | Light
-              </button>
-              :
-              <button className="btn btn-dark" style={{float: "right"}} onClick={()=>{setDarkMode(true)}}>
-                <i className="fa fa-moon-o"></i> | Dark
-              </button>
-            }
           </div>
       </div>
 
@@ -206,9 +196,21 @@ const App = () => {
             aria-describedby="basic-addon3"
           />
         </div>
+        <div className="col" style={{alignSelf: "center", marginRight:"50px"}}>
+            { darkMode?
+              <button className="btn btn-light" style={{float: "right"}} onClick={()=>{setDarkMode(false)}}>
+                <i className="fa fa-sun-o"></i> | Light
+              </button>
+              :
+              <button className="btn btn-dark" style={{float: "right"}} onClick={()=>{setDarkMode(true)}}>
+                <i className="fa fa-moon-o"></i> | Dark
+              </button>
+            }
+          </div>
       </div>
 
       <span style={{color:'red'}}>{arbitrageChannelMessage}</span>
+      <br/>
       <span style={{color:'red'}}>{marketPriceChannelMessage}</span>
       <div className="row">
         <div className="col-sm-9" style={{display: "flex", flexDirection: "row", flexWrap: "wrap"}}> 
