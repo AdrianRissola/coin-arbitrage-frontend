@@ -1,4 +1,4 @@
-import Arbitrage from "./Arbitrage2";
+import Arbitrage from "./Arbitrage";
 
 const tableStyleForBestArbitrage = {
     borderRadius: "40px", width: "400px", 
@@ -20,11 +20,11 @@ const Arbitrages = (props) => {
     const initArb = props.initArb
     const marketFilter = props.marketFilter
     const minProfitFilter = props.minProfitFilter
-    const tables = []
     const marketPairs = Object.keys(arbitrages).sort()
     const arbitrageComponents = []
     arbitrageComponents.push(
       <Arbitrage
+        key="Best Arbitrage"
         darkMode = {darkMode}
         header={"Best Arbitrage"}
         ticker={ticker}
@@ -38,6 +38,7 @@ const Arbitrages = (props) => {
         )
         arbitrageComponents.push(
           <Arbitrage
+            key={marketPair}
             darkMode = {darkMode}
             ticker={ticker}
             header={marketPair} 
@@ -46,34 +47,7 @@ const Arbitrages = (props) => {
           />
         )
     })
-    for(let i=0 ; i<arbitrageComponents.length ; i+=3) {
-      tables.push(
-        <table key={i}>
-          <tbody>
-            <tr>
-              <td align="center">
-                {arbitrageComponents[i]}
-              </td>
-              {
-                arbitrageComponents[i+1]?
-                <td align="center">
-                  {arbitrageComponents[i+1]}
-                </td>
-                :null
-              }
-              { 
-                arbitrageComponents[i+2]?
-                <td align="center">
-                  {arbitrageComponents[i+2]}
-                </td>
-                :null
-              }
-            </tr>
-          </tbody>
-        </table>
-      )
-    }
-    return tables
+    return arbitrageComponents
 }
 
 export default Arbitrages

@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import env from "react-dotenv";
 import './App.scss';
-import Arbitrages from "./components/Arbitrages2";
+import Arbitrages from "./components/Arbitrages";
 import TickerButtons from "./components/TickerButtons";
 import { getWebsocketEndpoint } from './params'
 import MarketPrices from "./components/MarketPrices";
@@ -67,28 +67,6 @@ const App = () => {
       allRequest.ticker=tickerSubscriptionSelected
       ws.send(JSON.stringify(allRequest));
     }
-  }
-
-  const FilterInput = (props) => {
-    const label = props.label
-    const inputType = props.inputType
-    const value = props.value
-    const onChange = props.onChange
-    return(
-      <div className="input-group mb-3" style={{width: '250px', marginLeft:'2rem'}}>
-        <div className="input-group-prepend">
-          <span className="input-group-text" id="basic-addon3">{label}</span>
-        </div>
-        <input
-          input = {inputType}
-          className = "form-control" 
-          id = "markets" 
-          aria-describedby = "basic-addon3" 
-          value = {value}
-          onChange = {onChange}
-        />
-      </div>
-    )
   }
   
   if(!ws) {
