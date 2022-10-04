@@ -147,7 +147,7 @@ const App = () => {
                 title={"Best arbitrage"}
                 style={{marginRight: '0.3rem', marginTop: '0.3rem',  fontSize:'90%'}} 
                 onClick={ ()=>{HandleChangeTickerSubscriptionClick("ALL")} }>
-                {"ALL TICKERS"}
+                {"BEST ARBITRAGE"}
               </button>
             </div>
           </div>
