@@ -5,24 +5,29 @@ const greenHex = "#0ecb81"
 
 
 const Arbitrage = (props)=> {
-    const ticker = props.ticker
+    
     const header = props.header
+    const header2 = props.header2
     const isBestArbitrage = header.toLowerCase().includes("best arbitrage")
     const displayedArbitrage = props.arbitrage
+    const ticker = displayedArbitrage.transactions[0].pair
     const darkCardMode = props.darkMode
 
     let styles = isBestArbitrage ? arbitrageCardStyle("40px", darkCardMode) : arbitrageCardStyle("20px", darkCardMode)
 
-    const getHeader = (header) => { return(
-        <div className={styles.cardHeaderClassName} style={{ textAlign: "center", color: isBestArbitrage ? greenHex: null}}>
-            <b>{header}</b>
-        </div>
+    const getHeader = (header) => { return( 
+        header ?
+            <div className={styles.cardHeaderClassName} style={{ textAlign: "center", color: isBestArbitrage ? greenHex: null}}>
+                <b>{header}</b>
+            </div>
+            : null
     )}
     
 
     return(
         <div className={styles.cardClassName} style={styles.cardStyle}>
             { getHeader(header) }
+            { getHeader(header2) }
             <div className={styles.cardBodyClassName}>
                 <table className="table">
                     <tbody>

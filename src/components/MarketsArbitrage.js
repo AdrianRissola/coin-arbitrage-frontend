@@ -13,7 +13,7 @@ const tableStyleArbitrage = {
     borderStyle:'solid', borderColor:"#aaaaaa",
 }
 
-const Arbitrages = (props) => {
+const MarketsArbitrage = (props) => {
     const darkMode = props.darkMode
     const arbitrages = props.arbitrages
     const ticker = props.ticker
@@ -50,4 +50,4 @@ const Arbitrages = (props) => {
     return arbitrageComponents
 }
 
-export default Arbitrages
+export default MarketsArbitrage

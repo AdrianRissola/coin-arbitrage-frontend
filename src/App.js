@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import './App.scss';
-import Arbitrages from "./components/Arbitrages";
+import MarketsArbitrage from "./components/MarketsArbitrage";
+import ArbitrageList from "./components/ArbitrageList";
 import TickerButtons from "./components/TickerButtons";
 import { getWebsocketEndpoint } from './params'
 import MarketPrices from "./components/MarketPrices";
@@ -39,13 +40,24 @@ const App = () => {
   const [minProfitFilter, setMinProfitFilter] = useState()
   const [darkMode, setDarkMode] = useState(true)
   const [currentWsResponse, setCurrentWsResponse] = useState({channel: null, ticker: null})
+  const [historicalArbitrage, setHistoricalArbitrage] = useState(helper.initialArbitrage[0])
 
-  const HandleChangeTickerSubscriptionClick = (tickerSubscriptionSelected) =>{
-    if(tickerSubscription !== tickerSubscriptionSelected) {
-      setTickerSubscription(tickerSubscriptionSelected);
-      allRequest.ticker = tickerSubscriptionSelected
-      allRequest.channel = tickerSubscriptionSelected==="ALL" ? "arbitrages" : "all";
-      ws.send(JSON.stringify(allRequest));
+  const getTitle = () => {
+    let title = currentWsResponse.channel;
+    if(currentWsResponse.channel==='arbitrage' || currentWsResponse.channel==='prices') {
+      if(currentWsResponse.ticker==='ALL')
+        title = 'Best arbitrage'
+      else title = ticker + ' Arbitrage'
+    }
+    return title;
+  }
+
+  const isCurrentSubscription = (channelSubscription) => currentWsResponse.channel === channelSubscription.channel && currentWsResponse.ticker === channelSubscription.ticker
+
+  const handleChangeChannelSubscriptionClick = (channelSubscription) =>{
+    if(!isCurrentSubscription(channelSubscription)) {
+      setTickerSubscription(channelSubscription.ticker);
+      ws.send(JSON.stringify(channelSubscription));
     }
   }
   
@@ -76,7 +88,7 @@ const App = () => {
       setCurrentWsResponse({channel: response.channel, ticker: response.ticker})
     }
     
-    if(response.channel==='arbitrages') {
+    if(response.channel==='arbitrage') {
       if(response.arbitrages && Object.keys(response.arbitrages).length>0) {
         let ticker = Object.keys(response.arbitrages)[0]
         setTicker(ticker)
@@ -88,7 +100,7 @@ const App = () => {
       }
     }
 
-    if(response.channel==='arbitrages' && response.ticker==='ALL') {
+    if(response.channel==='arbitrage' && response.ticker==='ALL') {
       if(response.arbitrages && response.arbitrages.length>0) {
         setBestArbitrage(response.arbitrages[0])
         setTicker(response.arbitrages[0].transactions[0].pair)
@@ -109,6 +121,14 @@ const App = () => {
       }
     }
 
+    if(response.channel==='Historical') {
+      if(!!response.arbitrages) {
+        setHistoricalArbitrage(response.arbitrages)
+      } else {
+        setHistoricalArbitrage(prev=>prev)
+      }
+    }
+
   };
 
 
@@ -126,30 +146,16 @@ const App = () => {
             <div className="scroll-images" id="USDT">
               <TickerButtons 
                 tickers={availableTickers.filter(at=>{return at.name.split("-")[1]==="USDT"})} 
-                HandleChangeTickerSubscriptionClick={HandleChangeTickerSubscriptionClick}
+                handleChangeChannelSubscriptionClick={handleChangeChannelSubscriptionClick}
                 darkMode = {darkMode}
               >
               </TickerButtons>
             </div>
             <button className="right" onClick={ ()=>{leftScroll("USDT")} } 
-              // onMouseOver = { (event)=>{leftScroll(event,"USDT")} }
-              // onMouseOut = { (event)=>{leftScroll(event,"USDT")} }
               style={{marginRight: "-20px"}}
             >
               <i className='fa fa-angle-double-right' style={{fontSize:"38px"}}></i>
             </button>
-          </div>
-        </div>
-        <div className="col-2" >
-          <div className="cover">
-            <div className="scroll-images" id="ALL">
-              <button className={darkMode ? "btn btn-dark" : "btn btn-light"}
-                title={"Best arbitrage"}
-                style={{marginRight: '0.3rem', marginTop: '0.3rem',  fontSize:'90%'}} 
-                onClick={ ()=>{HandleChangeTickerSubscriptionClick("ALL")} }>
-                {"BEST ARBITRAGE"}
-              </button>
-            </div>
           </div>
         </div>
       </div>
@@ -163,7 +169,7 @@ const App = () => {
             <div className="scroll-images" id="BTC">
               <TickerButtons 
                 tickers={availableTickers.filter(at=>{return at.name.split("-")[1]==="BTC"})} 
-                HandleChangeTickerSubscriptionClick={HandleChangeTickerSubscriptionClick}
+                handleChangeChannelSubscriptionClick={handleChangeChannelSubscriptionClick}
                 darkMode = {darkMode}
               >
               </TickerButtons>
@@ -178,10 +184,7 @@ const App = () => {
       <div className="row">
           <div className="col" style={{textAlign: "center"}}>
             <span style={{width:"1300px", fontWeight: 'bold', fontSize:"2.5rem"}}>
-              { tickerSubscription!=="ALL" ?
-                <> {ticker} Arbitrage </>
-                : <> Best Arbitrage </>
-              }
+              { getTitle() }
             </span>
           </div>
       </div>
@@ -214,6 +217,20 @@ const App = () => {
             aria-describedby="basic-addon3"
           />
         </div>
+        <div className="input-group mb-3" style={{width: '200px', marginLeft:'4rem'}}>
+            <button className={darkMode ? "btn btn-dark" : "btn btn-light"}
+              title={"Best arbitrage"}
+              onClick={ ()=>{handleChangeChannelSubscriptionClick({channel: 'arbitrage', ticker:"all"})} }>
+              {"BEST ARBITRAGE"}
+            </button>
+        </div>
+        <div className="input-group mb-3" style={{width: '200px', marginLeft:'2rem'}}>
+          <button className={darkMode ? "btn btn-dark" : "btn btn-light"}
+            title={"Best arbitrage"}
+            onClick={ ()=>{handleChangeChannelSubscriptionClick({channel: 'Historical', ticker:"all"})} }>
+            {"HISTORICAL"}
+          </button>
+        </div>
         {/* <div className="input-group mb-3" style={{width: '250px', marginLeft:'2rem'}}>
           <div className="input-group-prepend">
             <span className="input-group-text" id="basic-addon3">Best Arbitrage</span>
@@ -227,40 +244,23 @@ const App = () => {
         </div> */}
 
         <div className="col" style={{alignSelf: "center", marginRight:"50px"}}>
-            { darkMode?
-              <button className="btn btn-light" style={{float: "right"}} onClick={()=>{setDarkMode(false)}}>
-                <i className="fa fa-sun-o" style={{fontSize:"38px", color:"yellow"}}></i> | Light
-              </button>
-              :
-              <button className="btn btn-dark" style={{float: "right"}} onClick={()=>{setDarkMode(true)}}>
-                <i className="fa fa-moon-o" style={{fontSize:"38px"}}></i> | Dark
-              </button>
-            }
-          </div>
+          { darkMode?
+            <button className="btn btn-light" style={{float: "right"}} onClick={()=>{setDarkMode(false)}}>
+              <i className="fa fa-sun-o" style={{fontSize:"38px", color:"yellow"}}></i> | Light
+            </button>
+            :
+            <button className="btn btn-dark" style={{float: "right"}} onClick={()=>{setDarkMode(true)}}>
+              <i className="fa fa-moon-o" style={{fontSize:"38px"}}></i> | Dark
+            </button>
+          }
+        </div>
       </div>
 
       <span style={{color:'red'}}>{arbitrageChannelMessage}</span>
       <br/>
       <span style={{color:'red'}}>{marketPriceChannelMessage}</span>
 
-      { tickerSubscription!=="ALL" && currentWsResponse.ticker!=="ALL" ?
-        <div className="row">
-          <div className="col-sm-9" style={{display: "flex", flexDirection: "row", flexWrap: "wrap"}}> 
-            <Arbitrages
-              ticker = {ticker}
-              arbitrages = {arbitrages}
-              initArb = {helper.initialArbitrage}
-              marketFilter = {marketFilter}
-              minProfitFilter = {minProfitFilter}
-              darkMode = {darkMode}
-            >
-            </Arbitrages>
-          </div>
-          <div className="col-3" style={{verticalAlign:"top"}}>
-            <MarketPrices ticker={ticker} marketPrices={marketPrices} darkMode = {darkMode}/>
-          </div>
-        </div>
-        : 
+      { tickerSubscription==="all" && currentWsResponse.ticker==="ALL" ?
         <div className="row">
           <div className="col-sm-9" style={{display: "flex", flexDirection: "row", flexWrap: "wrap"}}>
             <Arbitrage
@@ -271,6 +271,46 @@ const App = () => {
             />
           </div>
         </div>
+        :
+        null
+      }
+      { currentWsResponse.channel==="arbitrage" && currentWsResponse.ticker!=="ALL"?
+        <div className="row">
+          <div className="col-sm-9" style={{display: "flex", flexDirection: "row", flexWrap: "wrap"}}> 
+            <MarketsArbitrage
+              ticker = {ticker}
+              arbitrages = {arbitrages}
+              initArb = {helper.initialArbitrage}
+              marketFilter = {marketFilter}
+              minProfitFilter = {minProfitFilter}
+              darkMode = {darkMode}
+            >
+            </MarketsArbitrage>
+          </div>
+          <div className="col-3" style={{verticalAlign:"top"}}>
+            <MarketPrices ticker={ticker} marketPrices={marketPrices} darkMode = {darkMode}/>
+          </div>
+        </div>
+        : 
+        null
+      }
+      { currentWsResponse.channel==="Historical" ?
+        <div className="row">
+          <div className="col-sm-9" style={{display: "flex", flexDirection: "row", flexWrap: "wrap"}}> 
+            <ArbitrageList
+              ticker = {ticker}
+              arbitrages = {historicalArbitrage}
+              initArb = {helper.initialArbitrage}
+              marketFilter = {marketFilter}
+              minProfitFilter = {minProfitFilter}
+              darkMode = {darkMode}
+              headerType = "date"
+            >
+            </ArbitrageList>
+          </div>
+        </div>
+        : 
+        null
       }
     </div>
   )
