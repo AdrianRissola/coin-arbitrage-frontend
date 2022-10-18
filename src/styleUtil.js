@@ -12,13 +12,26 @@ exports.marketPricesCardStyle = (isDarkMode) => {
     }
 }
 
+const marketStatusCardStyle = {width: "500px", borderRadius: "20px"}
+
+exports.marketStatusCardStyle = (isDarkMode) => { 
+    const mode = isDarkMode ? "dark" : "light"
+    const color = isDarkMode ? "white" : "black"
+    return {
+        cardClassName : marketPricesCardClassName.replace("#{mode}", mode).replace("#{color}", color),
+        cardStyle : marketStatusCardStyle,
+        cardBodyClassName : marketPricesCardBodyClassName,
+    }
+}
+
 
 
 const arbitrageCardClassName = "card text-#{color} bg-#{mode} mb-3"
 const arbitrageCardStyle = (borderRadius) => {
     return {
         width: "350px", marginLeft:"1rem", padding: "0rem",
-        borderRadius: borderRadius ? borderRadius : "20px"
+        borderRadius: borderRadius ? borderRadius : "20px",
+        maxHeight:"350px"
     }
 }
 const arbitrageCardHeaderClassName = "card-header"

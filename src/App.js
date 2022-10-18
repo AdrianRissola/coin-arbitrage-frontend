@@ -8,6 +8,7 @@ import MarketPrices from "./components/MarketPrices";
 import Arbitrage from "./components/Arbitrage";
 import "./HorizontalScroll.css";
 import helper from "./helper";
+import MarketStatus from "./components/MarketStatus";
 
 
 const allRequest = { 
@@ -41,6 +42,7 @@ const App = () => {
   const [darkMode, setDarkMode] = useState(true)
   const [currentWsResponse, setCurrentWsResponse] = useState({channel: null, ticker: null})
   const [historicalArbitrage, setHistoricalArbitrage] = useState(helper.initialArbitrage[0])
+  const [marketStatus, setMarketStatus] = useState(null)
 
   const getTitle = () => {
     let title = currentWsResponse.channel;
@@ -104,6 +106,7 @@ const App = () => {
       if(response.arbitrages && response.arbitrages.length>0) {
         setBestArbitrage(response.arbitrages[0])
         setTicker(response.arbitrages[0].transactions[0].pair)
+        setMarketStatus(response.marketStatus)
         setArbitrageChannelMessage(null)
       } else {
         setBestArbitrage(prev=>prev)
@@ -262,13 +265,16 @@ const App = () => {
 
       { tickerSubscription==="all" && currentWsResponse.ticker==="ALL" ?
         <div className="row">
-          <div className="col-sm-9" style={{display: "flex", flexDirection: "row", flexWrap: "wrap"}}>
+          <div className="col-sm-3" style={{display: "flex", flexDirection: "row", flexWrap: "wrap"}}>
             <Arbitrage
               darkMode = {darkMode}
               header={"Best Arbitrage: " + bestArbitrage.transactions[0].pair}
               ticker={ticker}
               arbitrage={bestArbitrage?bestArbitrage:helper.initialArbitrage[0]}
             />
+          </div>
+          <div className="col-4" style={{display: "flex", flexDirection: "row", flexWrap: "wrap"}}>
+            <MarketStatus marketsStatus = {marketStatus} darkMode = {darkMode}/>
           </div>
         </div>
         :
@@ -296,7 +302,7 @@ const App = () => {
       }
       { currentWsResponse.channel==="Historical" ?
         <div className="row">
-          <div className="col-sm-9" style={{display: "flex", flexDirection: "row", flexWrap: "wrap"}}> 
+          <div className="col-sm-12" style={{display: "flex", flexDirection: "row", flexWrap: "wrap"}}> 
             <ArbitrageList
               ticker = {ticker}
               arbitrages = {historicalArbitrage}

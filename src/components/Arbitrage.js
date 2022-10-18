@@ -15,19 +15,23 @@ const Arbitrage = (props)=> {
 
     let styles = isBestArbitrage ? arbitrageCardStyle("40px", darkCardMode) : arbitrageCardStyle("20px", darkCardMode)
 
-    const getHeader = (header) => { return( 
-        header ?
-            <div className={styles.cardHeaderClassName} style={{ textAlign: "center", color: isBestArbitrage ? greenHex: null}}>
-                <b>{header}</b>
-            </div>
-            : null
+    const getHeader = (header, header2) => { return( 
+        <div className={styles.cardHeaderClassName} style={{ textAlign: "center", color: isBestArbitrage ? greenHex: null}}>
+            <b>{header}</b> 
+            { header2 ? 
+                <>
+                    <br/>
+                    <b>{header2}</b>
+                </>
+                :null
+            }
+        </div>
     )}
     
 
     return(
         <div className={styles.cardClassName} style={styles.cardStyle}>
-            { getHeader(header) }
-            { getHeader(header2) }
+            { getHeader(header, header2) }
             <div className={styles.cardBodyClassName}>
                 <table className="table">
                     <tbody>
@@ -77,10 +81,10 @@ const Arbitrage = (props)=> {
                                 </td>
                                 :
                                 <>
-                                    <td style = {{fontWeight: 'bold', textAlign:"center"}} colSpan="2" title={displayedArbitrage.profitPerUnit + ' ' + ticker.split('-')[1]}>
+                                    <td style = {{fontWeight: 'bold', textAlign:"center", fontSize:"90%"}} colSpan="2" title={displayedArbitrage.profitPerUnit + ' ' + ticker.split('-')[1]}>
                                         Profit per {ticker.split('-')[0]} unit: 
                                     </td>
-                                    <td style = {{fontWeight: 'bold', textAlign:"center"}} colSpan="1" title={displayedArbitrage.profitPerUnit + ' ' + ticker.split('-')[1]}>
+                                    <td style = {{fontWeight: 'bold', textAlign:"center", fontSize:"90%"}} colSpan="1" title={displayedArbitrage.profitPerUnit + ' ' + ticker.split('-')[1]}>
                                         <span style={{color:greenHex}}>{displayedArbitrage.profitPerUnit.toLocaleString(navigator.language,{maximumSignificantDigits: 8})} {ticker.split('-')[1]}</span>
                                     </td>
                                 </>
