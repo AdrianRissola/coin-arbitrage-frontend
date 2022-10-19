@@ -10,7 +10,7 @@ const MarketsStatus = (props)=> {
         <div className={styles.cardClassName} style={styles.cardStyle}>
             <div  style={{ textAlign: "center"}}>
                 <b>
-                    Markets <br/>
+                    Websocket Market Connections <br/>
                     Connected: {marketsStatus.connectedMarkets.length} <br/>
                     Disconnected: {marketsStatus.disconnectedMarkets.length}
                 </b>
