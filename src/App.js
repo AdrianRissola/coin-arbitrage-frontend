@@ -39,7 +39,6 @@ const App = () => {
   const [ticker, setTicker] = useState("BTC-USDT")
   const [arbitrageChannelMessage, setArbitrageChannelMessage] = useState()
   const [marketPriceChannelMessage, setMarketPriceChannelMessage] = useState()
-  const [tickerSubscription, setTickerSubscription] = useState("BTC-USDT")
   const [availableTickers, setAvailableTickers] = useState([])
   const [marketFilter, setMarketFilter] = useState()
   const [minProfitFilter, setMinProfitFilter] = useState()
@@ -62,7 +61,6 @@ const App = () => {
 
   const handleChangeChannelSubscriptionClick = (channelSubscription) => {
     if(!isCurrentSubscription(channelSubscription)) {
-      setTickerSubscription(channelSubscription.ticker);
       ws.send(JSON.stringify(channelSubscription));
     }
   }
@@ -91,7 +89,6 @@ const App = () => {
     }
      
     if(response.channel && response.channel!=='prices') {
-      console.log(response.channel)
       setCurrentWsResponse({channel: response.channel, ticker: response.ticker})
     }
     
@@ -151,7 +148,7 @@ const App = () => {
 
   return (
     
-    <div className="container" style={{maxWidth: '1600px', marginTop: '25px'}}>
+    <div style={{ backgroundColor: darkMode ? "#E9ECEF" : "white" }}>
       
       <Navbar darkMode = {darkMode} 
         brandFunction = { ()=>{handleChangeChannelSubscriptionClick({channel: 'all', ticker:"btc-usdt"})} }
@@ -162,141 +159,151 @@ const App = () => {
         darkModeButton = {{component: DarkModeButton, darkMode: darkMode, darkModeSetFunction: setDarkMode}}
       />
 
-      { currentWsResponse.channel==="arbitrage" && currentWsResponse.ticker!=="ALL" ?
-        <>
-          <div className="row">
-            <div className="col-10">
-              <div className="cover" >
-                <button className="left" onClick={ ()=>{rightScroll("USDT")} } >
-                  <i className='fa fa-angle-double-left' style={{fontSize:"38px"}}></i>
-                </button>
-                <div className="scroll-images" id="USDT">
-                  <TickerButtons 
-                    tickers={availableTickers.filter(at=>{return at.name.split("-")[1]==="USDT"})} 
-                    handleChangeChannelSubscriptionClick={handleChangeChannelSubscriptionClick}
-                    darkMode = {darkMode}
+      <div style={{ marginLeft:"1rem", marginRight:"1rem" }}>
+
+        { currentWsResponse.channel==="arbitrage" && currentWsResponse.ticker!=="ALL" ?
+          <>
+            <div className="row">
+              <div className="col-10">
+                <div className="cover" >
+                  <button className="left" onClick={ ()=>{rightScroll("USDT")} } >
+                    <i className='fa fa-angle-double-left' style={{fontSize:"38px"}}></i>
+                  </button>
+                  <div className="scroll-images" id="USDT">
+                    <TickerButtons 
+                      tickers={availableTickers.filter(at=>{return at.name.split("-")[1]==="USDT"})} 
+                      handleChangeChannelSubscriptionClick={handleChangeChannelSubscriptionClick}
+                      darkMode = {darkMode}
+                    >
+                    </TickerButtons>
+                  </div>
+                  <button className="right" onClick={ ()=>{leftScroll("USDT")} } 
+                    style={{marginRight: "-20px"}}
                   >
-                  </TickerButtons>
+                    <i className='fa fa-angle-double-right' style={{fontSize:"38px"}}></i>
+                  </button>
                 </div>
-                <button className="right" onClick={ ()=>{leftScroll("USDT")} } 
-                  style={{marginRight: "-20px"}}
-                >
-                  <i className='fa fa-angle-double-right' style={{fontSize:"38px"}}></i>
-                </button>
               </div>
             </div>
-          </div>
-          <div className="row">
-            <div className="col-10">
-              <div className="cover">
-                <button className="left" onClick={ ()=>{rightScroll("BTC")} }>
-                  <i className='fa fa-angle-double-left' style={{fontSize:"38px"}}></i>
-                </button>
-                <div className="scroll-images" id="BTC">
-                  <TickerButtons 
-                    tickers={availableTickers.filter(at=>{return at.name.split("-")[1]==="BTC"})} 
-                    handleChangeChannelSubscriptionClick={handleChangeChannelSubscriptionClick}
-                    darkMode = {darkMode}
-                  >
-                  </TickerButtons>
+            <div className="row">
+              <div className="col-10">
+                <div className="cover">
+                  <button className="left" onClick={ ()=>{rightScroll("BTC")} }>
+                    <i className='fa fa-angle-double-left' style={{fontSize:"38px"}}></i>
+                  </button>
+                  <div className="scroll-images" id="BTC">
+                    <TickerButtons 
+                      tickers={availableTickers.filter(at=>{return at.name.split("-")[1]==="BTC"})} 
+                      handleChangeChannelSubscriptionClick={handleChangeChannelSubscriptionClick}
+                      darkMode = {darkMode}
+                    >
+                    </TickerButtons>
+                  </div>
+                  <button className="right" onClick={ ()=>{leftScroll("BTC")} } style={{marginRight: "-20px"}}>
+                    <i className='fa fa-angle-double-right' style={{fontSize:"38px"}}></i>
+                  </button>
                 </div>
-                <button className="right" onClick={ ()=>{leftScroll("BTC")} } style={{marginRight: "-20px"}}>
-                  <i className='fa fa-angle-double-right' style={{fontSize:"38px"}}></i>
-                </button>
               </div>
             </div>
-          </div>
-        </>
-        :
-        null
-      }
+          </>
+          :
+          null
+        }
 
-      <div className="row">
-          <div className="col" style={{textAlign: "center"}}>
-            <span style={{width:"1300px", fontWeight: 'bold', fontSize:"2.5rem"}}>
-              { getTitle() }
-            </span>
-          </div>
-      </div>
-
-      <div className="row">
-        <div className="input-group mb-3" style={{width: '250px', marginLeft:'2rem'}}>
-          <MarketFilter marketFilter = {marketFilter} marketFilterSetFunction = {setMarketFilter} filter = {MinProfitFilter}/>
-        </div>
-        <div className="input-group mb-3" style={{width: '200px', marginLeft:'2rem'}}>
-          <MinProfitFilter minProfitFilter = {minProfitFilter} minProfitFilterSetFunction = {setMinProfitFilter}/>
-        </div>
-      </div>
-
-      <span style={{color:'red'}}>{arbitrageChannelMessage}</span>
-      <br/>
-      <span style={{color:'red'}}>{marketPriceChannelMessage}</span>
-
-      {/* tickerSubscription==="all" && */}
-      { currentWsResponse.ticker==="ALL" ?
         <div className="row">
-          <div className="col-sm-3" style={{display: "flex", flexDirection: "row", flexWrap: "wrap"}}>
-            <Arbitrage
-              darkMode = {darkMode}
-              header={"Best Arbitrage: " + bestArbitrage.transactions[0].pair}
-              ticker={ticker}
-              arbitrage={bestArbitrage?bestArbitrage:helper.initialArbitrage[0]}
+            <div className="col" style={{textAlign: "center"}}>
+              <span style={{width:"1300px", fontWeight: 'bold', fontSize:"2.5rem"}}>
+                { getTitle() }
+              </span>
+            </div>
+        </div>
+
+        <div className="row">
+          <div className="input-group mb-3" style={{width: '250px', marginLeft:'2rem'}}>
+            <MarketFilter marketFilter = {marketFilter} darkMode={darkMode}
+              marketFilterSetFunction = {setMarketFilter} filter = {MinProfitFilter}
             />
           </div>
-          <div className="col-4" style={{display: "flex", flexDirection: "row", flexWrap: "wrap"}}>
-            <MarketStatus marketsStatus = {marketStatus} darkMode = {darkMode}/>
+          <div className="input-group mb-3" style={{width: '200px', marginLeft:'2rem'}}>
+            <MinProfitFilter minProfitFilter = {minProfitFilter} darkMode={darkMode}
+              minProfitFilterSetFunction = {setMinProfitFilter}
+            />
           </div>
         </div>
-        :
-        null
-      }
-      { currentWsResponse.channel==="arbitrage" && currentWsResponse.ticker!=="ALL" ?
-        <div className="row">
-          <div className="col-sm-9" style={{display: "flex", flexDirection: "row", flexWrap: "wrap"}}> 
-            <MarketsArbitrage
-              ticker = {ticker}
-              arbitrages = {arbitrages}
-              initArb = {helper.initialArbitrage}
-              marketFilter = {marketFilter}
-              minProfitFilter = {minProfitFilter}
-              darkMode = {darkMode}
-            >
-            </MarketsArbitrage>
+
+        <span style={{color:'red'}}>{arbitrageChannelMessage}</span>
+        <br/>
+        <span style={{color:'red'}}>{marketPriceChannelMessage}</span>
+
+        { currentWsResponse.ticker==="ALL" ?
+          <div className="row">
+            <div className="col-sm-3" style={{display: "flex", flexDirection: "row", flexWrap: "wrap"}}>
+              <Arbitrage
+                darkMode = {darkMode}
+                header={"Best Arbitrage: " + bestArbitrage.transactions[0].pair}
+                ticker={ticker}
+                arbitrage={bestArbitrage?bestArbitrage:helper.initialArbitrage[0]}
+              />
+            </div>
+            <div className="col-4" style={{display: "flex", flexDirection: "row", flexWrap: "wrap"}}>
+              <MarketStatus marketsStatus = {marketStatus} darkMode = {darkMode}/>
+            </div>
           </div>
-          <div className="col-3" style={{verticalAlign:"top"}}>
-            <MarketPrices ticker={ticker} marketPrices={marketPrices} darkMode = {darkMode}/>
+          :
+          null
+        }
+
+        { currentWsResponse.channel==="arbitrage" && currentWsResponse.ticker!=="ALL" ?
+          <div className="row">
+            <div className="col-sm-9" style={{display: "flex", flexDirection: "row", flexWrap: "wrap"}}> 
+              <MarketsArbitrage
+                ticker = {ticker}
+                arbitrages = {arbitrages}
+                initArb = {helper.initialArbitrage}
+                marketFilter = {marketFilter}
+                minProfitFilter = {minProfitFilter}
+                darkMode = {darkMode}
+              >
+              </MarketsArbitrage>
+            </div>
+            <div className="col-3" style={{verticalAlign:"top"}}>
+              <MarketPrices ticker={ticker} marketPrices={marketPrices} darkMode = {darkMode}/>
+            </div>
           </div>
-        </div>
-        : 
-        null
-      }
-      { currentWsResponse.channel==="Historical" ?
-        <div className="row">
-          <div className="col-sm-12" style={{display: "flex", flexDirection: "row", flexWrap: "wrap"}}> 
-            <ArbitrageList
-              ticker = {ticker}
-              arbitrages = {historicalArbitrage}
-              initArb = {helper.initialArbitrage}
-              marketFilter = {marketFilter}
-              minProfitFilter = {minProfitFilter}
-              darkMode = {darkMode}
-              headerType = "date"
-            >
-            </ArbitrageList>
+          : 
+          null
+        }
+
+        { currentWsResponse.channel==="Historical" ?
+          <div className="row">
+            <div className="col-sm-12" style={{display: "flex", flexDirection: "row", flexWrap: "wrap"}}> 
+              <ArbitrageList
+                ticker = {ticker}
+                arbitrages = {historicalArbitrage}
+                initArb = {helper.initialArbitrage}
+                marketFilter = {marketFilter}
+                minProfitFilter = {minProfitFilter}
+                darkMode = {darkMode}
+                headerType = "date"
+              >
+              </ArbitrageList>
+            </div>
           </div>
-        </div>
-        : 
-        null
-      }
-      { currentWsResponse.channel==="Markets" ?
-        <div className="row">
-          <div className="col-4" style={{display: "flex", flexDirection: "row", flexWrap: "wrap"}}>
-            <MarketStatus marketsStatus = {marketStatus} darkMode = {darkMode}/>
+          : 
+          null
+        }
+
+        { currentWsResponse.channel==="Markets" ?
+          <div className="row">
+            <div className="col-sm-4" style={{display: "flex", flexDirection: "row", flexWrap: "wrap"}}>
+              <MarketStatus marketsStatus = {marketStatus} darkMode = {darkMode}/>
+            </div>
           </div>
-        </div>
-        :
-        null
-      }
+          :
+          null
+        }
+
+      </div>
     </div>
   )
 };

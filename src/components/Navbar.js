@@ -8,7 +8,8 @@ const Navbar = (props)=> {
     const marketsFunction = props.marketsFunction;
 
     return(
-        <nav className={"navbar navbar-expand-sm " + (darkMode ? "bg-dark navbar-dark" : "bg-light navbar-light")}>
+        <nav className={"navbar navbar-expand-sm " + (darkMode ? "bg-dark navbar-dark" : "navbar-light")}
+            style={{backgroundColor: !darkMode ? "#E9ECEF" : null}}>
             <a className="navbar-brand" href="#" onClick={ brandFunction } >
                 <b><i>Real Time Arbitrage Monitor</i></b>
             </a>

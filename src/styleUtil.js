@@ -29,7 +29,7 @@ exports.marketStatusCardStyle = (isDarkMode) => {
 const arbitrageCardClassName = "card text-#{color} bg-#{mode} mb-3"
 const arbitrageCardStyle = (borderRadius) => {
     return {
-        width: "350px", marginLeft:"1rem", padding: "0rem",
+        width: "350px", marginRight:"1rem", padding: "0rem",
         borderRadius: borderRadius ? borderRadius : "20px",
         maxHeight:"350px"
     }

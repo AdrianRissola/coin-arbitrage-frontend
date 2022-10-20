@@ -1,11 +1,15 @@
 const MinProfitFilter = (props)=> {
+    const darkMode = props.darkMode;
+
     const minProfitFilterSetFunction = props.minProfitFilterSetFunction;
     const minProfitFilter = props.minProfitFilter;
+
+    const className = darkMode ? "input-group-text text-white bg-dark" : "input-group-text";
 
     return(
         <>
           <div className="input-group-prepend">
-            <span className="input-group-text" id="basic-addon3">Min Profit %</span>
+            <span className= {className} id="basic-addon3">Min Profit %</span>
           </div>
           <input 
             type="number" 
