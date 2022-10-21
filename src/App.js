@@ -13,6 +13,7 @@ import Navbar from "./components/Navbar";
 import DarkModeButton from "./components/DarkModeButton";
 import MarketFilter from "./components/MarketFilter";
 import MinProfitFilter from "./components/MinProfitFilter";
+import RowFilter from "./components/RowFilter";
 
 
 const allRequest = { 
@@ -218,18 +219,12 @@ const App = () => {
             </div>
         </div>
 
-        <div className="row">
-          <div className="input-group mb-3" style={{width: '250px', marginLeft:'2rem'}}>
-            <MarketFilter marketFilter = {marketFilter} darkMode={darkMode}
-              marketFilterSetFunction = {setMarketFilter} filter = {MinProfitFilter}
-            />
-          </div>
-          <div className="input-group mb-3" style={{width: '200px', marginLeft:'2rem'}}>
-            <MinProfitFilter minProfitFilter = {minProfitFilter} darkMode={darkMode}
-              minProfitFilterSetFunction = {setMinProfitFilter}
-            />
-          </div>
-        </div>
+        <RowFilter 
+          filters = {[
+            <MarketFilter marketFilter = {marketFilter} marketFilterSetFunction = {setMarketFilter} darkMode={darkMode} />,
+            <MinProfitFilter minProfitFilter = {minProfitFilter} minProfitFilterSetFunction = {setMinProfitFilter} darkMode={darkMode}/>
+          ]}
+        />
 
         <span style={{color:'red'}}>{arbitrageChannelMessage}</span>
         <br/>
