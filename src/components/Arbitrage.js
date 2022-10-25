@@ -1,11 +1,11 @@
-import React from 'react'
+import { useState } from 'react'
 import { arbitrageCardStyle } from '../styleUtil'
+import helper from '../helper'
 
 const greenHex = "#0ecb81"
 
 
 const Arbitrage = (props)=> {
-    
     const header = props.header
     const header2 = props.header2
     const isBestArbitrage = header.toLowerCase().includes("best arbitrage")

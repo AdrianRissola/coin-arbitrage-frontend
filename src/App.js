@@ -11,9 +11,13 @@ import helper from "./helper";
 import MarketStatus from "./components/MarketStatus";
 import Navbar from "./components/Navbar";
 import DarkModeButton from "./components/DarkModeButton";
-import MarketFilter from "./components/MarketFilter";
-import MinProfitFilter from "./components/MinProfitFilter";
-import RowFilter from "./components/RowFilter";
+import MarketFilter from "./components/filters/MarketFilter";
+import MinProfitFilter from "./components/filters/MinProfitFilter";
+import RowFilter from "./components/filters/RowFilter";
+import ArbitrageView from "./components/views/ArbitrageView";
+import BestArbitrageView from "./components/views/BestArbitrageView";
+import HistoricalView from "./components/views/HistoricalView";
+import MarketStatusView from "./components/views/MarketStatusView";
 
 
 const allRequest = { 
@@ -21,32 +25,43 @@ const allRequest = {
   ticker:"btc-usdt"
 };
 
-const leftScroll = (id) => {
-  const left = document.querySelector("#"+id);
-  left.scrollBy(200, 0);
-}
-
-const rightScroll = (id) => {
-  const right = document.querySelector("#"+id);
-  right.scrollBy(-200, 0);
-}
-
 let ws = null;
 const App = () => {
-
-  const [arbitrages, setArbitrages] = useState(helper.initialArbitrage);
+  const arbitrageState = useState(helper.initialArbitrage);
+  const [arbitrages, setArbitrages] = arbitrageState;
   const [bestArbitrage, setBestArbitrage] = useState(helper.initialArbitrage[0]);
   const [marketPrices, setMarketPrices] = useState(helper.initialMarketPrices);
   const [ticker, setTicker] = useState("BTC-USDT")
   const [arbitrageChannelMessage, setArbitrageChannelMessage] = useState()
   const [marketPriceChannelMessage, setMarketPriceChannelMessage] = useState()
   const [availableTickers, setAvailableTickers] = useState([])
-  const [marketFilter, setMarketFilter] = useState()
-  const [minProfitFilter, setMinProfitFilter] = useState()
+  const [marketFilter, setMarketFilter] = useState("")
+  const [minProfitFilter, setMinProfitFilter] = useState(0)
   const [darkMode, setDarkMode] = useState(true)
   const [currentWsResponse, setCurrentWsResponse] = useState({channel: null, ticker: null})
   const [historicalArbitrage, setHistoricalArbitrage] = useState(helper.initialArbitrage[0])
   const [marketStatus, setMarketStatus] = useState(null)
+
+  const getRowFilterComponent = () => {
+    return (
+      <RowFilter 
+        filters = {[
+          <MarketFilter marketFilter = {marketFilter} marketFilterSetFunction = {setMarketFilter} darkMode={darkMode} />,
+          <MinProfitFilter minProfitFilter = {minProfitFilter} minProfitFilterSetFunction = {setMinProfitFilter} darkMode={darkMode} />
+        ]}
+      />
+    )
+  }
+
+  const getTickerButtonsComponent = (coin) => {
+    return (
+      <TickerButtons 
+        tickers= { availableTickers.filter(at=>{return at.name.split("-")[1] === coin}) } 
+        handleChangeChannelSubscriptionClick = { handleChangeChannelSubscriptionClick }
+        darkMode = { darkMode }
+      />
+    )
+  }
 
   const getTitle = () => {
     let title = currentWsResponse.channel;
@@ -56,6 +71,18 @@ const App = () => {
       else title = ticker + ' Arbitrage'
     }
     return title;
+  }
+
+  const getDivTitle = () => {
+    return (
+      <div className="row">
+          <div className="col" style={{textAlign: "center"}}>
+            <span style={{width:"1300px", fontWeight: 'bold', fontSize:"2.5rem"}}>
+              { getTitle() }
+            </span>
+          </div>
+      </div>
+    )
   }
 
   const isCurrentSubscription = (channelSubscription) => currentWsResponse.channel === channelSubscription.channel && currentWsResponse.ticker === channelSubscription.ticker
@@ -157,152 +184,74 @@ const App = () => {
         bestArbitrageFunction = { ()=>{handleChangeChannelSubscriptionClick({channel: 'arbitrage', ticker:"all"})} }
         historicalFunction = { ()=>{handleChangeChannelSubscriptionClick({channel: 'Historical', ticker:"all"})} }
         marketsFunction = { ()=>{handleChangeChannelSubscriptionClick({channel: 'Markets'})} }
-        darkModeButton = {{component: DarkModeButton, darkMode: darkMode, darkModeSetFunction: setDarkMode}}
+        darkModeButton = { {component: DarkModeButton, darkMode: darkMode, darkModeSetFunction: setDarkMode} }
       />
 
+      <span style={{color:'red'}}>{arbitrageChannelMessage}</span>
+      <br/>
+      <span style={{color:'red'}}>{marketPriceChannelMessage}</span>
+
       <div style={{ marginLeft:"1rem", marginRight:"1rem" }}>
-
-        { currentWsResponse.channel==="arbitrage" && currentWsResponse.ticker!=="ALL" ?
-          <>
-            <div className="row">
-              <div className="col-10">
-                <div className="cover" >
-                  <button className="left" onClick={ ()=>{rightScroll("USDT")} } >
-                    <i className='fa fa-angle-double-left' style={{fontSize:"38px"}}></i>
-                  </button>
-                  <div className="scroll-images" id="USDT">
-                    <TickerButtons 
-                      tickers={availableTickers.filter(at=>{return at.name.split("-")[1]==="USDT"})} 
-                      handleChangeChannelSubscriptionClick={handleChangeChannelSubscriptionClick}
-                      darkMode = {darkMode}
-                    >
-                    </TickerButtons>
-                  </div>
-                  <button className="right" onClick={ ()=>{leftScroll("USDT")} } 
-                    style={{marginRight: "-20px"}}
-                  >
-                    <i className='fa fa-angle-double-right' style={{fontSize:"38px"}}></i>
-                  </button>
-                </div>
-              </div>
-            </div>
-            <div className="row">
-              <div className="col-10">
-                <div className="cover">
-                  <button className="left" onClick={ ()=>{rightScroll("BTC")} }>
-                    <i className='fa fa-angle-double-left' style={{fontSize:"38px"}}></i>
-                  </button>
-                  <div className="scroll-images" id="BTC">
-                    <TickerButtons 
-                      tickers={availableTickers.filter(at=>{return at.name.split("-")[1]==="BTC"})} 
-                      handleChangeChannelSubscriptionClick={handleChangeChannelSubscriptionClick}
-                      darkMode = {darkMode}
-                    >
-                    </TickerButtons>
-                  </div>
-                  <button className="right" onClick={ ()=>{leftScroll("BTC")} } style={{marginRight: "-20px"}}>
-                    <i className='fa fa-angle-double-right' style={{fontSize:"38px"}}></i>
-                  </button>
-                </div>
-              </div>
-            </div>
-          </>
-          :
-          null
-        }
-
-        <div className="row">
-            <div className="col" style={{textAlign: "center"}}>
-              <span style={{width:"1300px", fontWeight: 'bold', fontSize:"2.5rem"}}>
-                { getTitle() }
-              </span>
-            </div>
-        </div>
-
-        <RowFilter 
-          filters = {[
-            <MarketFilter marketFilter = {marketFilter} marketFilterSetFunction = {setMarketFilter} darkMode={darkMode} />,
-            <MinProfitFilter minProfitFilter = {minProfitFilter} minProfitFilterSetFunction = {setMinProfitFilter} darkMode={darkMode}/>
-          ]}
+        
+        <ArbitrageView
+          title = { getDivTitle() }
+          currentWsResponse = { currentWsResponse }
+          filters = { getRowFilterComponent() }
+          usdtTickerButtons = { getTickerButtonsComponent("USDT") }
+          btcTickerButtons = { getTickerButtonsComponent("BTC") }
+          marketsArbitrage = {
+            <MarketsArbitrage
+              ticker = {ticker}
+              arbitrages = {arbitrages}
+              initArb = {helper.initialArbitrage}
+              marketFilter = {marketFilter}
+              minProfitFilter = {minProfitFilter}
+              darkMode = {darkMode}
+            />
+          }
+          marketPrices = { <MarketPrices ticker={ticker} marketPrices={marketPrices} darkMode = {darkMode}/> }
         />
 
-        <span style={{color:'red'}}>{arbitrageChannelMessage}</span>
-        <br/>
-        <span style={{color:'red'}}>{marketPriceChannelMessage}</span>
+        <BestArbitrageView
+          title = { getDivTitle() }
+          currentWsResponse = { currentWsResponse }
+          arbitrageComponent = {
+            <Arbitrage
+              darkMode = {darkMode}
+              header = { "Best Arbitrage: " + bestArbitrage.transactions[0].pair }
+              ticker = { ticker }
+              arbitrage = { bestArbitrage?bestArbitrage:helper.initialArbitrage[0] }
+            />
+          }
+          marketStatusComponent = { <MarketStatus marketsStatus = {marketStatus} darkMode = {darkMode}/> }
+        />
 
-        { currentWsResponse.ticker==="ALL" ?
-          <div className="row">
-            <div className="col-sm-3" style={{display: "flex", flexDirection: "row", flexWrap: "wrap"}}>
-              <Arbitrage
-                darkMode = {darkMode}
-                header={"Best Arbitrage: " + bestArbitrage.transactions[0].pair}
-                ticker={ticker}
-                arbitrage={bestArbitrage?bestArbitrage:helper.initialArbitrage[0]}
-              />
-            </div>
-            <div className="col-4" style={{display: "flex", flexDirection: "row", flexWrap: "wrap"}}>
-              <MarketStatus marketsStatus = {marketStatus} darkMode = {darkMode}/>
-            </div>
-          </div>
-          :
-          null
-        }
+        <HistoricalView
+          title = { getDivTitle() }
+          currentWsResponse = { currentWsResponse }
+          filters = { getRowFilterComponent() }
+          arbitrageList = {
+            <ArbitrageList
+              ticker = { ticker }
+              arbitrages = { historicalArbitrage }
+              initArb = { helper.initialArbitrage }
+              marketFilter = { marketFilter }
+              minProfitFilter = { minProfitFilter }
+              darkMode = { darkMode }
+              headerType = "date"
+            />
+          }
+        />
 
-        { currentWsResponse.channel==="arbitrage" && currentWsResponse.ticker!=="ALL" ?
-          <div className="row">
-            <div className="col-sm-9" style={{display: "flex", flexDirection: "row", flexWrap: "wrap"}}> 
-              <MarketsArbitrage
-                ticker = {ticker}
-                arbitrages = {arbitrages}
-                initArb = {helper.initialArbitrage}
-                marketFilter = {marketFilter}
-                minProfitFilter = {minProfitFilter}
-                darkMode = {darkMode}
-              >
-              </MarketsArbitrage>
-            </div>
-            <div className="col-3" style={{verticalAlign:"top"}}>
-              <MarketPrices ticker={ticker} marketPrices={marketPrices} darkMode = {darkMode}/>
-            </div>
-          </div>
-          : 
-          null
-        }
-
-        { currentWsResponse.channel==="Historical" ?
-          <div className="row">
-            <div className="col-sm-12" style={{display: "flex", flexDirection: "row", flexWrap: "wrap"}}> 
-              <ArbitrageList
-                ticker = {ticker}
-                arbitrages = {historicalArbitrage}
-                initArb = {helper.initialArbitrage}
-                marketFilter = {marketFilter}
-                minProfitFilter = {minProfitFilter}
-                darkMode = {darkMode}
-                headerType = "date"
-              >
-              </ArbitrageList>
-            </div>
-          </div>
-          : 
-          null
-        }
-
-        { currentWsResponse.channel==="Markets" ?
-          <div className="row">
-            <div className="col-sm-4" style={{display: "flex", flexDirection: "row", flexWrap: "wrap"}}>
-              <MarketStatus marketsStatus = {marketStatus} darkMode = {darkMode}/>
-            </div>
-          </div>
-          :
-          null
-        }
+        <MarketStatusView
+          currentWsResponse = { currentWsResponse }
+          title = { getDivTitle() }
+          marketStatusComponent = { <MarketStatus marketsStatus = {marketStatus} darkMode = {darkMode}/> }
+        />
 
       </div>
     </div>
   )
 };
-
-
 
 export default App;
