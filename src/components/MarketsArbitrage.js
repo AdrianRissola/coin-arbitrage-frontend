@@ -16,7 +16,6 @@ const tableStyleArbitrage = {
 const MarketsArbitrage = (props) => {
     const darkMode = props.darkMode
     const arbitrages = props.arbitrages
-    const ticker = props.ticker
     const initArb = props.initArb
     const marketFilter = props.marketFilter
     const minProfitFilter = props.minProfitFilter
@@ -27,7 +26,6 @@ const MarketsArbitrage = (props) => {
         key="Best Arbitrage"
         darkMode = {darkMode}
         header={"Best Arbitrage"}
-        ticker={ticker}
         arbitrage={arbitrages[Object.keys(arbitrages)[0]]?arbitrages[Object.keys(arbitrages)[0]]:initArb[0]}
         tableStyle= {tableStyleForBestArbitrage}
       />
@@ -40,7 +38,6 @@ const MarketsArbitrage = (props) => {
           <Arbitrage
             key={marketPair}
             darkMode = {darkMode}
-            ticker={ticker}
             header={marketPair} 
             arbitrage={arbitrages[marketPair]?arbitrages[marketPair]:initArb[0]}
             tableStyle={tableStyleArbitrage}

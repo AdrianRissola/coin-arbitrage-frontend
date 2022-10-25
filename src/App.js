@@ -13,6 +13,7 @@ import Navbar from "./components/Navbar";
 import DarkModeButton from "./components/DarkModeButton";
 import MarketFilter from "./components/filters/MarketFilter";
 import MinProfitFilter from "./components/filters/MinProfitFilter";
+import TickerFilter from "./components/filters/TickerFilter";
 import RowFilter from "./components/filters/RowFilter";
 import ArbitrageView from "./components/views/ArbitrageView";
 import BestArbitrageView from "./components/views/BestArbitrageView";
@@ -39,18 +40,48 @@ const App = () => {
   const [minProfitFilter, setMinProfitFilter] = useState(0)
   const [darkMode, setDarkMode] = useState(true)
   const [currentWsResponse, setCurrentWsResponse] = useState({channel: null, ticker: null})
-  const [historicalArbitrage, setHistoricalArbitrage] = useState(helper.initialArbitrage[0])
+  const [historicalArbitrage, setHistoricalArbitrage] = useState(helper.initialArbitrage)
   const [marketStatus, setMarketStatus] = useState(null)
+  const [tickerFilter, setTickerFilter] = useState("")
 
-  const getRowFilterComponent = () => {
+
+  const getArbitrageFilters = () => {
     return (
-      <RowFilter 
-        filters = {[
-          <MarketFilter marketFilter = {marketFilter} marketFilterSetFunction = {setMarketFilter} darkMode={darkMode} />,
-          <MinProfitFilter minProfitFilter = {minProfitFilter} minProfitFilterSetFunction = {setMinProfitFilter} darkMode={darkMode} />
-        ]}
-      />
+      [
+        <MarketFilter marketFilter = {marketFilter} marketFilterSetFunction = {setMarketFilter} darkMode={darkMode} />,
+        <MinProfitFilter minProfitFilter = {minProfitFilter} minProfitFilterSetFunction = {setMinProfitFilter} darkMode={darkMode} />,
+      ]
     )
+  }
+  
+  const handleSelectedTickerOnClick = (selectedTicker) => {
+    if(tickerFilter!==selectedTicker) setTickerFilter(selectedTicker)
+  }
+
+  const getTickersFromHistoricalArbitrageList = () => {
+    const tickers = ["ALL"].concat(historicalArbitrage.map(arbitrage => {
+      return(arbitrage.transactions[0].pair)
+    }))
+    return [...new Set(tickers)]
+  }
+
+  const getHistoricalFilters = () => {
+    const historicalFilters = getArbitrageFilters();
+    historicalFilters.push(
+      <TickerFilter darkMode = { darkMode } onClickFunction = { handleSelectedTickerOnClick }
+        currentTickerSelected = { tickerFilter }
+        tickers = { getTickersFromHistoricalArbitrageList() }
+      />
+    );
+    return historicalFilters;
+  }
+
+  const getArbitrageRowFilterComponent = () => {
+    return ( <RowFilter filters = { getArbitrageFilters() }/> )
+  }
+
+  const getHistoricalRowFilterComponent = () => {
+    return ( <RowFilter filters = { getHistoricalFilters() }/> )
   }
 
   const getTickerButtonsComponent = (coin) => {
@@ -196,12 +227,11 @@ const App = () => {
         <ArbitrageView
           title = { getDivTitle() }
           currentWsResponse = { currentWsResponse }
-          filters = { getRowFilterComponent() }
+          filters = { getArbitrageRowFilterComponent() }
           usdtTickerButtons = { getTickerButtonsComponent("USDT") }
           btcTickerButtons = { getTickerButtonsComponent("BTC") }
           marketsArbitrage = {
             <MarketsArbitrage
-              ticker = {ticker}
               arbitrages = {arbitrages}
               initArb = {helper.initialArbitrage}
               marketFilter = {marketFilter}
@@ -219,7 +249,6 @@ const App = () => {
             <Arbitrage
               darkMode = {darkMode}
               header = { "Best Arbitrage: " + bestArbitrage.transactions[0].pair }
-              ticker = { ticker }
               arbitrage = { bestArbitrage?bestArbitrage:helper.initialArbitrage[0] }
             />
           }
@@ -229,16 +258,15 @@ const App = () => {
         <HistoricalView
           title = { getDivTitle() }
           currentWsResponse = { currentWsResponse }
-          filters = { getRowFilterComponent() }
+          filters = { getHistoricalRowFilterComponent() }
           arbitrageList = {
             <ArbitrageList
-              ticker = { ticker }
               arbitrages = { historicalArbitrage }
               initArb = { helper.initialArbitrage }
               marketFilter = { marketFilter }
               minProfitFilter = { minProfitFilter }
+              tickerFilter = { tickerFilter }
               darkMode = { darkMode }
-              headerType = "date"
             />
           }
         />

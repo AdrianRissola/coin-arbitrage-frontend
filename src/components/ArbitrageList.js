@@ -7,25 +7,29 @@ const tableStyleArbitrage = {
     borderStyle:'solid', borderColor:"#aaaaaa",
 }
 
+const satisfiedTickerFilter = (tickerFilter, pair) => {
+  return (!tickerFilter || tickerFilter.toUpperCase()==="ALL" || tickerFilter.toUpperCase()===pair.toUpperCase())
+}
+
 const ArbitrageList = (props) => {
     const darkMode = props.darkMode
     const arbitrages = props.arbitrages
-    const ticker = props.ticker
     const initArb = props.initArb
     const marketFilter = props.marketFilter
     const minProfitFilter = props.minProfitFilter
+    const tickerFilter = props.tickerFilter
     const arbitrageComponents = []
 
     arbitrages.forEach((arbitrage) => {
         const marketPair = `${arbitrage.transactions[0].market}-${arbitrage.transactions[1].market}`
         if( (!marketFilter || marketPair.toUpperCase().includes(marketFilter.toUpperCase())) 
           && (!minProfitFilter || arbitrage.profitPercentage>=minProfitFilter)
+          && satisfiedTickerFilter(tickerFilter, arbitrage.transactions[0].pair)
         )
         arbitrageComponents.push(
           <Arbitrage
             key={arbitrage.date}
             darkMode = {darkMode}
-            ticker={ticker}
             header={`${arbitrage.transactions[0].pair}`}
             header2 = {`${arbitrage.date.slice(0,19).replace("T", " ")}`}
             arbitrage={arbitrage ? arbitrage : initArb[0]}
