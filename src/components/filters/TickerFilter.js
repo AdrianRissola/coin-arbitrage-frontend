@@ -22,7 +22,8 @@ const TickerFilter = (props)=> {
                 <div className="dropdown-menu" aria-labelledby="dropdownMenuButton">
                     {tickers.map(ticker => {
                         return (
-                            <button className="dropdown-item" type="button" onClick={ ()=>{onClickFunction(ticker); setSelectedTicker(ticker)} }>
+                            <button className="dropdown-item" type="button" key={ticker}
+                                onClick={ ()=>{onClickFunction(ticker); setSelectedTicker(ticker)} }>
                                 { ticker }
                             </button>
                         )
