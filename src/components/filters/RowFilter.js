@@ -6,7 +6,12 @@ const RowFilter = (props)=> {
             {
                 filtersComponents.map(filterComponent => {
                     return (
-                        <div key= {filterComponent.type.name} className="input-group mb-3" style={{width: '250px', marginLeft:'2rem'}}>
+                        <div key= {filterComponent.type.name} className="input-group mb-3" 
+                            style={{
+                                width: filterComponent.props.styleWidth || '250px',
+                                marginLeft: '2rem'
+                            }}
+                        >
                             { filterComponent }
                         </div>
                     )

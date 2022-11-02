@@ -13,12 +13,13 @@ import Navbar from "./components/Navbar";
 import DarkModeButton from "./components/DarkModeButton";
 import MarketFilter from "./components/filters/MarketFilter";
 import MinProfitFilter from "./components/filters/MinProfitFilter";
-import TickerFilter from "./components/filters/TickerFilter";
 import RowFilter from "./components/filters/RowFilter";
 import ArbitrageView from "./components/views/ArbitrageView";
 import BestArbitrageView from "./components/views/BestArbitrageView";
 import HistoricalView from "./components/views/HistoricalView";
 import MarketStatusView from "./components/views/MarketStatusView";
+import ComboBoxFilter from "./components/filters/ComboBoxFilter";
+import SplitButtonComboBox from "./components/filters/SplitButtonComboBox";
 
 
 const allRequest = { 
@@ -43,6 +44,7 @@ const App = () => {
   const [historicalArbitrage, setHistoricalArbitrage] = useState(helper.initialArbitrage)
   const [marketStatus, setMarketStatus] = useState(null)
   const [tickerFilter, setTickerFilter] = useState("")
+  const [historicalArbitrageOrder, setHistoricalArbitrageOrder] = useState({key: "profitPercentage", value: "DESC", label: "Profit %"})
 
 
   const getArbitrageFilters = () => {
@@ -58,19 +60,44 @@ const App = () => {
     if(tickerFilter!==selectedTicker) setTickerFilter(selectedTicker)
   }
 
+  const handleSelectedHistoricalArbitrageOrderOnClick = (selectedHistoricalArbitrageOrder) => {
+    if(selectedHistoricalArbitrageOrder.field) {
+      if(historicalArbitrageOrder.field!==selectedHistoricalArbitrageOrder.field) 
+        setHistoricalArbitrageOrder(selectedHistoricalArbitrageOrder)
+      } else {
+        setHistoricalArbitrageOrder(historicalArbitrageOrder)
+      }
+  }
+
+  const handleSelectedHistoricalArbitrageOrderOnClickk = (selectedHistoricalArbitrageOrder) => {
+    setHistoricalArbitrageOrder(selectedHistoricalArbitrageOrder)
+  }
+
   const getTickersFromHistoricalArbitrageList = () => {
     const tickers = ["ALL"].concat(historicalArbitrage.map(arbitrage => {
       return(arbitrage.transactions[0].pair)
-    }))
-    return [...new Set(tickers)]
+    }).sort())
+    return [...new Set(tickers)];
   }
 
   const getHistoricalFilters = () => {
     const historicalFilters = getArbitrageFilters();
     historicalFilters.push(
-      <TickerFilter darkMode = { darkMode } onClickFunction = { handleSelectedTickerOnClick }
-        currentTickerSelected = { tickerFilter }
-        tickers = { getTickersFromHistoricalArbitrageList() }
+      <ComboBoxFilter darkMode = { darkMode } onClickFunction = { handleSelectedTickerOnClick }
+        currentSelection = { tickerFilter || "ALL" } buttonText = { "Ticker: "}
+        options = { getTickersFromHistoricalArbitrageList() } styleWidth = {"175px"}
+      />
+    );
+    historicalFilters.push(
+      <SplitButtonComboBox darkMode = { darkMode } 
+        optionOnClickFunction = { handleSelectedHistoricalArbitrageOrderOnClick }
+        buttonOnClickFunction = { handleSelectedHistoricalArbitrageOrderOnClickk }
+        currentSelection = { historicalArbitrageOrder } buttonText = { "Order By: "}
+        options = { 
+          [{key: "profitPercentage", value: "DESC", label: "Profit %"}, {key: "date", value: "DESC", label: "Date"}]
+        }
+        styleWidth = {"350px"} 
+        // styleMarginLeft = {"-6rem"}
       />
     );
     return historicalFilters;
@@ -97,9 +124,7 @@ const App = () => {
   const getTitle = () => {
     let title = currentWsResponse.channel;
     if(currentWsResponse.channel==='arbitrage' || currentWsResponse.channel==='prices') {
-      if(currentWsResponse.ticker==='ALL')
-        title = 'Best arbitrage'
-      else title = ticker + ' Arbitrage'
+      title = currentWsResponse.ticker==='ALL' ? 'Best Arbitrage' : ticker + ' Arbitrage'
     }
     return title;
   }
@@ -108,9 +133,9 @@ const App = () => {
     return (
       <div className="row">
           <div className="col" style={{textAlign: "center"}}>
-            <span style={{width:"1300px", fontWeight: 'bold', fontSize:"2.5rem"}}>
+            <h1 style={{width:"1300px", fontWeight: 'bold', fontSize:"2.5rem"}}>
               { getTitle() }
-            </span>
+            </h1>
           </div>
       </div>
     )
@@ -185,6 +210,7 @@ const App = () => {
       }
     }
 
+    // TODO: replace using API REST
     if(response.channel==='Historical') {
       if(!!response.arbitrages) {
         setHistoricalArbitrage(response.arbitrages)
@@ -230,7 +256,7 @@ const App = () => {
           filters = { getArbitrageRowFilterComponent() }
           usdtTickerButtons = { getTickerButtonsComponent("USDT") }
           btcTickerButtons = { getTickerButtonsComponent("BTC") }
-          marketsArbitrage = {
+          marketsArbitrageComponent = {
             <MarketsArbitrage
               arbitrages = {arbitrages}
               initArb = {helper.initialArbitrage}
@@ -259,7 +285,7 @@ const App = () => {
           title = { getDivTitle() }
           currentWsResponse = { currentWsResponse }
           filters = { getHistoricalRowFilterComponent() }
-          arbitrageList = {
+          arbitrageListComponent = {
             <ArbitrageList
               arbitrages = { historicalArbitrage }
               initArb = { helper.initialArbitrage }
@@ -267,6 +293,8 @@ const App = () => {
               minProfitFilter = { minProfitFilter }
               tickerFilter = { tickerFilter }
               darkMode = { darkMode }
+              orderBy = { historicalArbitrageOrder }
+              withHeader = { true }
             />
           }
         />

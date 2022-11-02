@@ -14,7 +14,7 @@ const ArbitrageView = (props)=> {
     const filters = props.filters;
     const usdtTickerButtons = props.usdtTickerButtons;
     const btcTickerButtons = props.btcTickerButtons;
-    const marketsArbitrage = props.marketsArbitrage;
+    const marketsArbitrageComponent = props.marketsArbitrageComponent;
     const marketPrices = props.marketPrices;
 
     return(
@@ -57,7 +57,7 @@ const ArbitrageView = (props)=> {
                     { filters }
                     <div className="row">
                         <div className="col-sm-9" style={{display: "flex", flexDirection: "row", flexWrap: "wrap"}}> 
-                            { marketsArbitrage }
+                            { marketsArbitrageComponent }
                         </div>
                         <div className="col-3" style={{verticalAlign:"top"}}>
                             { marketPrices }

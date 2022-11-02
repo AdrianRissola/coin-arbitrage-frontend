@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-const TickerFilter = (props)=> {
+const TickerComboBoxFilter = (props)=> {
     const currentTickerSelected = props.currentTickerSelected ? props.currentTickerSelected : "ALL";
     const [selectedTicker, setSelectedTicker] = useState(currentTickerSelected);
     const darkMode = props.darkMode;
@@ -10,6 +10,7 @@ const TickerFilter = (props)=> {
     const buttonStyle = !darkMode ? {
             backgroundColor: "#E9ECEF", color: "black", border: "0px", height: "38px"
         } : { backgroundColor: null, color: null }
+    buttonStyle.width = "175px"
 
     return(
         <>
@@ -17,7 +18,7 @@ const TickerFilter = (props)=> {
                 <button className={ buttonClassName }
                     style={ buttonStyle }
                     type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    { selectedTicker === "ALL" ? "ALL TICKERS" : selectedTicker  }
+                    { "Ticker: " + selectedTicker }
                 </button>
                 <div className="dropdown-menu" aria-labelledby="dropdownMenuButton">
                     {tickers.map(ticker => {
@@ -34,4 +35,4 @@ const TickerFilter = (props)=> {
     )
 }
 
-export default TickerFilter
+export default TickerComboBoxFilter
