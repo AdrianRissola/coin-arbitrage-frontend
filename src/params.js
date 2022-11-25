@@ -5,3 +5,11 @@ export const getWebsocketEndpoint = () => {
     console.log("websocketEndpoint: ", websocketEndpoint)
     return websocketEndpoint
 }
+
+export const getRestApiEndpoint = () => {
+    let restApiEndpoint = process.env.REACT_APP_API_REST_ENDPOINT
+    if(!restApiEndpoint)
+        restApiEndpoint = "wss://arcane-refuge-64485.herokuapp.com/"
+    console.log("restApiEndpoint: ", restApiEndpoint)
+    return restApiEndpoint
+}

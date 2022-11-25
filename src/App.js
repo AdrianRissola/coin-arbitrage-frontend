@@ -24,8 +24,8 @@ import SplitButtonComboBox from "./components/filters/SplitButtonComboBox";
 
 let ws = null;
 
+console.log(process.env);
 const App = () => {
-
   const arbitrageState = useState(helper.initialArbitrage);
   const [arbitrages, setArbitrages] = arbitrageState;
   const [bestArbitrage, setBestArbitrage] = useState(helper.initialArbitrage[0]);
