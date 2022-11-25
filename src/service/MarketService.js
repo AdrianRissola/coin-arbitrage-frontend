@@ -7,10 +7,11 @@ const markets = "coin-arbitrage/crypto/markets";
 
 
 const getMarkets = async () => {
-    return await axios.get(baseURL.concat(markets)).then((response) => {
+    return await axios.get(baseURL.concat(markets)).then(
+        (response) => {
         console.log("MarketService.getMarkets:", response)
         return response;
-    });
+    }).catch(e => console.log(e));;
 }
 
 export { getMarkets }
