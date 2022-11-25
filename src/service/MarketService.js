@@ -1,6 +1,7 @@
 import axios from "axios";
+import { getWebsocketEndpoint } from '../params';
 
-const baseURL = "http://localhost:3001";
+const baseURL = getWebsocketEndpoint();
 const markets = "/coin-arbitrage/crypto/markets";
 
 
