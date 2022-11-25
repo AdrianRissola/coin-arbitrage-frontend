@@ -11,6 +11,8 @@ const satisfiedTickerFilter = (tickerFilter, pair) => {
   return (!tickerFilter || tickerFilter.toUpperCase()==="ALL" || tickerFilter.toUpperCase()===pair.toUpperCase())
 }
 
+const getTime = (date) => (new Date(date)).getTime();
+
 const ArbitrageList = (props) => {
     const darkMode = props.darkMode
     let arbitrages = props.arbitrages
@@ -36,7 +38,7 @@ const ArbitrageList = (props) => {
       arbitrages = arbitrages.sort((a, b) => {
         const [val1, val2] = (orderBy.key !== "date") 
           ? [a[orderBy.key], b[orderBy.key]] 
-          : [(new Date(a[orderBy.key])).getTime(), (new Date(b[orderBy.key])).getTime()];
+          : [getTime(a[orderBy.key]), getTime(new Date(b[orderBy.key]))];
         return orderBy.value === "DESC" ? val2 - val1 : val1 - val2;
       });
     

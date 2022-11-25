@@ -1,6 +1,4 @@
-import { useState } from 'react'
 import { arbitrageCardStyle } from '../styleUtil'
-import helper from '../helper'
 
 const greenHex = "#0ecb81"
 

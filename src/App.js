@@ -22,13 +22,10 @@ import ComboBoxFilter from "./components/filters/ComboBoxFilter";
 import SplitButtonComboBox from "./components/filters/SplitButtonComboBox";
 
 
-const allRequest = { 
-  channel:"all",
-  ticker:"btc-usdt"
-};
-
 let ws = null;
+
 const App = () => {
+
   const arbitrageState = useState(helper.initialArbitrage);
   const [arbitrages, setArbitrages] = arbitrageState;
   const [bestArbitrage, setBestArbitrage] = useState(helper.initialArbitrage[0]);
@@ -45,7 +42,6 @@ const App = () => {
   const [marketStatus, setMarketStatus] = useState(null)
   const [tickerFilter, setTickerFilter] = useState("")
   const [historicalArbitrageOrder, setHistoricalArbitrageOrder] = useState({key: "profitPercentage", value: "DESC", label: "Profit %"})
-
 
   const getArbitrageFilters = () => {
     return (
@@ -97,7 +93,6 @@ const App = () => {
           [{key: "profitPercentage", value: "DESC", label: "Profit %"}, {key: "date", value: "DESC", label: "Date"}]
         }
         styleWidth = {"350px"} 
-        // styleMarginLeft = {"-6rem"}
       />
     );
     return historicalFilters;
@@ -154,7 +149,10 @@ const App = () => {
   }
 
   ws.onopen = (event) => {
-    ws.send(JSON.stringify(allRequest));
+    ws.send(JSON.stringify({ 
+      channel:"arbitrage",
+      ticker:"btc-usdt"
+    }));
   };
 
   ws.onerror = (event) => {
@@ -186,9 +184,17 @@ const App = () => {
         setArbitrages(prev=>prev)
         setArbitrageChannelMessage(response.message)
       }
+      if(response.marketPrices) {
+        const ticker = Object.keys(response.marketPrices)[0]
+        setMarketPrices(response.marketPrices[ticker])
+      } else {
+        setMarketPrices(prev=>prev)
+        setMarketPriceChannelMessage(response.message)
+      }
     }
 
     if(response.channel==='arbitrage' && response.ticker==='ALL') {
+      console.log("response.arbitrages:", response.arbitrages)
       if(response.arbitrages && response.arbitrages.length>0) {
         setBestArbitrage(response.arbitrages[0])
         setTicker(response.arbitrages[0].transactions[0].pair)
@@ -198,10 +204,7 @@ const App = () => {
         setBestArbitrage(prev=>prev)
         setArbitrageChannelMessage(response.message)
       }
-    }
-
-    if(response.channel==='prices') {
-      if(!!response.marketPrices) {
+      if(response.marketPrices) {
         const ticker = Object.keys(response.marketPrices)[0]
         setMarketPrices(response.marketPrices[ticker])
       } else {
@@ -235,9 +238,9 @@ const App = () => {
     
     <div style={{ backgroundColor: darkMode ? "#E9ECEF" : "white" }}>
       
-      <Navbar darkMode = {darkMode} 
-        brandFunction = { ()=>{handleChangeChannelSubscriptionClick({channel: 'all', ticker:"btc-usdt"})} }
-        arbitrageFunction = { ()=>{handleChangeChannelSubscriptionClick({channel: 'all', ticker:"btc-usdt"})} }
+      <Navbar darkMode = {darkMode}
+        brandFunction = { ()=>{handleChangeChannelSubscriptionClick({channel: 'arbitrage', ticker:"btc-usdt"})} }
+        arbitrageFunction = { ()=>{handleChangeChannelSubscriptionClick({channel: 'arbitrage', ticker:"btc-usdt"})} }
         bestArbitrageFunction = { ()=>{handleChangeChannelSubscriptionClick({channel: 'arbitrage', ticker:"all"})} }
         historicalFunction = { ()=>{handleChangeChannelSubscriptionClick({channel: 'Historical', ticker:"all"})} }
         marketsFunction = { ()=>{handleChangeChannelSubscriptionClick({channel: 'Markets'})} }
@@ -278,6 +281,11 @@ const App = () => {
               arbitrage = { bestArbitrage?bestArbitrage:helper.initialArbitrage[0] }
             />
           }
+          marketPrices = { 
+            <MarketPrices ticker={bestArbitrage.transactions[0].pair} 
+              marketPrices={marketPrices} darkMode = {darkMode}
+            /> 
+          }
           marketStatusComponent = { <MarketStatus marketsStatus = {marketStatus} darkMode = {darkMode}/> }
         />
 
@@ -301,6 +309,7 @@ const App = () => {
 
         <MarketStatusView
           currentWsResponse = { currentWsResponse }
+          darkMode = { darkMode }
           title = { getDivTitle() }
           marketStatusComponent = { <MarketStatus marketsStatus = {marketStatus} darkMode = {darkMode}/> }
         />

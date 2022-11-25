@@ -3,17 +3,25 @@ const BestArbitrageView = (props)=> {
     const currentWsResponse = props.currentWsResponse;
     const arbitrageComponent = props.arbitrageComponent;
     const marketStatusComponent = props.marketStatusComponent;
+    const marketPrices = props.marketPrices;
 
     return(
         <>
             { currentWsResponse.ticker === "ALL" ?
                 <>
                     { title }
+                    <br/>
                     <div className="row">
-                        <div className="col-sm-3" style={{display: "flex", flexDirection: "row", flexWrap: "wrap"}}>
+                        <div  
+                            style={{display: "flex", flexDirection: "row", flexWrap: "wrap", marginLeft: "2rem"}}>
                             { arbitrageComponent }
                         </div>
-                        <div className="col-4" style={{display: "flex", flexDirection: "row", flexWrap: "wrap"}}>
+                        <div  
+                            style={{flexDirection: "row", flexWrap: "wrap", marginLeft: "2.5rem"}}>
+                            { marketPrices }
+                        </div>
+                        <div  
+                            style={{display: "flex", flexDirection: "row", flexWrap: "wrap", marginLeft: "2rem"}}>
                             { marketStatusComponent }
                         </div>
                     </div>
