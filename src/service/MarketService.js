@@ -1,8 +1,8 @@
 import axios from "axios";
-import { getWebsocketEndpoint } from '../params';
+import { getRestApiEndpoint } from '../params';
 
-const baseURL = getWebsocketEndpoint();
-const markets = "/coin-arbitrage/crypto/markets";
+const baseURL = getRestApiEndpoint();
+const markets = "coin-arbitrage/crypto/markets";
 
 
 
