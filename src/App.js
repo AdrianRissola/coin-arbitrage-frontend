@@ -138,8 +138,10 @@ const App = () => {
 
   const isCurrentSubscription = (channelSubscription) => currentWsResponse.channel === channelSubscription.channel && currentWsResponse.ticker === channelSubscription.ticker
 
+  const isOpen = ws => ws.readyState === ws.OPEN
+
   const handleChangeChannelSubscriptionClick = (channelSubscription) => {
-    if(!isCurrentSubscription(channelSubscription)) {
+    if(!isCurrentSubscription(channelSubscription) && isOpen(ws)) {
       ws.send(JSON.stringify(channelSubscription));
     }
   }
@@ -149,10 +151,11 @@ const App = () => {
   }
 
   ws.onopen = (event) => {
-    ws.send(JSON.stringify({ 
-      channel:"arbitrage",
-      ticker:"btc-usdt"
-    }));
+    if(isOpen(ws))
+      ws.send(JSON.stringify({ 
+        channel:"arbitrage",
+        ticker:"btc-usdt"
+      }));
   };
 
   ws.onerror = (event) => {
