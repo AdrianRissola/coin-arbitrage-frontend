@@ -1,13 +1,13 @@
 const BestArbitrageView = (props)=> {
     const title = props.title
-    const currentWsResponse = props.currentWsResponse;
+    const menuSelection = props.menuSelection;
     const arbitrageComponent = props.arbitrageComponent;
     const marketStatusComponent = props.marketStatusComponent;
     const marketPrices = props.marketPrices;
 
     return(
         <>
-            { currentWsResponse.ticker === "ALL" ?
+            { menuSelection.channelSubscription?.ticker?.toUpperCase() === "ALL" ?
                 <>
                     { title }
                     <br/>

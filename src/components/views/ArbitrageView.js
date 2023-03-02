@@ -10,7 +10,7 @@ const leftScroll = (id) => {
 
 const ArbitrageView = (props)=> {
     const title = props.title
-    const currentWsResponse = props.currentWsResponse;
+    const menuSelection = props.menuSelection;
     const filters = props.filters;
     const usdtTickerButtons = props.usdtTickerButtons;
     const btcTickerButtons = props.btcTickerButtons;
@@ -19,7 +19,8 @@ const ArbitrageView = (props)=> {
 
     return(
         <>
-            { currentWsResponse.channel==="arbitrage" && currentWsResponse.ticker!=="ALL" ?
+            { menuSelection?.channelSubscription?.channel?.toUpperCase()==="ARBITRAGE" 
+                && menuSelection.channelSubscription.ticker.toUpperCase()!=="ALL" ?
                 <>
                     <div className="row">
                         <div className="col-10">

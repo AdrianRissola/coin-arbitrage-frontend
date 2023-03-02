@@ -3,13 +3,13 @@ exports.initialArbitrage = [
         transactions: [
             {
                 type: "BUY",
-                market: null,
+                market: "",
                 pair: null,
                 price: ""
             },
             {
                 type: "SELL",
-                market: null,
+                market: "",
                 pair: null,
                 price: ""
             }

@@ -57,9 +57,9 @@ const MarketStatusView = (props)=> {
     const [markets, setMarkets] = useState([])
     const title = props.title
     const darkMode = props.darkMode
-    const currentWsResponse = props.currentWsResponse
     const marketStatusComponent = props.marketStatusComponent;
 
+    
     React.useEffect(() => {
         getMarkets().then(
             response => {
@@ -72,21 +72,15 @@ const MarketStatusView = (props)=> {
 
     return(
         <>
-            { currentWsResponse.channel==="Markets" ?
-                <>
-                    { title }
-                    <div className="row">
-                        <div className="col-sm-8" style={{display: "flex", flexDirection: "row", flexWrap: "wrap"}}>
-                            { getMarketsInfo(markets, darkMode) }
-                        </div>
-                        <div className="col-sm-4" style={{flexDirection: "row", flexWrap: "wrap", marginLeft: "-1rem"}}>
-                            { marketStatusComponent }
-                        </div>
-                    </div>
-                </>
-                :
-                null
-            }
+            { title }
+            <div className="row">
+                <div className="col-sm-8" style={{display: "flex", flexDirection: "row", flexWrap: "wrap"}}>
+                    { getMarketsInfo(markets, darkMode) }
+                </div>
+                <div className="col-sm-4" style={{flexDirection: "row", flexWrap: "wrap", marginLeft: "-1rem"}}>
+                    { marketStatusComponent }
+                </div>
+            </div>
         </>
     )
 }
