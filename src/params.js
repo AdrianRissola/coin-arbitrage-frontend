@@ -1,7 +1,7 @@
 export const getWebsocketEndpoint = () => {
     let websocketEndpoint = process.env.REACT_APP_WEB_SOCKET_ENDPOINT
     if(!websocketEndpoint)
-        websocketEndpoint = "wss://web-production-b204.up.railway.app/"
+        websocketEndpoint = "wss://coin-arbitrage-backend.onrender.com/"
     console.log("websocketEndpoint: ", websocketEndpoint)
     return websocketEndpoint
 }
@@ -9,7 +9,7 @@ export const getWebsocketEndpoint = () => {
 export const getRestApiEndpoint = () => {
     let restApiEndpoint = process.env.REACT_APP_API_REST_ENDPOINT
     if(!restApiEndpoint)
-        restApiEndpoint = "https://web-production-b204.up.railway.app/"
+        restApiEndpoint = "https://coin-arbitrage-backend.onrender.com/"
     console.log("restApiEndpoint: ", restApiEndpoint)
     return restApiEndpoint
 }

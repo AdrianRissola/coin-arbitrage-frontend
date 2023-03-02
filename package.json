@@ -18,8 +18,7 @@
   "scripts": {
     "dev": "cross-env NODE_ENV=development && react-scripts start",
     "start": "npx cross-env NODE_ENV=production && react-scripts start",
-    "build": "npx cross-env NODE_ENV=production",
-    "build2": "npx cross-env NODE_ENV=production && react-dotenv && react-scripts build",
+    "build": "npx cross-env NODE_ENV=production && react-dotenv && react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
