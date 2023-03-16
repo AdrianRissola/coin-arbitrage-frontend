@@ -34,7 +34,7 @@ const App = () => {
   const [marketFilter, setMarketFilter] = useState("")
   const [minProfitFilter, setMinProfitFilter] = useState(0)
   const [darkMode, setDarkMode] = useState(true)
-  const [currentWsResponse, setCurrentWsResponse] = useState({channel: null, ticker: null})
+  const [currentWsResponse, setCurrentWsResponse] = useState({channel: "arbitrage", ticker: "btc-usdt"})
   const [marketStatus, setMarketStatus] = useState(null)
   const [webSocketOnMessageEnabled, setWebSocketOnMessageEnabled] = useState(true)
   const [menuSelection, setMenuSelection] = useState('arbitrage');
@@ -63,36 +63,15 @@ const App = () => {
     )
   }
 
-  const getTitle = () => {
-    let title = currentWsResponse.channel;
-    if(currentWsResponse.channel==='arbitrage' || currentWsResponse.channel==='prices') {
-      title = currentWsResponse.ticker==='ALL' ? 'Best Arbitrage' : ticker + ' Arbitrage'
-    }
-    return title;
-  }
-
-  const getDivTitle = () => {
-    return (
-      <div className="row">
-          <div className="col" style={{textAlign: "center"}}>
-            <h1 style={{width:"1300px", fontWeight: 'bold', fontSize:"2.5rem"}}>
-              { getTitle() }
-            </h1>
-          </div>
-      </div>
-    )
-  }
-
   const isCurrentSubscription = (channelSubscription) => currentWsResponse.channel === channelSubscription.channel && currentWsResponse.ticker === channelSubscription.ticker
-
   const isOpen = ws => ws.readyState === ws.OPEN
   const isClosed = ws => ws.readyState === ws.CLOSED
 
   const handleChangeChannelSubscriptionClick = (channelSubscription) => {
     setWebSocketOnMessageEnabled(true);
+    setWebSocketRequest(channelSubscription);
     if(isClosed(ws)) {
       ws = new WebSocket(getWebsocketEndpoint());
-      setWebSocketRequest(channelSubscription);
     } else if(!isCurrentSubscription(channelSubscription) && isOpen(ws)) {
       ws.send(JSON.stringify(channelSubscription));
     }
@@ -126,11 +105,11 @@ const App = () => {
 
     if(menuSelection!==response.channel) return;
      
-    if(response.channel && response.channel!=='prices') {
+    if(response?.channel!=='prices') {
       setCurrentWsResponse({channel: response.channel, ticker: response.ticker})
     }
     
-    if(response.channel==='arbitrage') {
+    if(response.channel==='arbitrage' && response.ticker===webSocketRequest.ticker) {
       if(response.arbitrages && Object.keys(response.arbitrages).length>0) {
         const ticker = Object.keys(response.arbitrages)[0]
         setTicker(ticker)
@@ -169,7 +148,7 @@ const App = () => {
       }
     }
 
-    if(response.channel==='Markets') {
+    if(response.channel==='markets') {
       if(response.markets) {
         setMarketStatus(response.markets)
       } else {
@@ -179,7 +158,58 @@ const App = () => {
 
   };
 
+  const arbitrageView = 
+  <ArbitrageView
+    filters = { getArbitrageRowFilterComponent() }
+    usdtTickerButtons = { getTickerButtonsComponent("USDT") }
+    btcTickerButtons = { getTickerButtonsComponent("BTC") }
+    marketsArbitrageComponent = {
+      <MarketsArbitrage
+        arbitrages = {arbitrages}
+        initArb = {helper.initialArbitrage}
+        marketFilter = {marketFilter}
+        minProfitFilter = {minProfitFilter}
+        darkMode = {darkMode}
+      />
+    }
+    marketPrices = { <MarketPrices ticker={ticker} marketPrices={marketPrices} darkMode = {darkMode}/> }
+  />;
 
+  const bestArbitrageView = 
+  <BestArbitrageView
+    arbitrageComponent = {
+      <Arbitrage
+        darkMode = {darkMode}
+        header = { "Best Arbitrage: " + bestArbitrage.transactions[0].pair }
+        arbitrage = { bestArbitrage?bestArbitrage:helper.initialArbitrage[0] }
+      />
+    }
+    marketPrices = { 
+      <MarketPrices ticker={bestArbitrage.transactions[0].pair} 
+        marketPrices={marketPrices} darkMode = {darkMode}
+      /> 
+    }
+    marketStatusComponent = { <MarketStatus marketsStatus = {marketStatus} darkMode = {darkMode}/> }
+  />;
+
+  const historicalView = 
+  <HistoricalView
+    darkMode = { darkMode }
+    withHeader = { true }
+  />;
+
+  const marketsView = 
+  <MarketStatusView
+    darkMode = { darkMode }
+    marketStatusComponent = { <MarketStatus marketsStatus = {marketStatus} darkMode = {darkMode}/> }
+  />;
+
+  const menuSelector = Object.freeze({
+    arbitrage : arbitrageView,
+    bestArbitrage : bestArbitrageView,
+    historical: historicalView,
+    markets: marketsView
+  })
 
   return (
     
@@ -195,13 +225,12 @@ const App = () => {
         bestArbitrageFunction = { ()=>{
           setMenuSelection('bestArbitrage');
           handleChangeChannelSubscriptionClick({channel: 'bestArbitrage', ticker:"all"})} }
-        // historicalFunction = { ()=>{handleChangeChannelSubscriptionClick({channel: 'Historical', ticker:"all"})} }
         historicalFunction = { ()=>{
           setMenuSelection('historical');
           setWebSocketOnMessageEnabled(false);
           setCurrentWsResponse({channel: null, ticker: null})} }
         marketsFunction = { ()=>{
-          setMenuSelection('Markets');
+          setMenuSelection('markets');
           handleChangeChannelSubscriptionClick({channel: 'Markets'})} }
         darkModeButton = { {component: DarkModeButton, darkMode: darkMode, darkModeSetFunction: setDarkMode} }
       />
@@ -211,58 +240,8 @@ const App = () => {
       <span style={{color:'red'}}>{marketPriceChannelMessage}</span>
 
       <div style={{ marginLeft:"1rem", marginRight:"1rem" }}>
-        
-        <ArbitrageView
-          title = { getDivTitle() }
-          currentWsResponse = { currentWsResponse }
-          filters = { getArbitrageRowFilterComponent() }
-          usdtTickerButtons = { getTickerButtonsComponent("USDT") }
-          btcTickerButtons = { getTickerButtonsComponent("BTC") }
-          marketsArbitrageComponent = {
-            <MarketsArbitrage
-              arbitrages = {arbitrages}
-              initArb = {helper.initialArbitrage}
-              marketFilter = {marketFilter}
-              minProfitFilter = {minProfitFilter}
-              darkMode = {darkMode}
-            />
-          }
-          marketPrices = { <MarketPrices ticker={ticker} marketPrices={marketPrices} darkMode = {darkMode}/> }
-        />
 
-        <BestArbitrageView
-          title = { getDivTitle() }
-          currentWsResponse = { currentWsResponse }
-          arbitrageComponent = {
-            <Arbitrage
-              darkMode = {darkMode}
-              header = { "Best Arbitrage: " + bestArbitrage.transactions[0].pair }
-              arbitrage = { bestArbitrage?bestArbitrage:helper.initialArbitrage[0] }
-            />
-          }
-          marketPrices = { 
-            <MarketPrices ticker={bestArbitrage.transactions[0].pair} 
-              marketPrices={marketPrices} darkMode = {darkMode}
-            /> 
-          }
-          marketStatusComponent = { <MarketStatus marketsStatus = {marketStatus} darkMode = {darkMode}/> }
-        />
-
-        { !webSocketOnMessageEnabled ? 
-          <HistoricalView
-            title = { getDivTitle() }
-            darkMode = { darkMode }
-            withHeader = { true }
-          />
-          : null
-        }
-
-        <MarketStatusView
-          currentWsResponse = { currentWsResponse }
-          darkMode = { darkMode }
-          title = { getDivTitle() }
-          marketStatusComponent = { <MarketStatus marketsStatus = {marketStatus} darkMode = {darkMode}/> }
-        />
+        { menuSelector[currentWsResponse.channel || menuSelection] }
 
       </div>
     </div>
