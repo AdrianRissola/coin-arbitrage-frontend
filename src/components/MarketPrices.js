@@ -5,7 +5,7 @@ const greenHex = "#0ecb81"
 
 const MarketPrices = (props)=> {
     const [order, setOrder] = useState(false);
-    const ticker = props.ticker
+    const ticker = props.ticker  || 'coin-coin'
     const marketPrices = order ? props.marketPrices.sort((a,b)=>a.price - b.price) : props.marketPrices
     const styles = marketPricesCardStyle(props.darkMode)
 

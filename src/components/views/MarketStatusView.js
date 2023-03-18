@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { getMarkets } from "../../service/MarketService"
 import { arbitrageCardStyle } from '../../styleUtil'
-
+import MarketStatus from "../../components/MarketStatus";
 
 const getMarketsInfo = (markets, darkMode) => {
     return(
@@ -56,7 +56,7 @@ const getMarketsInfo = (markets, darkMode) => {
 const MarketStatusView = (props)=> {
     const [markets, setMarkets] = useState([])
     const darkMode = props.darkMode
-    const marketStatusComponent = props.marketStatusComponent;
+    const marketStatus = props.marketStatus;
 
     React.useEffect(() => {
         getMarkets().then(
@@ -82,7 +82,7 @@ const MarketStatusView = (props)=> {
                     { getMarketsInfo(markets, darkMode) }
                 </div>
                 <div className="col-sm-4" style={{flexDirection: "row", flexWrap: "wrap", marginLeft: "-1rem"}}>
-                    { marketStatusComponent }
+                    <MarketStatus marketsStatus = {marketStatus} darkMode = {darkMode}/>
                 </div>
             </div>
         </>

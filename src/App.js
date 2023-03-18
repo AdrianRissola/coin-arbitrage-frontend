@@ -1,67 +1,29 @@
 import React, { useState } from "react";
 import './App.scss';
-import MarketsArbitrage from "./components/MarketsArbitrage";
-import TickerButtons from "./components/TickerButtons";
 import { getWebsocketEndpoint } from './params'
-import MarketPrices from "./components/MarketPrices";
-import Arbitrage from "./components/Arbitrage";
-import "./HorizontalScroll.css";
 import helper from "./helper";
-import MarketStatus from "./components/MarketStatus";
 import Navbar from "./components/Navbar";
 import DarkModeButton from "./components/DarkModeButton";
-import MarketFilter from "./components/filters/MarketFilter";
-import MinProfitFilter from "./components/filters/MinProfitFilter";
-import RowFilter from "./components/filters/RowFilter";
-import ArbitrageView from "./components/views/ArbitrageView";
-import BestArbitrageView from "./components/views/BestArbitrageView";
-import HistoricalView from "./components/views/HistoricalView";
-import MarketStatusView from "./components/views/MarketStatusView";
+import { buildArbitrageView, buildHistoricalView, buildMarketStatusView, buildBestArbitrageView } from "./components/views/ViewBuilder";
 
+console.log(process.env);
 
 let ws = null;
 
-console.log(process.env);
 const App = () => {
-  const arbitrageState = useState(helper.initialArbitrage);
-  const [arbitrages, setArbitrages] = arbitrageState;
+  const [arbitrages, setArbitrages] = useState(helper.initialArbitrage);
   const [bestArbitrage, setBestArbitrage] = useState(helper.initialArbitrage[0]);
   const [marketPrices, setMarketPrices] = useState(helper.initialMarketPrices);
   const [ticker, setTicker] = useState("BTC-USDT")
   const [arbitrageChannelMessage, setArbitrageChannelMessage] = useState()
   const [marketPriceChannelMessage, setMarketPriceChannelMessage] = useState()
   const [availableTickers, setAvailableTickers] = useState([])
-  const [marketFilter, setMarketFilter] = useState("")
-  const [minProfitFilter, setMinProfitFilter] = useState(0)
   const [darkMode, setDarkMode] = useState(true)
   const [currentWsResponse, setCurrentWsResponse] = useState({channel: "arbitrage", ticker: "btc-usdt"})
   const [marketStatus, setMarketStatus] = useState(null)
   const [webSocketOnMessageEnabled, setWebSocketOnMessageEnabled] = useState(true)
   const [menuSelection, setMenuSelection] = useState('arbitrage');
   const [webSocketRequest, setWebSocketRequest] = useState({ channel:"arbitrage", ticker:"btc-usdt" });
-
-  const getArbitrageFilters = () => {
-    return (
-      [
-        <MarketFilter marketFilter = {marketFilter} marketFilterSetFunction = {setMarketFilter} darkMode={darkMode} />,
-        <MinProfitFilter minProfitFilter = {minProfitFilter} minProfitFilterSetFunction = {setMinProfitFilter} darkMode={darkMode} />,
-      ]
-    )
-  }
-
-  const getArbitrageRowFilterComponent = () => {
-    return ( <RowFilter filters = { getArbitrageFilters() }/> )
-  }
-
-  const getTickerButtonsComponent = (coin) => {
-    return (
-      <TickerButtons 
-        tickers= { availableTickers.filter(at=>{return at.name.split("-")[1] === coin}) } 
-        handleChangeChannelSubscriptionClick = { handleChangeChannelSubscriptionClick }
-        darkMode = { darkMode }
-      />
-    )
-  }
 
   const isCurrentSubscription = (channelSubscription) => currentWsResponse.channel === channelSubscription.channel && currentWsResponse.ticker === channelSubscription.ticker
   const isOpen = ws => ws.readyState === ws.OPEN
@@ -158,57 +120,12 @@ const App = () => {
 
   };
 
-  const arbitrageView = 
-  <ArbitrageView
-    filters = { getArbitrageRowFilterComponent() }
-    usdtTickerButtons = { getTickerButtonsComponent("USDT") }
-    btcTickerButtons = { getTickerButtonsComponent("BTC") }
-    marketsArbitrageComponent = {
-      <MarketsArbitrage
-        arbitrages = {arbitrages}
-        initArb = {helper.initialArbitrage}
-        marketFilter = {marketFilter}
-        minProfitFilter = {minProfitFilter}
-        darkMode = {darkMode}
-      />
-    }
-    marketPrices = { <MarketPrices ticker={ticker} marketPrices={marketPrices} darkMode = {darkMode}/> }
-  />;
-
-  const bestArbitrageView = 
-  <BestArbitrageView
-    arbitrageComponent = {
-      <Arbitrage
-        darkMode = {darkMode}
-        header = { "Best Arbitrage: " + bestArbitrage.transactions[0].pair }
-        arbitrage = { bestArbitrage?bestArbitrage:helper.initialArbitrage[0] }
-      />
-    }
-    marketPrices = { 
-      <MarketPrices ticker={bestArbitrage.transactions[0].pair} 
-        marketPrices={marketPrices} darkMode = {darkMode}
-      /> 
-    }
-    marketStatusComponent = { <MarketStatus marketsStatus = {marketStatus} darkMode = {darkMode}/> }
-  />;
-
-  const historicalView = 
-  <HistoricalView
-    darkMode = { darkMode }
-    withHeader = { true }
-  />;
-
-  const marketsView = 
-  <MarketStatusView
-    darkMode = { darkMode }
-    marketStatusComponent = { <MarketStatus marketsStatus = {marketStatus} darkMode = {darkMode}/> }
-  />;
-
   const menuSelector = Object.freeze({
-    arbitrage : arbitrageView,
-    bestArbitrage : bestArbitrageView,
-    historical: historicalView,
-    markets: marketsView
+    arbitrage : buildArbitrageView(
+      {darkMode, ticker, availableTickers, arbitrages, handleChangeChannelSubscriptionClick, marketPrices }),
+    bestArbitrage : buildBestArbitrageView({darkMode, bestArbitrage, marketPrices, marketStatus}),
+    historical: buildHistoricalView(darkMode),
+    markets: buildMarketStatusView(darkMode, marketStatus)
   })
 
   return (

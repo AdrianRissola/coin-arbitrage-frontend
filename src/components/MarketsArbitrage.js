@@ -16,7 +16,7 @@ const tableStyleArbitrage = {
 const MarketsArbitrage = (props) => {
     const darkMode = props.darkMode
     const arbitrages = props.arbitrages
-    const initArb = props.initArb
+    // const initArb = props.initArb
     const marketFilter = props.marketFilter
     const minProfitFilter = props.minProfitFilter
     const marketPairs = Object.keys(arbitrages).sort()
@@ -24,10 +24,11 @@ const MarketsArbitrage = (props) => {
     arbitrageComponents.push(
       <Arbitrage
         key="Best Arbitrage"
-        darkMode = {darkMode}
-        header={"Best Arbitrage"}
-        arbitrage={arbitrages[Object.keys(arbitrages)[0]]?arbitrages[Object.keys(arbitrages)[0]]:initArb[0]}
-        tableStyle= {tableStyleForBestArbitrage}
+        darkMode = { darkMode }
+        header={ "Best Arbitrage" }
+        arbitrage={ arbitrages[Object.keys(arbitrages)[0]] }
+        // arbitrage={arbitrages[Object.keys(arbitrages)[0]]?arbitrages[Object.keys(arbitrages)[0]]:initArb[0]}
+        tableStyle= { tableStyleForBestArbitrage }
       />
     )
     marketPairs.forEach((marketPair) => {
@@ -39,7 +40,8 @@ const MarketsArbitrage = (props) => {
             key={marketPair}
             darkMode = {darkMode}
             header={marketPair} 
-            arbitrage={arbitrages[marketPair]?arbitrages[marketPair]:initArb[0]}
+            // arbitrage={arbitrages[marketPair]?arbitrages[marketPair]:initArb[0]}
+            arbitrage={ arbitrages[marketPair] }
             tableStyle={tableStyleArbitrage}
           />
         )

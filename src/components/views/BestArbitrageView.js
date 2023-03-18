@@ -1,7 +1,12 @@
+import Arbitrage from "../Arbitrage";
+import MarketPrices from "../MarketPrices";
+import MarketStatus from "../MarketStatus";
+
 const BestArbitrageView = (props)=> {
-    const arbitrageComponent = props.arbitrageComponent;
-    const marketStatusComponent = props.marketStatusComponent;
+    const darkMode = props.darkMode;
+    const bestArbitrage = props.bestArbitrage;
     const marketPrices = props.marketPrices;
+    const marketStatus = props.marketStatus;
 
     return(
         <>
@@ -16,15 +21,21 @@ const BestArbitrageView = (props)=> {
             <div className="row">
                 <div  
                     style={{display: "flex", flexDirection: "row", flexWrap: "wrap", marginLeft: "2rem"}}>
-                    { arbitrageComponent }
+                    <Arbitrage
+                        darkMode = { darkMode }
+                        header = { "Best Arbitrage: " + bestArbitrage.transactions[0].pair }
+                        arbitrage = { bestArbitrage  }
+                    />
                 </div>
                 <div  
                     style={{flexDirection: "row", flexWrap: "wrap", marginLeft: "2.5rem"}}>
-                    { marketPrices }
+                    <MarketPrices ticker = { bestArbitrage.transactions[0].pair } 
+                        marketPrices={ marketPrices } darkMode = { darkMode }
+                    /> 
                 </div>
                 <div  
                     style={{display: "flex", flexDirection: "row", flexWrap: "wrap", marginLeft: "2rem"}}>
-                    { marketStatusComponent }
+                    <MarketStatus marketsStatus = { marketStatus } darkMode = { darkMode }/>
                 </div>
             </div>
         </> 
