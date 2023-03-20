@@ -45,7 +45,7 @@ const ArbitrageList = (props) => {
     arbitrages.forEach((arbitrage) => {
         arbitrageComponents.push(
           <Arbitrage
-            key={arbitrage.date}
+            key={arbitrage._id}
             darkMode = {darkMode}
             header={`${arbitrage.transactions[0].pair}`}
             header2 = {`${arbitrage.date.slice(0,19).replace("T", " ")}`}

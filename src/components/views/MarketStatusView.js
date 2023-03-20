@@ -57,6 +57,7 @@ const MarketStatusView = (props)=> {
     const [markets, setMarkets] = useState([])
     const darkMode = props.darkMode
     const marketStatus = props.marketStatus;
+    console.log('MarketStatusView:', props.marketStatus)
 
     React.useEffect(() => {
         getMarkets().then(

@@ -3,7 +3,8 @@ import { marketStatusCardStyle } from "../styleUtil";
 const greenHex = "#0ecb81"
 
 const MarketsStatus = (props)=> {
-    const marketsStatus = props.marketsStatus;
+    const marketsStatus = props.marketsStatus || {connectedMarkets: [], disconnectedMarkets: []};
+    console.log('MarketsStatus:', props.marketsStatus)
     const styles = marketStatusCardStyle(props.darkMode)
 
     return(
