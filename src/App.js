@@ -112,7 +112,6 @@ const App = () => {
 
     if(response.channel==='markets') {
       if(response.markets) {
-        console.log('App response.markets:', response.markets)
         setMarketStatus(response.markets)
       } else {
         setMarketStatus(prev=>prev)

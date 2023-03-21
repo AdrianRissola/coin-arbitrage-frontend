@@ -1,5 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { getHistoricalArbitrages } from "../../service/HistoricalArbitrageService"
+import { getAllAvailableTickers } from "../../service/MarketService"
 import ArbitrageList from "../ArbitrageList";
 import helper from "../../helper";
 import RowFilter from "../../components/filters/RowFilter";
@@ -15,12 +16,37 @@ const HistoricalView = (props)=> {
     const [marketFilter, setMarketFilter] = useState("")
     const [minProfitFilter, setMinProfitFilter] = useState(0)
     const [tickerFilter, setTickerFilter] = useState("BTC-USDT")
-    // const [historicalArbitrageOrder, setHistoricalArbitrageOrder] = useState({key: "profitPercentage", value: "DESC", label: "Profit %"})
     const [historicalArbitrageOrder, setHistoricalArbitrageOrder] = useState({key: "date", value: "DESC", label: "Date"})
+    const availableTickers = useRef(['ALL']);
     const darkMode = props.darkMode;
 
+    const callGetHistoricalArbitrages = (ticker) => {
+        getHistoricalArbitrages(ticker).then(
+            response => {
+                console.log("HistoricalView.getHistoricalArbitrages:", response)
+                setHistoricalArbitrages(response.data)
+            }
+        );
+    }
+
+    React.useEffect(() => {
+        callGetHistoricalArbitrages(tickerFilter);
+        getAllAvailableTickers().then(
+            response => {
+                console.log("HistoricalView.getAllAvailableTickers:", response)
+                availableTickers.current = availableTickers.current.concat(
+                    response.data.filter(ticker => ticker.websocket).map(ticker => ticker.name).sort()
+                );
+            }
+        );
+    }, []);
+
     const handleSelectedTickerOnClick = (selectedTicker) => {
-        if(tickerFilter!==selectedTicker) setTickerFilter(selectedTicker)
+        if(tickerFilter!==selectedTicker) {
+            setTickerFilter(selectedTicker);
+            callGetHistoricalArbitrages(selectedTicker==='ALL'? null : selectedTicker);
+        };
+        
     }
 
     const getArbitrageFilters = () => {
@@ -30,13 +56,6 @@ const HistoricalView = (props)=> {
             <MinProfitFilter minProfitFilter = {minProfitFilter} minProfitFilterSetFunction = {setMinProfitFilter} darkMode={darkMode} />,
           ]
         )
-    }
-
-    const getTickersFromHistoricalArbitrageList = () => {
-        const tickers = ["ALL"].concat(historicalArbitrages.map(arbitrage => {
-          return(arbitrage.transactions[0].pair)
-        }).sort())
-        return [...new Set(tickers)];
     }
 
     const handleSelectedHistoricalArbitrageOrderOnClick = (selectedHistoricalArbitrageOrder) => {
@@ -57,13 +76,13 @@ const HistoricalView = (props)=> {
         historicalFilters.push(
             <ComboBoxFilter darkMode = { darkMode } onClickFunction = { handleSelectedTickerOnClick }
                 currentSelection = { tickerFilter } buttonText = { "Ticker: "}
-                options = { getTickersFromHistoricalArbitrageList() } styleWidth = {"175px"}
+                options = { availableTickers.current } styleWidth = {"175px"}
             />
         );
         // historicalFilters.push(
         //     <MarketsComboBoxFilter darkMode = { darkMode } onClickFunction = { handleSelectedTickerOnClick }
         //         currentSelection = { tickerFilter || "ALL" } buttonText = { "Ticker: "}
-        //         options = { getTickersFromHistoricalArbitrageList() } styleWidth = {"175px"}
+        //         options = { availableTickers.current } styleWidth = {"175px"}
         //     />
         // );
         historicalFilters.push(
@@ -85,14 +104,6 @@ const HistoricalView = (props)=> {
     }
 
 
-    React.useEffect(() => {
-        getHistoricalArbitrages().then(
-            response => {
-                console.log("HistoricalView.getHistoricalArbitrages:", response)
-                setHistoricalArbitrages(response.data)
-            }
-        );
-    }, []);
 
     return(
         <>
@@ -105,17 +116,20 @@ const HistoricalView = (props)=> {
             </div>
             { getHistoricalRowFilterComponent() }
             <div className="row">
-                <div className="col-sm-12" style={{display: "flex", flexDirection: "row", flexWrap: "wrap"}}> 
-                    <ArbitrageList
-                        arbitrages = { historicalArbitrages }
-                        initArb = { helper.initialArbitrage }
-                        marketFilter = { marketFilter }
-                        minProfitFilter = { minProfitFilter }
-                        tickerFilter = { tickerFilter }
-                        darkMode = { darkMode }
-                        orderBy = { historicalArbitrageOrder }
-                        withHeader = { true }
-                    />
+                <div className="col-sm-12" style={{display: "flex", flexDirection: "row", flexWrap: "wrap"}}>
+                    { historicalArbitrages.length>0 ?
+                        <ArbitrageList
+                            arbitrages = { historicalArbitrages }
+                            initArb = { helper.initialArbitrage }
+                            marketFilter = { marketFilter }
+                            minProfitFilter = { minProfitFilter }
+                            tickerFilter = { tickerFilter }
+                            darkMode = { darkMode }
+                            orderBy = { historicalArbitrageOrder }
+                            withHeader = { true }
+                        />
+                        : null
+                    }
                 </div>
             </div>
         </>

@@ -6,8 +6,12 @@ const baseURL = getRestApiEndpoint();
 const historicalArbitrages = "coin-arbitrage/crypto/historical-arbitrages"
 
 
-const getHistoricalArbitrages = async () => {
-    return await axios.get(baseURL.concat(historicalArbitrages)).then(
+const getHistoricalArbitrages = async (ticker) => {
+    return await axios.get(baseURL.concat(historicalArbitrages), {
+        params: {
+            ticker,
+        }
+      }).then(
         (response) => {
         console.log("ArbitrageService.getHistoricalArbitrages:", response)
         return response;
