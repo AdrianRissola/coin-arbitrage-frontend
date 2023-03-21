@@ -52,34 +52,34 @@ const ArbitrageView = (props)=> {
         <>
             <div className="row">
                 <div className="col-10">
-                <div className="cover" >
-                    <button className="left" onClick={ ()=>{rightScroll("USDT")} } >
-                        <i className='fa fa-angle-double-left' style={{fontSize:"38px"}}></i>
-                    </button>
-                    <div className="scroll-images" id="USDT">
-                        { getTickerButtonsComponent("USDT") }
+                    <div className="cover" >
+                        <button className="left" onClick={ ()=>{rightScroll("USDT")} } >
+                            <i className='fa fa-angle-double-left' style={{fontSize:"38px"}}></i>
+                        </button>
+                        <div className="scroll-images" id="USDT">
+                            { getTickerButtonsComponent("USDT") }
+                        </div>
+                        <button className="right" onClick={ ()=>{leftScroll("USDT")} } 
+                            style={{marginRight: "-20px"}}
+                        >
+                            <i className='fa fa-angle-double-right' style={{fontSize:"38px"}}></i>
+                        </button>
                     </div>
-                    <button className="right" onClick={ ()=>{leftScroll("USDT")} } 
-                    style={{marginRight: "-20px"}}
-                    >
-                        <i className='fa fa-angle-double-right' style={{fontSize:"38px"}}></i>
-                    </button>
-                </div>
                 </div>
             </div>
             <div className="row">
                 <div className="col-10">
-                <div className="cover">
-                    <button className="left" onClick={ ()=>{rightScroll("BTC")} }>
-                        <i className='fa fa-angle-double-left' style={{fontSize:"38px"}}></i>
-                    </button>
-                    <div className="scroll-images" id="BTC">
-                        { getTickerButtonsComponent("BTC") }
+                    <div className="cover">
+                        <button className="left" onClick={ ()=>{rightScroll("BTC")} }>
+                            <i className='fa fa-angle-double-left' style={{fontSize:"38px"}}></i>
+                        </button>
+                        <div className="scroll-images" id="BTC">
+                            { getTickerButtonsComponent("BTC") }
+                        </div>
+                        <button className="right" onClick={ ()=>{leftScroll("BTC")} } style={{marginRight: "-20px"}}>
+                            <i className='fa fa-angle-double-right' style={{fontSize:"38px"}}></i>
+                        </button>
                     </div>
-                    <button className="right" onClick={ ()=>{leftScroll("BTC")} } style={{marginRight: "-20px"}}>
-                        <i className='fa fa-angle-double-right' style={{fontSize:"38px"}}></i>
-                    </button>
-                </div>
                 </div>
             </div>
             <div className="row">

@@ -10,30 +10,30 @@ const Navbar = (props)=> {
     return(
         <nav className={"navbar navbar-expand-sm " + (darkMode ? "bg-dark navbar-dark" : "navbar-light")}
             style={{backgroundColor: !darkMode ? "#E9ECEF" : null}}>
-            <a className="navbar-brand" href="#" onClick={ brandFunction } >
-                <b><i>Real Time Arbitrage Monitor</i></b>
+            <a className="navbar-brand" href="/#" onClick={ brandFunction } >
+                <b><i>Real-Time Arbitrage Monitor</i></b>
             </a>
             <ul className="navbar-nav">
                 <li className="nav-item dropdown">
-                    <a className="nav-link dropdown-toggle" href="#" id="navbardrop" data-toggle="dropdown">
+                    <a className="nav-link dropdown-toggle" href="/#" id="navbardrop" data-toggle="dropdown">
                         Monitor
                     </a>
                     <div className="dropdown-menu">
-                        <a className="dropdown-item" href="#" onClick={ arbitrageFunction } >
+                        <a className="dropdown-item" href="/#" onClick={ arbitrageFunction } >
                             All Arbitrage
                         </a>
-                        <a className="dropdown-item" href="#" onClick={ bestArbitrageFunction }>
+                        <a className="dropdown-item" href="/#" onClick={ bestArbitrageFunction }>
                             Best Arbitrage
                         </a>
                     </div>
                 </li>
                 <li className="nav-item">
-                    <a className="nav-link" href="#" onClick={ historicalFunction } >
+                    <a className="nav-link" href="/#" onClick={ historicalFunction } >
                         Historical
                     </a>
                 </li>
                 <li className="nav-item">
-                    <a className="nav-link" href="#" onClick={ marketsFunction } >
+                    <a className="nav-link" href="/#" onClick={ marketsFunction } >
                         Markets
                     </a>
                 </li>

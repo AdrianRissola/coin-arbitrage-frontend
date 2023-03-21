@@ -8,7 +8,7 @@ const MarketFilter = (props)=> {
     return(
         <>
             <div className="input-group-prepend">
-                <span className= {className} id="basic-addon3">Markets</span>
+                <span className= {className} id="basic-addon3">Market</span>
             </div>
             <input 
                 className="form-control" 

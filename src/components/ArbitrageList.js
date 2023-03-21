@@ -18,19 +18,21 @@ const ArbitrageList = (props) => {
     let arbitrages = props.arbitrages
     const initArb = props.initArb
     const marketFilter = props.marketFilter
+    const marketsFilter = props.marketsFilter
     const minProfitFilter = props.minProfitFilter
     const tickerFilter = props.tickerFilter
     const orderBy = props.orderBy
     const withHeader = props.withHeader
     const arbitrageComponents = []
 
-    if(marketFilter || (minProfitFilter && minProfitFilter>0) || (tickerFilter && tickerFilter!=="ALL"))
+    if(marketsFilter || marketFilter || (minProfitFilter && minProfitFilter>0) || (tickerFilter && tickerFilter!=="ALL"))
       arbitrages = arbitrages.filter(arbitrage => {
         const marketPair = `${arbitrage.transactions[0].market}-${arbitrage.transactions[1].market}`
         return (
-          !marketFilter || marketPair.toUpperCase().includes(marketFilter.toUpperCase())) 
+          (!marketFilter || marketPair.toUpperCase().includes(marketFilter.toUpperCase()))
+          && (!marketsFilter || (marketsFilter.includes(arbitrage.transactions[0].market) && marketsFilter.includes(arbitrage.transactions[1].market)))
           && (!minProfitFilter || arbitrage.profitPercentage>=minProfitFilter)
-          && satisfiedTickerFilter(tickerFilter, arbitrage.transactions[0].pair
+          && satisfiedTickerFilter(tickerFilter, arbitrage.transactions[0].pair)
         )
       })
 

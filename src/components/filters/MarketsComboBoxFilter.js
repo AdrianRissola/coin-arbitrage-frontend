@@ -1,7 +1,5 @@
-import { useState } from "react";
 
 const CheckboxDropdown = (props)=> {
-    const [selectedOption, setSelectedOption] = useState(props.currentSelection);
     const buttonText = props.buttonText;
     const options = props.options;
     const onClickFunction = props.onClickFunction;
@@ -13,47 +11,27 @@ const CheckboxDropdown = (props)=> {
 
     return(
         <>
-<div className="dropdown">
-    <button className="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton"
-        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-        Checkbox dropdown
-    </button>
-    <ul className="dropdown-menu" aria-labelledby="dropdownMenuButton">
-        <li>
-            <a className="dropdown-item" href="#">
-                <div className="form-check">
-                    <input className="form-check-input" type="checkbox" value="" id="Checkme1" onChange={e => {}}/>
-                    <label className="form-check-label" htmlFor="Checkme1">Check me</label>
-                </div>
-            </a>
-        </li>
-        <li>
-            <a className="dropdown-item" href="#">
-                <div className="form-check">
-                    <input className="form-check-input" type="checkbox" value="" id="Checkme2" checked onChange={e => {}}/>
-                    <label className="form-check-label" htmlFor="Checkme2">Check me</label>
-                </div>
-            </a>
-        </li>
-        <li>
-            <a className="dropdown-item" href="#">
-                <div className="form-check">
-                    <input className="form-check-input" type="checkbox" value="" id="Checkme3" onChange={e => {}}/>
-                    <label className="form-check-label" htmlFor="Checkme3">Check me</label>
-                </div>
-            </a>
-        </li>
-        <li><hr className="dropdown-divider" /></li>
-        <li>
-            <a className="dropdown-item" href="#">
-                <div className="form-check">
-                    <input className="form-check-input" type="checkbox" value="" id="Checkme4" checked onChange={e => {}}/>
-                    <label className="form-check-label" htmlFor="Checkme4">Check me</label>
-                </div>
-            </a>
-        </li>
-    </ul>
-</div>
+            <div className="dropdown">
+                <button className= {buttonClassName} type="button" id="dropdownMenuButton"
+                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style={ buttonStyle }>
+                    { buttonText }
+                </button>
+                <ul className="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                    { options.map(option => 
+                        <li key= { option }>
+                            <a className="dropdown-item" href="/#">
+                                <div className="form-check">
+                                    <input className="form-check-input" type="checkbox" value="" id="Checkme2"
+                                        defaultChecked={ true }
+                                        onChange={(event)=>{ onClickFunction(event.target.checked, option) }}
+                                    />
+                                    <label className="form-check-label" htmlFor="Checkme2">{ option }</label>
+                                </div>
+                            </a>
+                        </li>)
+                    }
+                </ul>
+            </div>
         </>
     )
 }
