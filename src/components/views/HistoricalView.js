@@ -8,7 +8,7 @@ import SplitButtonComboBox from "../../components/filters/SplitButtonComboBox";
 import ComboBoxFilter from "../../components/filters/ComboBoxFilter";
 import MarketFilter from "../../components/filters/MarketFilter";
 import MinProfitFilter from "../../components/filters/MinProfitFilter";
-import MarketsComboBoxFilter from "../../components/filters/MarketsComboBoxFilter";
+import MarketsComboBoxFilter from "../filters/MarketsCheckboxDropdownFilter";
 
 
 const HistoricalView = (props)=> {

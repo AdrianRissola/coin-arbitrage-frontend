@@ -92,7 +92,6 @@ const App = () => {
     }
 
     if(response.channel==='bestArbitrage' && response.ticker==='ALL') {
-      console.log("response.arbitrages:", response.arbitrages)
       if(response.arbitrages && response.arbitrages.length>0) {
         setBestArbitrage(response.arbitrages[0])
         setTicker(response.arbitrages[0].transactions[0].pair)
@@ -122,12 +121,20 @@ const App = () => {
   };
 
   const menuSelector = Object.freeze({
-    arbitrage : buildArbitrageView(
-      {darkMode, ticker, availableTickers, arbitrages, handleChangeChannelSubscriptionClick, marketPrices }),
-    bestArbitrage : buildBestArbitrageView({darkMode, bestArbitrage, marketPrices, marketStatus}),
-    historical: buildHistoricalView(darkMode),
-    markets: buildMarketStatusView(darkMode, marketStatus)
+    arbitrage : () => {return buildArbitrageView(
+      {darkMode, ticker, availableTickers, arbitrages, handleChangeChannelSubscriptionClick, marketPrices })},
+    bestArbitrage : () => {return buildBestArbitrageView({darkMode, bestArbitrage, marketPrices, marketStatus})},
+    historical: () => {return buildHistoricalView(darkMode)},
+    markets: () => {return buildMarketStatusView(darkMode, marketStatus)}
   })
+
+  // const menuSelector = Object.freeze({
+  //   arbitrage : buildArbitrageView(
+  //     {darkMode, ticker, availableTickers, arbitrages, handleChangeChannelSubscriptionClick, marketPrices }),
+  //   bestArbitrage : buildBestArbitrageView({darkMode, bestArbitrage, marketPrices, marketStatus}),
+  //   historical: buildHistoricalView(darkMode),
+  //   markets: ()=>{return buildMarketStatusView(darkMode, marketStatus)}
+  // })
 
   return (
     
@@ -152,14 +159,14 @@ const App = () => {
           handleChangeChannelSubscriptionClick({channel: 'Markets'})} }
         darkModeButton = { {component: DarkModeButton, darkMode: darkMode, darkModeSetFunction: setDarkMode} }
       />
-
+      
       <span style={{color:'red'}}>{arbitrageChannelMessage}</span>
       <br/>
       <span style={{color:'red'}}>{marketPriceChannelMessage}</span>
 
       <div style={{ marginLeft:"1rem", marginRight:"1rem" }}>
 
-        { menuSelector[currentWsResponse.channel || menuSelection] }
+        { menuSelector[currentWsResponse.channel || menuSelection]() }
 
       </div>
     </div>

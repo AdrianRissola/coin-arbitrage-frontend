@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { getMarkets } from "../../service/MarketService"
 
 
-const CheckboxDropdown = (props)=> {
+const MarketsCheckboxDropdown = (props)=> {
     const [availableMarkets, setAvailableMarkets] = useState([]);
     const marketsFilter = props.marketsFilter;
     const buttonText = props.buttonText;
@@ -25,7 +25,7 @@ const CheckboxDropdown = (props)=> {
     React.useEffect(() => {
         getMarkets().then(
             response => {
-                console.log("HistoricalView.getAllMarkets:", response);
+                console.log("MarketsCheckboxDropdown.getAllMarkets:", response);
                 const marketNames = response.data.map(market => market.name);
                 setAvailableMarkets(marketNames.sort());
                 onClickFunction([...marketNames]);
@@ -60,4 +60,4 @@ const CheckboxDropdown = (props)=> {
     )
 }
 
-export default CheckboxDropdown
+export default MarketsCheckboxDropdown

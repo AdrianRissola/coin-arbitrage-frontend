@@ -7,7 +7,7 @@ import TickerButtons from "../TickerButtons";
 import MarketsArbitrage from "../MarketsArbitrage";
 import helper from "../../helper";
 import "../../HorizontalScroll.css";
-import MarketsComboBoxFilter from "../../components/filters/MarketsComboBoxFilter";
+import MarketsComboBoxFilter from "../filters/MarketsCheckboxDropdownFilter";
 
 
 
@@ -23,6 +23,7 @@ const rightScroll = (id) => {
 
 const ArbitrageView = (props)=> {
     const [marketFilter, setMarketFilter] = useState("");
+    const [marketsFilter, setMarketsFilter] = useState([]);
     const [minProfitFilter, setMinProfitFilter] = useState(0);
     const ticker = props.ticker;
     const handleChangeChannelSubscriptionClick = props.handleChangeChannelSubscriptionClick;
@@ -46,10 +47,9 @@ const ArbitrageView = (props)=> {
           [
             <MarketFilter marketFilter = {marketFilter} marketFilterSetFunction = {setMarketFilter} darkMode={darkMode} />,
             <MinProfitFilter minProfitFilter = {minProfitFilter} minProfitFilterSetFunction = {setMinProfitFilter} darkMode={darkMode} />,
-            // <MarketsComboBoxFilter darkMode = { darkMode } onClickFunction = { handleSelectedMarketsOnClick }
-            //     marketsFilter = { marketsFilter } buttonText = { "Markets"}
-            //     options = { availableMarkets } styleWidth = {"100px"}
-            // />
+            <MarketsComboBoxFilter darkMode = { darkMode } onClickFunction = { setMarketsFilter }
+                marketsFilter = { marketsFilter } buttonText = { "Markets"} styleWidth = {"100px"}
+            />
           ]
         )  
     }
@@ -102,6 +102,7 @@ const ArbitrageView = (props)=> {
                         arbitrages = {arbitrages}
                         initArb = {helper.initialArbitrage}
                         marketFilter = {marketFilter}
+                        marketsFilter = {marketsFilter}
                         minProfitFilter = {minProfitFilter}
                         darkMode = {darkMode}
                     />
