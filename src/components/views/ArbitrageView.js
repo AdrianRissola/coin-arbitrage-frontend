@@ -7,6 +7,8 @@ import TickerButtons from "../TickerButtons";
 import MarketsArbitrage from "../MarketsArbitrage";
 import helper from "../../helper";
 import "../../HorizontalScroll.css";
+import MarketsComboBoxFilter from "../../components/filters/MarketsComboBoxFilter";
+
 
 
 const leftScroll = (id) => {
@@ -44,6 +46,10 @@ const ArbitrageView = (props)=> {
           [
             <MarketFilter marketFilter = {marketFilter} marketFilterSetFunction = {setMarketFilter} darkMode={darkMode} />,
             <MinProfitFilter minProfitFilter = {minProfitFilter} minProfitFilterSetFunction = {setMinProfitFilter} darkMode={darkMode} />,
+            // <MarketsComboBoxFilter darkMode = { darkMode } onClickFunction = { handleSelectedMarketsOnClick }
+            //     marketsFilter = { marketsFilter } buttonText = { "Markets"}
+            //     options = { availableMarkets } styleWidth = {"100px"}
+            // />
           ]
         )  
     }

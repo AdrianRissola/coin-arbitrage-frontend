@@ -1,6 +1,6 @@
 import React, { useState, useRef } from "react";
 import { getHistoricalArbitrages } from "../../service/HistoricalArbitrageService"
-import { getMarkets, getAllAvailableTickers } from "../../service/MarketService"
+import { getAllAvailableTickers } from "../../service/MarketService"
 import ArbitrageList from "../ArbitrageList";
 import helper from "../../helper";
 import RowFilter from "../../components/filters/RowFilter";
@@ -19,7 +19,6 @@ const HistoricalView = (props)=> {
     const [tickerFilter, setTickerFilter] = useState("BTC-USDT")
     const [historicalArbitrageOrder, setHistoricalArbitrageOrder] = useState({key: "date", value: "DESC", label: "Date"})
     const availableTickers = useRef(['ALL']);
-    const [availableMarkets, setAvailableMarkets] = useState([]);
     const darkMode = props.darkMode;
 
     const callGetHistoricalArbitrages = (ticker) => {
@@ -44,14 +43,6 @@ const HistoricalView = (props)=> {
                 );
             }
         );
-        getMarkets().then(
-            response => {
-                console.log("HistoricalView.getAllMarkets:", response);
-                const marketNames = response.data.map(market => market.name);
-                setAvailableMarkets(marketNames.sort());
-                setMarketsFilter([...marketNames]);
-            }
-        );
     }, []);
 
 
@@ -59,17 +50,7 @@ const HistoricalView = (props)=> {
     const handleSelectedTickerOnClick = (selectedTicker) => {
         if(tickerFilter!==selectedTicker) {
             setTickerFilter(selectedTicker);
-            // callGetHistoricalArbitrages(selectedTicker==='ALL'? null : selectedTicker);
         };
-    }
-
-    const handleSelectedMarketsOnClick = (checked, selectedMarket) => {
-        if(checked){
-            setMarketsFilter([...marketsFilter, selectedMarket]);
-        } else {
-            marketsFilter.splice(marketsFilter.indexOf(selectedMarket), 1)
-            setMarketsFilter([...marketsFilter]);
-        }
     }
 
     const getArbitrageFilters = () => {
@@ -97,9 +78,8 @@ const HistoricalView = (props)=> {
     const getHistoricalFilters = () => {
         const historicalFilters = getArbitrageFilters();
         historicalFilters.push(
-            <MarketsComboBoxFilter darkMode = { darkMode } onClickFunction = { handleSelectedMarketsOnClick }
-                marketsFilter = { marketsFilter } buttonText = { "Markets"}
-                options = { availableMarkets } styleWidth = {"100px"}
+            <MarketsComboBoxFilter darkMode = { darkMode } onClickFunction = { setMarketsFilter }
+                marketsFilter = { marketsFilter } buttonText = { "Markets"} styleWidth = {"100px"}
             />
         );
         historicalFilters.push(
