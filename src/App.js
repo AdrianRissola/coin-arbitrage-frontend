@@ -82,8 +82,9 @@ const App = () => {
         setArbitrageChannelMessage(response.message)
       }
       if(response.marketPrices) {
-        const ticker = Object.keys(response.marketPrices)[0]
-        setMarketPrices(response.marketPrices[ticker])
+        const ticker = Object.keys(response.marketPrices)[0];
+        setMarketPrices(response.marketPrices[ticker]
+          .sort((mp1, mp2) => (mp1.market > mp2.market) ? 1 : ((mp2.market > mp1.market) ? -1 : 0)));
       } else {
         setMarketPrices(prev=>prev)
         setMarketPriceChannelMessage(response.message)
