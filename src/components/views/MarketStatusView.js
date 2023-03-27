@@ -61,7 +61,6 @@ const MarketStatusView = (props)=> {
     React.useEffect(() => {
         getMarkets().then(
             response => {
-                console.log("MarketStatusView.getMarkets:", response)
                 setMarkets(response.data.sort((m1, m2) => (m1.name > m2.name) ? 1 : ((m2.name > m1.name) ? -1 : 0)))
             }
         );

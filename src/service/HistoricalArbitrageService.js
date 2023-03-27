@@ -13,9 +13,16 @@ const getHistoricalArbitrages = async (ticker) => {
         }
       }).then(
         (response) => {
-        console.log("ArbitrageService.getHistoricalArbitrages:", response)
+        console.log(`HistoricalArbitrageService.getHistoricalArbitrages(${ticker}):`, response.data)
         return response;
     }).catch(e => console.log(e));
 }
+
+getHistoricalArbitrages("BTC-USDT").then(
+    response => {
+        localStorage.setItem('historicalArbitrages', JSON.stringify(response.data));
+    }
+);
+
 
 export { getHistoricalArbitrages }

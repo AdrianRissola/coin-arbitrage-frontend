@@ -1,4 +1,5 @@
 import { arbitrageCardStyle } from '../styleUtil'
+import pushpin from "../../src/pushpin_u1F4CC_icon_24x24.png";
 
 const greenHex = "#0ecb81"
 
@@ -16,12 +17,16 @@ const Arbitrage = (props)=> {
     const getHeader = (header, header2) => { return( 
         <div className={styles.cardHeaderClassName} style={{ textAlign: "center", color: isBestArbitrage ? greenHex: null}}>
             <b>{header}</b> 
+            { isBestArbitrage ?
+                <img  src={pushpin} alt="" align="right"/>
+                : null
+            }
             { header2 ? 
                 <>
                     <br/>
                     <b>{header2}</b>
                 </>
-                :null
+                : null
             }
         </div>
     )}

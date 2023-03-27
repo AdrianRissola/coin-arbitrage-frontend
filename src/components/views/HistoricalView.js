@@ -1,6 +1,5 @@
-import React, { useState, useRef } from "react";
+import React, { useState } from "react";
 import { getHistoricalArbitrages } from "../../service/HistoricalArbitrageService"
-import { getAllAvailableTickers } from "../../service/MarketService"
 import ArbitrageList from "../ArbitrageList";
 import helper from "../../helper";
 import RowFilter from "../../components/filters/RowFilter";
@@ -11,45 +10,29 @@ import MinProfitFilter from "../../components/filters/MinProfitFilter";
 import MarketsComboBoxFilter from "../filters/MarketsCheckboxDropdownFilter";
 
 
+
 const HistoricalView = (props)=> {
-    const [historicalArbitrages, setHistoricalArbitrages] = useState([])
-    const [marketFilter, setMarketFilter] = useState("")
-    const [marketsFilter, setMarketsFilter] = useState([])
+    const [historicalArbitrages, setHistoricalArbitrages] = useState(JSON.parse(localStorage.getItem("historicalArbitrages")));
+    const [marketFilter, setMarketFilter] = useState("");
+    const [marketsFilter, setMarketsFilter] = useState([]);
     const [minProfitFilter, setMinProfitFilter] = useState(0)
     const [tickerFilter, setTickerFilter] = useState("BTC-USDT")
     const [historicalArbitrageOrder, setHistoricalArbitrageOrder] = useState({key: "date", value: "DESC", label: "Date"})
-    const availableTickers = useRef(['ALL']);
+    const availableTickers = ["ALL", ...JSON.parse(localStorage.getItem("availableWebsocketTickers"))];
     const darkMode = props.darkMode;
 
-    const callGetHistoricalArbitrages = (ticker) => {
-        getHistoricalArbitrages(ticker==='ALL'? null : ticker).then(
-            response => {
-                console.log("HistoricalView.getHistoricalArbitrages:", response)
-                setHistoricalArbitrages(response.data)
-            }
-        );
+
+
+ 
+    const callGetHistoricalArbitrages = async (tickerFilter) => {
+        const {data} = await getHistoricalArbitrages(tickerFilter==='ALL' ? null : tickerFilter);
+        setHistoricalArbitrages(data);
     }
-
-    React.useEffect(() => {
-        callGetHistoricalArbitrages(tickerFilter);
-    }, [tickerFilter]);
-
-    React.useEffect(() => {
-        getAllAvailableTickers().then(
-            response => {
-                console.log("HistoricalView.getAllAvailableTickers:", response)
-                availableTickers.current = availableTickers.current.concat(
-                    response.data.filter(ticker => ticker.websocket).map(ticker => ticker.name).sort()
-                );
-            }
-        );
-    }, []);
-
-
 
     const handleSelectedTickerOnClick = (selectedTicker) => {
         if(tickerFilter!==selectedTicker) {
             setTickerFilter(selectedTicker);
+            callGetHistoricalArbitrages(selectedTicker);
         };
     }
 
@@ -85,7 +68,7 @@ const HistoricalView = (props)=> {
         historicalFilters.push(
             <ComboBoxFilter darkMode = { darkMode } onClickFunction = { handleSelectedTickerOnClick }
                 currentSelection = { tickerFilter } buttonText = { "Ticker: "}
-                options = { availableTickers.current } styleWidth = {"175px"}
+                options = { availableTickers } styleWidth = {"175px"}
             />
         );
         

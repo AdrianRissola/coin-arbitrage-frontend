@@ -1,9 +1,8 @@
-import React, { useState } from "react";
-import { getMarkets } from "../../service/MarketService"
+import React from "react";
 
+const availableMarkets = JSON.parse(localStorage.getItem("marketsCheckboxDropdown"));
 
-const MarketsCheckboxDropdown = (props)=> {
-    const [availableMarkets, setAvailableMarkets] = useState([]);
+const MarketsCheckboxDropdown = (props)=> {    
     const marketsFilter = props.marketsFilter;
     const buttonText = props.buttonText;
     const onClickFunction = props.onClickFunction;
@@ -23,14 +22,7 @@ const MarketsCheckboxDropdown = (props)=> {
     }
 
     React.useEffect(() => {
-        getMarkets().then(
-            response => {
-                console.log("MarketsCheckboxDropdown.getAllMarkets:", response);
-                const marketNames = response.data.map(market => market.name);
-                setAvailableMarkets(marketNames.sort());
-                onClickFunction([...marketNames]);
-            }
-        );
+        onClickFunction([...availableMarkets]);
     }, [onClickFunction]);
 
     return(
