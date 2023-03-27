@@ -1,29 +1,51 @@
-import React from "react";
+import React, { useState } from "react";
 
-const availableMarkets = JSON.parse(localStorage.getItem("marketsCheckboxDropdown"));
+const availableMarkets = JSON.parse(localStorage.getItem("marketsCheckboxDropdown")).map(market => {
+    return {
+        marketName: market,
+        checked: true,
+    }
+});
 
-const MarketsCheckboxDropdown = (props)=> {    
+const MarketsCheckboxDropdown = (props)=> {
+    const [check, setCheck] = useState(true);
     const marketsFilter = props.marketsFilter;
     const buttonText = props.buttonText;
     const onClickFunction = props.onClickFunction;
     const darkMode = props.darkMode;
     const buttonClassName = darkMode ? "btn btn-secondary dropdown-toggle text-white bg-dark" : "btn btn-secondary dropdown-toggle";
     const buttonStyle = !darkMode ? {
-            backgroundColor: "#E9ECEF", color: "black", border: "0px", height: "38px"
-        } : { backgroundColor: null, color: null }
+        backgroundColor: "#E9ECEF", color: "black", border: "0px", height: "38px"
+    } : { backgroundColor: null, color: null };
+
+    React.useEffect(() => {
+        onClickFunction([...availableMarkets.map(market=>market.marketName)]);
+    }, [onClickFunction]);
 
     const handleSelectedMarketsOnClick = (checked, selectedMarket) => {
+        availableMarkets.filter(market => market.marketName===selectedMarket.marketName)[0].checked = checked
+        if(!availableMarkets.some(market=>!market.checked))
+            setCheck(true);
         if(checked){
-            onClickFunction([...marketsFilter, selectedMarket]);
+            onClickFunction([...marketsFilter, selectedMarket.marketName]);
         } else {
-            marketsFilter.splice(marketsFilter.indexOf(selectedMarket), 1)
+            setCheck(false);
+            marketsFilter.splice(marketsFilter.indexOf(selectedMarket.marketName), 1);
             onClickFunction([...marketsFilter]);
         }
     }
 
-    React.useEffect(() => {
-        onClickFunction([...availableMarkets]);
-    }, [onClickFunction]);
+    const handleSelectAllOnClick = (checked) => {
+        setCheck(checked);
+        availableMarkets.forEach(market => {
+            market.checked = checked
+        });
+        if(checked) {
+            onClickFunction([...availableMarkets.map(market=>market.marketName)]);
+        } else {
+            onClickFunction([]);
+        }
+    }
 
     return(
         <>
@@ -33,15 +55,29 @@ const MarketsCheckboxDropdown = (props)=> {
                     { buttonText }
                 </button>
                 <ul className="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                    <li>
+                        <a className="dropdown-item" href="/#">
+                            <div className="form-check">
+                                <input className="form-check-input" type="checkbox" value="" id="selectAllId"
+                                    checked = { check }
+                                    onChange={(event)=>{ handleSelectAllOnClick(event.target.checked) }}
+                                />
+                                <label className="form-check-label" htmlFor="selectAllId">Select All</label>
+                            </div>
+                        </a>
+                    </li>
+                    <li><hr className="dropdown-divider"/></li>
                     { availableMarkets.map(option => 
-                        <li key= { option }>
+                        <li key= { option.marketName }>
                             <a className="dropdown-item" href="/#">
                                 <div className="form-check">
                                     <input className="form-check-input" type="checkbox" value="" id="Checkme2"
-                                        defaultChecked={ true }
-                                        onChange={(event)=>{ handleSelectedMarketsOnClick(event.target.checked, option) }}
+                                        checked = { option.checked }
+                                        onChange = {(event)=>{
+                                            handleSelectedMarketsOnClick(event.target.checked, option);
+                                        }}
                                     />
-                                    <label className="form-check-label" htmlFor="Checkme2">{ option }</label>
+                                    <label className="form-check-label" htmlFor="Checkme2">{ option.marketName }</label>
                                 </div>
                             </a>
                         </li>)
