@@ -26,7 +26,11 @@ const getMarketsInfo = (markets, darkMode) => {
                             markets.map( market => {
                                 return(
                                     <tr key={ market.name }>
-                                        <td title={market.type}>{ market.name }</td>             
+                                        <td title={market.type}>
+                                            <a href={ market.website } target="_blank"rel="noopener noreferrer">
+                                                { market.name }
+                                            </a>
+                                        </td>             
                                         <td>
                                             {market.tickers.websocket.toString()} 
                                         </td>
