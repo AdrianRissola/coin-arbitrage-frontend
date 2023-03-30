@@ -7,7 +7,8 @@ import SplitButtonComboBox from "../../components/filters/SplitButtonComboBox";
 import ComboBoxFilter from "../../components/filters/ComboBoxFilter";
 import MarketFilter from "../../components/filters/MarketFilter";
 import MinProfitFilter from "../../components/filters/MinProfitFilter";
-import MarketsComboBoxFilter from "../filters/MarketsCheckboxDropdownFilter";
+import MarketsCheckboxDropdownFilter from "../filters/MarketsCheckboxDropdownFilter";
+import TickersCheckboxDropdownFilter from "../filters/TickersCheckboxDropdownFilter";
 
 
 
@@ -16,23 +17,21 @@ const HistoricalView = (props)=> {
     const [marketFilter, setMarketFilter] = useState("");
     const [marketsFilter, setMarketsFilter] = useState([]);
     const [minProfitFilter, setMinProfitFilter] = useState(0)
-    const [tickerFilter, setTickerFilter] = useState("BTC-USDT")
     const [historicalArbitrageOrder, setHistoricalArbitrageOrder] = useState({key: "date", value: "DESC", label: "Date"})
-    const availableTickers = ["ALL", ...JSON.parse(localStorage.getItem("availableWebsocketTickers"))];
+    const availableTickers = [...JSON.parse(localStorage.getItem("availableWebsocketTickers"))];
     const darkMode = props.darkMode;
 
-
-
  
-    const callGetHistoricalArbitrages = async (tickerFilter) => {
-        const {data} = await getHistoricalArbitrages(tickerFilter==='ALL' ? null : tickerFilter);
+    const callGetHistoricalArbitrages = async (tickersFilter) => {
+        const {data} = await getHistoricalArbitrages(
+            availableTickers.length===tickersFilter.length ? null : tickersFilter
+        );
         setHistoricalArbitrages(data);
     }
 
-    const handleSelectedTickerOnClick = (selectedTicker) => {
-        if(tickerFilter!==selectedTicker) {
-            setTickerFilter(selectedTicker);
-            callGetHistoricalArbitrages(selectedTicker);
+    const handleOnClickFindButton = (selectedTickers) => {
+        if(selectedTickers && selectedTickers.length>0) {
+            callGetHistoricalArbitrages(selectedTickers);
         };
     }
 
@@ -61,16 +60,22 @@ const HistoricalView = (props)=> {
     const getHistoricalFilters = () => {
         const historicalFilters = getArbitrageFilters();
         historicalFilters.push(
-            <MarketsComboBoxFilter darkMode = { darkMode } onClickFunction = { setMarketsFilter }
+            <MarketsCheckboxDropdownFilter darkMode = { darkMode } onClickFunction = { setMarketsFilter }
                 marketsFilter = { marketsFilter } buttonText = { "Markets"} styleWidth = {"100px"}
             />
         );
         historicalFilters.push(
-            <ComboBoxFilter darkMode = { darkMode } onClickFunction = { handleSelectedTickerOnClick }
-                currentSelection = { tickerFilter } buttonText = { "Ticker: "}
-                options = { availableTickers } styleWidth = {"175px"}
+            <TickersCheckboxDropdownFilter darkMode = { darkMode }
+                handleOnClickFindButton = { handleOnClickFindButton }
+                buttonText = { "Tickers"} styleWidth = {"150px"}
             />
         );
+        // historicalFilters.push(
+        //     <ComboBoxFilter darkMode = { darkMode } onClickFunction = { handleSelectedTickerOnClick }
+        //         currentSelection = { tickerFilter } buttonText = { "Ticker: "}
+        //         options = { availableTickers } styleWidth = {"175px"}
+        //     />
+        // );
         
         historicalFilters.push(
         <SplitButtonComboBox darkMode = { darkMode } 
@@ -111,7 +116,6 @@ const HistoricalView = (props)=> {
                             marketFilter = { marketFilter }
                             marketsFilter = { marketsFilter }
                             minProfitFilter = { minProfitFilter }
-                            tickerFilter = { tickerFilter }
                             darkMode = { darkMode }
                             orderBy = { historicalArbitrageOrder }
                             withHeader = { true }

@@ -58,11 +58,11 @@ const MarketsCheckboxDropdown = (props)=> {
                     <li>
                         <a className="dropdown-item" href="/#">
                             <div className="form-check">
-                                <input className="form-check-input" type="checkbox" value="" id="selectAllId"
+                                <input className="form-check-input" type="checkbox" value="" id="selectAllMarketsId"
                                     checked = { check }
                                     onChange={(event)=>{ handleSelectAllOnClick(event.target.checked) }}
                                 />
-                                <label className="form-check-label" htmlFor="selectAllId">Select All</label>
+                                <label className="form-check-label" htmlFor="selectAllMarketsId">Select All</label>
                             </div>
                         </a>
                     </li>
@@ -71,13 +71,13 @@ const MarketsCheckboxDropdown = (props)=> {
                         <li key= { option.marketName }>
                             <a className="dropdown-item" href="/#">
                                 <div className="form-check">
-                                    <input className="form-check-input" type="checkbox" value="" id="Checkme2"
+                                    <input className="form-check-input" type="checkbox" value="" id="checkMarketId"
                                         checked = { option.checked }
                                         onChange = {(event)=>{
                                             handleSelectedMarketsOnClick(event.target.checked, option);
                                         }}
                                     />
-                                    <label className="form-check-label" htmlFor="Checkme2">{ option.marketName }</label>
+                                    <label className="form-check-label" htmlFor="checkMarketId">{ option.marketName }</label>
                                 </div>
                             </a>
                         </li>)
