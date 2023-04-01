@@ -7,7 +7,7 @@ import DarkModeButton from "./components/DarkModeButton";
 import { buildArbitrageView, buildHistoricalView, buildMarketStatusView, buildBestArbitrageView } from "./components/views/ViewBuilder";
 
 console.log(process.env);
-
+const availableTickers = JSON.parse(localStorage.getItem("availableWebsocketTickers"));
 let ws = null;
 
 const App = () => {
@@ -17,7 +17,6 @@ const App = () => {
   const [ticker, setTicker] = useState("BTC-USDT")
   const [arbitrageChannelMessage, setArbitrageChannelMessage] = useState()
   const [marketPriceChannelMessage, setMarketPriceChannelMessage] = useState()
-  const [availableTickers, setAvailableTickers] = useState([])
   const [darkMode, setDarkMode] = useState(true)
   const [currentWsResponse, setCurrentWsResponse] = useState({channel: "arbitrage", ticker: "btc-usdt"})
   const [marketStatus, setMarketStatus] = useState(null)
@@ -38,8 +37,8 @@ const App = () => {
       ws.send(JSON.stringify(channelSubscription));
     }
   }
-  
-  if(!ws) {
+
+  if(!ws || isClosed(ws)) {
     ws = new WebSocket(getWebsocketEndpoint());
   }
 
@@ -58,12 +57,6 @@ const App = () => {
     if(!webSocketOnMessageEnabled) return;
     
     const response = JSON.parse(event.data);
-
-    if(response.availableTickers) {
-      if(!availableTickers || availableTickers.length===0) {
-        setAvailableTickers(response.availableTickers)
-      }
-    }
 
     if(menuSelection!==response.channel) return;
      
@@ -120,6 +113,7 @@ const App = () => {
 
   };
 
+
   const menuSelector = Object.freeze({
     arbitrage : () => {return buildArbitrageView(
       {darkMode, ticker, availableTickers, arbitrages, handleChangeChannelSubscriptionClick, marketPrices })},
@@ -127,14 +121,6 @@ const App = () => {
     historical: () => {return buildHistoricalView(darkMode)},
     markets: () => {return buildMarketStatusView(darkMode, marketStatus)}
   })
-
-  // const menuSelector = Object.freeze({
-  //   arbitrage : buildArbitrageView(
-  //     {darkMode, ticker, availableTickers, arbitrages, handleChangeChannelSubscriptionClick, marketPrices }),
-  //   bestArbitrage : buildBestArbitrageView({darkMode, bestArbitrage, marketPrices, marketStatus}),
-  //   historical: buildHistoricalView(darkMode),
-  //   markets: ()=>{return buildMarketStatusView(darkMode, marketStatus)}
-  // })
 
   return (
     

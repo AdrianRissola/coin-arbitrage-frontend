@@ -25,7 +25,7 @@ const getAllAvailableTickers = async () => {
     }).catch(e => console.log(e));
 }
 getAllAvailableTickers().then( response => {
-    const availableWebsocketTickers = response.data.filter(ticker => ticker.websocket).map(ticker => ticker.name).sort()
+    const availableWebsocketTickers = response.data.filter(ticker => ticker.websocket);
     localStorage.setItem('availableWebsocketTickers', JSON.stringify(availableWebsocketTickers));
 })
 
