@@ -3,7 +3,18 @@ import { getMarkets } from "../../service/MarketService"
 import { arbitrageCardStyle } from '../../styleUtil'
 import MarketStatus from "../../components/MarketStatus";
 
-const getMarketsInfo = (markets, darkMode) => {
+const hiddenStyle = { overflow: "hidden", height: "1.2rem" };
+
+const GetMarketsInfo = (markets, darkMode) => {
+
+    const [collapsedStyle, setCollapsedStyle] = useState(true);
+
+    const handleCollapseOnClick = (market) => {
+        market.collapsed = !market.collapsed;
+        setCollapsedStyle(!collapsedStyle);
+        market.currensStyle = market.collapsed ? {} : hiddenStyle;
+    }
+
     return(
         <div className={ arbitrageCardStyle("20px", darkMode).cardClassName} 
             style={{ marginRight:"1rem", padding: "0rem", borderRadius: "20px"}}>
@@ -12,13 +23,15 @@ const getMarketsInfo = (markets, darkMode) => {
                     <thead>
                         <tr align="center">
                             <th>Market ({markets.length})</th>
-                            <th>Available Tickers</th>
+                            <th style={{verticalAlign:"top"}}>Available Tickers</th>
+                            <th></th>
                             <th></th>
                         </tr>
                         <tr align="center">
                             <th></th>
                             <th>WebSocket</th>
                             <th>REST</th>
+                            <th></th>
                         </tr>
                     </thead>
                     <tbody>
@@ -27,22 +40,24 @@ const getMarketsInfo = (markets, darkMode) => {
                                 return(
                                     <tr key={ market.name }>
                                         <td title={market.type}>
-                                            <a href={ market.website } target="_blank"rel="noopener noreferrer">
+                                            <a href={ market.website } target="_blank" rel="noopener noreferrer">
                                                 { market.name }
                                             </a>
                                         </td>             
                                         <td>
-                                            {market.tickers.websocket.toString()} 
+                                            <div style={ market.currensStyle || hiddenStyle }> 
+                                                { market.tickers.websocket.toString() } 
+                                            </div>
                                         </td>
                                         <td>
-                                            { 
-                                                market.tickers.rest.toString()
-                                                // market.tickers.rest.map(ticker => 
-                                                //     <a key={ ticker } href={marketticker.RestEndpoint}>
-                                                //         {ticker}, 
-                                                //     </a>
-                                                // )
-                                            } 
+                                            <div style={ market.currensStyle || hiddenStyle }>  
+                                                { market.tickers.rest.toString() } 
+                                            </div>
+                                        </td>
+                                        <td style={{width:"50px"}}>
+                                            <button style={{color: darkMode ? "white" : "black"}} onClick={()=>{handleCollapseOnClick(market)}}>
+                                                { !market.collapsed ? "+" : "-" }
+                                            </button>
                                         </td>
                                     </tr>
                                 )
@@ -82,7 +97,7 @@ const MarketStatusView = (props)=> {
             </div>
             <div className="row">
                 <div className="col-sm-8" style={{display: "flex", flexDirection: "row", flexWrap: "wrap"}}>
-                    { getMarketsInfo(markets, darkMode) }
+                    { GetMarketsInfo(markets, darkMode) }
                 </div>
                 <div className="col-sm-4" style={{flexDirection: "row", flexWrap: "wrap", marginLeft: "-1rem"}}>
                     <MarketStatus marketsStatus = {marketStatus} darkMode = {darkMode}/>
