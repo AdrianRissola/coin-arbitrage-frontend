@@ -11,30 +11,25 @@ const BestArbitrageView = (props)=> {
     return(
         <>
             <div className="row">
-                <div className="col" style={{textAlign: "center"}}>
-                    <h1 style={{width:"1300px", fontWeight: 'bold', fontSize:"2.5rem"}}>
-                        Best Arbitrage
-                    </h1>
+                <div className="col" style={{ textAlign: "center" }}>
+                    <h1 style={{ fontWeight: 'bold' }}> Best Arbitrage </h1>
                 </div>
             </div>
             <br/>
-            <div className="row">
-                <div  
-                    style={{display: "flex", flexDirection: "row", flexWrap: "wrap", marginLeft: "2rem"}}>
+            <div className="row" style={{display: "flex", flexDirection: "row", flexWrap: "wrap"}}>
+                <div class="col-sm" align="center">
                     <Arbitrage
                         darkMode = { darkMode }
                         header = { "Best Arbitrage: " + bestArbitrage.transactions[0].pair }
                         arbitrage = { bestArbitrage  }
                     />
                 </div>
-                <div  
-                    style={{flexDirection: "row", flexWrap: "wrap", marginLeft: "2.5rem"}}>
+                <div class="col-sm" align="center" > 
                     <MarketPrices ticker = { bestArbitrage.transactions[0].pair } 
                         marketPrices={ marketPrices } darkMode = { darkMode }
                     /> 
                 </div>
-                <div  
-                    style={{display: "flex", flexDirection: "row", flexWrap: "wrap", marginLeft: "2rem"}}>
+                <div class="col-sm" align="center">
                     <MarketStatus marketsStatus = { marketStatus } darkMode = { darkMode }/>
                 </div>
             </div>
