@@ -8,7 +8,7 @@ const TickerButtons = (props) => {
       return (
         <button className={btnClassName} key={ticker.name}
           title={ticker.description}
-          style={{marginRight: '0.3rem', marginTop: '0.3rem',  fontSize:'90%', backgroundColor:backgroundColor}} 
+          style={{whiteSpace:'nowrap', marginRight: '0.3rem', marginTop: '0.3rem',  fontSize:'90%', backgroundColor:backgroundColor}} 
           onClick={()=>{handleChangeChannelSubscriptionClick({channel: 'arbitrage', ticker: ticker.name})}}>
           {ticker.name}
         </button>

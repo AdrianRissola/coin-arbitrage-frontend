@@ -8,11 +8,12 @@ const MarketPrices = (props)=> {
     const ticker = props.ticker  || 'coin-coin'
     const marketPrices = order ? props.marketPrices.sort((a,b)=>a.price - b.price) : props.marketPrices
     const styles = marketPricesCardStyle(props.darkMode)
+    const textColor = props.darkMode ? "white" : "black";
 
     return(
         <div className={styles.cardClassName} style={styles.cardStyle}>
             <div className={styles.cardBodyClassName}>
-                <table className="table">
+                <table className="table" style={{ color: textColor}}>
                     <thead>
                         <tr>
                             <th></th>

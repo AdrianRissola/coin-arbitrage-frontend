@@ -4,11 +4,12 @@ import { arbitrageCardStyle } from '../../styleUtil'
 import MarketStatus from "../../components/MarketStatus";
 
 const getMarketsInfo = (markets, darkMode) => {
+    const textColor = darkMode ? "white" : "black";
     return(
         <div className={ arbitrageCardStyle("20px", darkMode).cardClassName} 
             style={{ marginRight:"1rem", padding: "0rem", borderRadius: "20px"}}>
-            <div className={ arbitrageCardStyle("20px", darkMode).cardBodyClassName} >
-                <table className="table">
+            <div className={ arbitrageCardStyle("20px", darkMode).cardBodyClassName}>
+                <table className="table" style={{ color: textColor}}>
                     <thead>
                         <tr align="center">
                             <th>Market ({markets.length})</th>
@@ -35,14 +36,7 @@ const getMarketsInfo = (markets, darkMode) => {
                                             {market.tickers.websocket.toString()} 
                                         </td>
                                         <td>
-                                            { 
-                                                market.tickers.rest.toString()
-                                                // market.tickers.rest.map(ticker => 
-                                                //     <a key={ ticker } href={marketticker.RestEndpoint}>
-                                                //         {ticker}, 
-                                                //     </a>
-                                                // )
-                                            } 
+                                            { market.tickers.rest.toString() } 
                                         </td>
                                     </tr>
                                 )
@@ -61,6 +55,7 @@ const MarketStatusView = (props)=> {
     const [markets, setMarkets] = useState([])
     const darkMode = props.darkMode
     const marketStatus = props.marketStatus;
+    
 
     React.useEffect(() => {
         getMarkets().then(

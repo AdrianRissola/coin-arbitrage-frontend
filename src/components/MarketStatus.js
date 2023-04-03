@@ -5,10 +5,10 @@ const greenHex = "#0ecb81"
 const MarketsStatus = (props)=> {
     const marketsStatus = props.marketsStatus || {connectedMarkets: [], disconnectedMarkets: []};
     const styles = marketStatusCardStyle(props.darkMode)
-
+    const textColor = props.darkMode ? "white" : "black";
     return(
         <div className={styles.cardClassName} style={styles.cardStyle}>
-            <div  style={{ textAlign: "center"}}>
+            <div  style={{ textAlign: "center", color: textColor}}>
                 <b>
                     WebSocket Market Connections <br/>
                     Connected: {marketsStatus.connectedMarkets.length} <br/>
@@ -16,7 +16,7 @@ const MarketsStatus = (props)=> {
                 </b>
             </div>
             <div className={styles.cardBodyClassName}>
-                <table className="table">
+                <table className="table" style={{ color: textColor}}>
                     <tbody>
                         {
                             marketsStatus.connectedMarkets.map(connectedMarket => {
