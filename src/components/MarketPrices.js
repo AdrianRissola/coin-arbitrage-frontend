@@ -22,7 +22,7 @@ const MarketPrices = (props)=> {
                                     type="checkbox" className="form-check-input" id="sortCheck"
                                     onClick={ evt => {setOrder(evt.target.checked)} }
                                 />
-                                <label className="form-check-label" htmlFor="sortCheck">Sort down</label>
+                                <label className="form-check-label" htmlFor="sortCheck" style={{fontSize:"20px"}}>&#x2191;&#x2193;</label>
                             </th>
                         </tr>
                         <tr>
