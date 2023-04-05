@@ -12,7 +12,7 @@ let ws = null;
 
 const App = () => {
   const [arbitrages, setArbitrages] = useState(helper.initialArbitrage);
-  const [bestArbitrage, setBestArbitrage] = useState(helper.initialArbitrage[0]);
+  const [bestArbitrage, setBestArbitrage] = useState(helper.initialArbitrage);
   const [marketPrices, setMarketPrices] = useState(helper.initialMarketPrices);
   const [ticker, setTicker] = useState("BTC-USDT")
   const [arbitrageChannelMessage, setArbitrageChannelMessage] = useState()
@@ -86,7 +86,7 @@ const App = () => {
 
     if(response.channel==='bestArbitrage' && response.ticker==='ALL') {
       if(response.arbitrages && response.arbitrages.length>0) {
-        setBestArbitrage(response.arbitrages[0])
+        setBestArbitrage(response.arbitrages)
         setTicker(response.arbitrages[0].transactions[0].pair)
         setMarketStatus(response.marketStatus)
         setArbitrageChannelMessage(null)
