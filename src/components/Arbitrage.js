@@ -91,8 +91,8 @@ const Arbitrage = (props)=> {
                                 </td>
                                 :
                                 <>
-                                    <td style = {{fontWeight: 'bold', textAlign:"center", fontSize:"90%"}} colSpan="2" title={displayedArbitrage.profitPerUnit + ' ' + ticker.split('-')[1]}>
-                                        Profit per {ticker.split('-')[0]} unit: 
+                                    <td style = {{fontWeight: 'bold', textAlign:"center", fontSize:"90%"}} colSpan="2" title={`Profit per ${ticker.split('-')[0]} unit`}>
+                                        Profit / {ticker.split('-')[0]}:
                                     </td>
                                     <td style = {{fontWeight: 'bold', textAlign:"center", fontSize:"90%"}} colSpan="1" title={displayedArbitrage.profitPerUnit + ' ' + ticker.split('-')[1]}>
                                         <span style={{color:greenHex}}>{displayedArbitrage.profitPerUnit.toLocaleString(navigator.language,{maximumSignificantDigits: 8})} {ticker.split('-')[1]}</span>

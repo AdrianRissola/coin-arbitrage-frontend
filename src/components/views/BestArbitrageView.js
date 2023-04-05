@@ -19,7 +19,8 @@ const BestArbitrageView = (props)=> {
     bestArbitrages.filter(arbitrage => arbitrage.transactions[0].pair.split('-')[1]===coin)[0]
     : bestArbitrages[0].profitPercentage > bestArbitrages[1].profitPercentage ? 
         bestArbitrages[0] : bestArbitrages[1];
-
+    
+    const selectedMarketPrices = marketPrices[selectedArbitrage.transactions[0].pair]
 
     const btnGroupClassName = darkMode ? "btn btn-dark" : "btn btn-light";
 
@@ -33,13 +34,13 @@ const BestArbitrageView = (props)=> {
                     <div className="btn-group" role="group" >
 
                         <input onClick={ () => {setCoin()} } defaultChecked={true} type="radio" class="btn-check" name="btnradio" id="btnradio1" autocomplete="off"/>
-                        <label class={btnGroupClassName} for="btnradio1">Best</label>
+                        <label className={btnGroupClassName} htmlFor="btnradio1">Best</label>
 
-                        <input onClick={ () => {setCoin('USDT')} } type="radio" class="btn-check" name="btnradio" id="btnradio2" autocomplete="off"/>
-                        <label class={btnGroupClassName} for="btnradio2">USDT</label>
+                        <input onClick={ () => {setCoin('USDT')} } type="radio" class="btn-check" name="btnradio" id="btnradio2" autoComplete="off"/>
+                        <label className={btnGroupClassName} htmlFor="btnradio2">USDT</label>
 
-                        <input onClick={ () => {setCoin('BTC')} } type="radio" class="btn-check" name="btnradio" id="btnradio3" autocomplete="off"/>
-                        <label class={btnGroupClassName} for="btnradio3">BTC</label>
+                        <input onClick={ () => {setCoin('BTC')} } type="radio" class="btn-check" name="btnradio" id="btnradio3" autoComplete="off"/>
+                        <label className={btnGroupClassName} htmlFor="btnradio3">BTC</label>
 
                     </div>
                 </div>
@@ -61,7 +62,7 @@ const BestArbitrageView = (props)=> {
                 </div>
                 <div className="col-sm" align="center" > 
                     <MarketPrices ticker = { selectedArbitrage.transactions[0].pair } 
-                        marketPrices={ marketPrices } darkMode = { darkMode }
+                        marketPrices={ selectedMarketPrices } darkMode = { darkMode }
                     /> 
                 </div>
             </div>

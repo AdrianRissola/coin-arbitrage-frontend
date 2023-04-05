@@ -4,21 +4,24 @@ import ArbitrageView from "./ArbitrageView";
 import BestArbitrageView from "./BestArbitrageView";
 
 
-const buildArbitrageView = (props) => <ArbitrageView
-    ticker = { props.ticker }
-    darkMode = { props.darkMode }
-    availableTickers = { props.availableTickers }
-    handleChangeChannelSubscriptionClick = { props.handleChangeChannelSubscriptionClick }
-    arbitrages = { props.arbitrages }
-    marketPrices = { props.marketPrices }
-/>;
+const buildArbitrageView = (props) => {
+    const arbitrageView = props.marketPrices ?
+    <ArbitrageView
+        ticker = { props.ticker }
+        darkMode = { props.darkMode }
+        availableTickers = { props.availableTickers }
+        handleChangeChannelSubscriptionClick = { props.handleChangeChannelSubscriptionClick }
+        arbitrages = { props.arbitrages }
+        marketPrices = { props.marketPrices[0] }
+    /> : null;
+    return arbitrageView;
+}
 
 const buildBestArbitrageView = (props) => <BestArbitrageView
-    darkMode = { props.darkMode }
-    bestArbitrage = { props.bestArbitrage }
-    marketPrices = { props.marketPrices }
-    marketStatus = { props.marketStatus }
-/>;
+        darkMode = { props.darkMode }
+        bestArbitrage = { props.bestArbitrage }
+        marketPrices = { props.marketPrices }
+    />
 
 const buildHistoricalView = (darkMode) => <HistoricalView darkMode = { darkMode } />
 

@@ -19,10 +19,3 @@ exports.initialArbitrage = [
         date: null
     }
 ]
-  
-exports.initialMarketPrices = [
-    {
-        market: "",
-        price: ""
-    }
-]

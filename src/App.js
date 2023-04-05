@@ -13,7 +13,7 @@ let ws = null;
 const App = () => {
   const [arbitrages, setArbitrages] = useState(helper.initialArbitrage);
   const [bestArbitrage, setBestArbitrage] = useState(helper.initialArbitrage);
-  const [marketPrices, setMarketPrices] = useState(helper.initialMarketPrices);
+  const [marketPrices, setMarketPrices] = useState(null);
   const [ticker, setTicker] = useState("BTC-USDT")
   const [arbitrageChannelMessage, setArbitrageChannelMessage] = useState()
   const [marketPriceChannelMessage, setMarketPriceChannelMessage] = useState()
@@ -76,8 +76,8 @@ const App = () => {
       }
       if(response.marketPrices) {
         const ticker = Object.keys(response.marketPrices)[0];
-        setMarketPrices(response.marketPrices[ticker]
-          .sort((mp1, mp2) => (mp1.market > mp2.market) ? 1 : ((mp2.market > mp1.market) ? -1 : 0)));
+        setMarketPrices([response.marketPrices[ticker]
+          .sort((mp1, mp2) => (mp1.market > mp2.market) ? 1 : ((mp2.market > mp1.market) ? -1 : 0))]);
       } else {
         setMarketPrices(prev=>prev)
         setMarketPriceChannelMessage(response.message)
@@ -85,18 +85,20 @@ const App = () => {
     }
 
     if(response.channel==='bestArbitrage' && response.ticker==='ALL') {
-      if(response.arbitrages && response.arbitrages.length>0) {
-        setBestArbitrage(response.arbitrages)
-        setTicker(response.arbitrages[0].transactions[0].pair)
-        setMarketStatus(response.marketStatus)
+      const arbitrages = response.bestArbitrages.arbitragesData.map( ad => ad.arbitrage );
+      const marketPrices = {};
+      response.bestArbitrages.arbitragesData.forEach(ad => {
+        marketPrices[Object.keys(ad.marketPrices)[0]] = ad.marketPrices[Object.keys(ad.marketPrices)[0]];
+      });
+      if(response.bestArbitrages.arbitragesData) {
+        setBestArbitrage(arbitrages);
         setArbitrageChannelMessage(null)
       } else {
         setBestArbitrage(prev=>prev)
         setArbitrageChannelMessage(response.message)
       }
-      if(response.marketPrices) {
-        const ticker = Object.keys(response.marketPrices)[0]
-        setMarketPrices(response.marketPrices[ticker])
+      if(response.bestArbitrages.arbitragesData) {
+        setMarketPrices(marketPrices);
       } else {
         setMarketPrices(prev=>prev)
         setMarketPriceChannelMessage(response.message)
