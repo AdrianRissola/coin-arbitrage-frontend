@@ -1,39 +1,71 @@
+import { useState } from "react";
 import Arbitrage from "../Arbitrage";
 import MarketPrices from "../MarketPrices";
-import MarketStatus from "../MarketStatus";
+
+
+
 
 const BestArbitrageView = (props)=> {
+    const [coin, setCoin] = useState();
     const darkMode = props.darkMode;
-    const bestArbitrage = props.bestArbitrage;
+    const bestArbitrages = props.bestArbitrage;
     const marketPrices = props.marketPrices;
-    const marketStatus = props.marketStatus;
+
+    console.log("bestArbitrages: ", bestArbitrages);
+    console.log("profitPercentage: ", bestArbitrages[0].profitPercentage);
+    
+    const selectedArbitrage =
+    coin ?
+    bestArbitrages.filter(arbitrage => arbitrage.transactions[0].pair.split('-')[1]===coin)[0]
+    : bestArbitrages[0].profitPercentage > bestArbitrages[1].profitPercentage ? 
+        bestArbitrages[0] : bestArbitrages[1];
+
+
+    const btnGroupClassName = darkMode ? "btn btn-dark" : "btn btn-light";
+
+
+
 
     return(
-        <>
+        <div style={{ marginLeft:"10rem", marginRight:"10rem" }}>
+            <div className="row" style={{ textAlign: "center" }}>
+                <div className="col" >
+                    <div className="btn-group" role="group" >
+
+                        <input onClick={ () => {setCoin()} } defaultChecked={true} type="radio" class="btn-check" name="btnradio" id="btnradio1" autocomplete="off"/>
+                        <label class={btnGroupClassName} for="btnradio1">Best</label>
+
+                        <input onClick={ () => {setCoin('USDT')} } type="radio" class="btn-check" name="btnradio" id="btnradio2" autocomplete="off"/>
+                        <label class={btnGroupClassName} for="btnradio2">USDT</label>
+
+                        <input onClick={ () => {setCoin('BTC')} } type="radio" class="btn-check" name="btnradio" id="btnradio3" autocomplete="off"/>
+                        <label class={btnGroupClassName} for="btnradio3">BTC</label>
+
+                    </div>
+                </div>
+            </div>
+            <br/>
             <div className="row">
                 <div className="col" style={{ textAlign: "center" }}>
-                    <h1 style={{ fontWeight: 'bold' }}> Best Arbitrage </h1>
+                    <h1 style={{ fontWeight: 'bold' }}> Best {coin} Arbitrage </h1>
                 </div>
             </div>
             <br/>
             <div className="row" style={{display: "flex", flexDirection: "row", flexWrap: "wrap"}}>
-                <div class="col-sm" align="center">
+                <div className="col-sm" align="center">
                     <Arbitrage
                         darkMode = { darkMode }
-                        header = { "Best Arbitrage: " + bestArbitrage.transactions[0].pair }
-                        arbitrage = { bestArbitrage  }
+                        header = { "Best Arbitrage: " + selectedArbitrage.transactions[0].pair }
+                        arbitrage = { selectedArbitrage }
                     />
                 </div>
-                <div class="col-sm" align="center" > 
-                    <MarketPrices ticker = { bestArbitrage.transactions[0].pair } 
+                <div className="col-sm" align="center" > 
+                    <MarketPrices ticker = { selectedArbitrage.transactions[0].pair } 
                         marketPrices={ marketPrices } darkMode = { darkMode }
                     /> 
                 </div>
-                <div class="col-sm" align="center">
-                    <MarketStatus marketsStatus = { marketStatus } darkMode = { darkMode }/>
-                </div>
             </div>
-        </> 
+        </div>
     )
 }
 

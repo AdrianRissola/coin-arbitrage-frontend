@@ -37,8 +37,13 @@ const Arbitrage = (props)=> {
     return(
         <div className={styles.cardClassName} style={styles.cardStyle}>
             { getHeader(header, header2) }
-            <div className={styles.cardBodyClassName} >
+            <div className={styles.cardBodyClassName} style={{paddingTop:"0px"}}>
                 <table className="table" style={{ color: textColor}}>
+                    <thead>
+                        <tr>
+                            <th style={{paddingTop:"0px"}}></th><th style={{paddingTop:"0px"}}></th><th style={{paddingTop:"0px"}}></th>
+                        </tr>
+                    </thead>
                     <tbody>
                         <tr>
                             <td align="center" style={{width: "100px"}}>Operation</td>

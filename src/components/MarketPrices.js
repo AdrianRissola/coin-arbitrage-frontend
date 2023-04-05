@@ -16,13 +16,16 @@ const MarketPrices = (props)=> {
                 <table className="table" style={{ color: textColor}}>
                     <thead>
                         <tr>
-                            <th></th>
-                            <th style={{ textAlign:"center", padding: '0rem'}}>
-                                <input
-                                    type="checkbox" className="form-check-input" id="sortCheck"
-                                    onClick={ evt => {setOrder(evt.target.checked)} }
-                                />
-                                <label className="form-check-label" htmlFor="sortCheck" style={{fontSize:"20px"}}>&#x2191;&#x2193;</label>
+                            <th className="text-center" style={{fontSize:"18px"}}>Prices</th>
+                            <th>
+                                <div className="form-check">
+                                    <input className="form-check-input" type="checkbox" value="" id="flexCheckDefault"
+                                        onClick={ evt => {setOrder(evt.target.checked)} }
+                                    />
+                                    <label style={{fontSize:"18px"}}>
+                                        &#x2191;&#x2193;
+                                    </label>
+                                </div>
                             </th>
                         </tr>
                         <tr>
