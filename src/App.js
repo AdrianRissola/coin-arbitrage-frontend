@@ -7,7 +7,6 @@ import DarkModeButton from "./components/DarkModeButton";
 import { buildArbitrageView, buildHistoricalView, buildMarketStatusView, buildBestArbitrageView } from "./components/views/ViewBuilder";
 
 console.log(process.env);
-const availableTickers = JSON.parse(localStorage.getItem("availableWebsocketTickers"));
 let ws = null;
 
 const App = () => {
@@ -122,7 +121,7 @@ const App = () => {
 
   const menuSelector = Object.freeze({
     arbitrage : () => {return buildArbitrageView(
-      {darkMode, ticker, availableTickers, arbitrages, handleChangeChannelSubscriptionClick, marketPrices })},
+      {darkMode, ticker, arbitrages, handleChangeChannelSubscriptionClick, marketPrices })},
     bestArbitrage : () => {return buildBestArbitrageView({darkMode, bestArbitrage, marketPrices, marketStatus})},
     historical: () => {return buildHistoricalView(darkMode)},
     markets: () => {return buildMarketStatusView(darkMode, marketStatus)}
@@ -151,9 +150,10 @@ const App = () => {
           handleChangeChannelSubscriptionClick({channel: 'Markets'})} }
         darkModeButton = { {component: DarkModeButton, darkMode: darkMode, darkModeSetFunction: setDarkMode} }
       />
-      <br/>
+      
 
       <span style={{color:'red'}}>{arbitrageChannelMessage}</span>
+      <br/>
       <span style={{color:'red'}}>{marketPriceChannelMessage}</span> 
 
       <div style={{ marginLeft:"1rem", marginRight:"1rem" }}>

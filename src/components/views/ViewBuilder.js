@@ -9,7 +9,6 @@ const buildArbitrageView = (props) => {
     <ArbitrageView
         ticker = { props.ticker }
         darkMode = { props.darkMode }
-        availableTickers = { props.availableTickers }
         handleChangeChannelSubscriptionClick = { props.handleChangeChannelSubscriptionClick }
         arbitrages = { props.arbitrages }
         marketPrices = { props.marketPrices[0] }

@@ -8,7 +8,7 @@ import MarketsArbitrage from "../MarketsArbitrage";
 import "../../HorizontalScroll.css";
 import MarketsComboBoxFilter from "../filters/MarketsCheckboxDropdownFilter";
 
-
+const availableTickers = JSON.parse(localStorage.getItem("availableWebsocketTickers"));
 
 const leftScroll = (id) => {
     const left = document.querySelector("#"+id.concat('scroll'));
@@ -27,7 +27,7 @@ const ArbitrageView = (props)=> {
     const [coin, setCoin]  = useState("USDT");
     const ticker = props.ticker;
     const handleChangeChannelSubscriptionClick = props.handleChangeChannelSubscriptionClick;
-    const pairCurrencies = props.availableTickers;
+    const pairCurrencies = availableTickers;
     const arbitrages = props.arbitrages;
     const marketPrices = props.marketPrices;
     const darkMode = props.darkMode;
