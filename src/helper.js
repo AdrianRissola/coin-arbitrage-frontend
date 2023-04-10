@@ -1,28 +1,25 @@
-exports.initialArbitrage = [
+exports.arbitrageNotAvailable = (currencyPair) => (
     {
-        transactions: [
-            {
-                type: "BUY",
-                market: null,
-                pair: null,
-                price: ""
-            },
-            {
-                type: "SELL",
-                market: null,
-                pair: null,
-                price: ""
-            }
-        ],
-        profitPerUnit: 0,
-        profitPercentage: 0,
-        date: null
+        "arbitrage_not_available": {
+            message: `Arbitrage not available for: ${currencyPair}`,
+            currencyPair: currencyPair,
+            transactions: [
+                {
+                    type: "BUY",
+                    market: "NotAvailable",
+                    pair: currencyPair,
+                    price: ""
+                },
+                {
+                    type: "SELL",
+                    market: "NotAvailable",
+                    pair: currencyPair,
+                    price: ""
+                }
+            ],
+            profitPerUnit: 0,
+            profitPercentage: 0,
+            date: null
+        }
     }
-]
-  
-exports.initialMarketPrices = [
-    {
-        market: "",
-        price: ""
-    }
-]
+)

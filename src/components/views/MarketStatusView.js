@@ -6,8 +6,9 @@ import MarketStatus from "../../components/MarketStatus";
 const hiddenStyle = { overflow: "hidden", height: "1.2rem" };
 
 const GetMarketsInfo = (markets, darkMode) => {
-
     const [collapsedStyle, setCollapsedStyle] = useState(true);
+    const textColor = darkMode ? "white" : "black";
+
 
     const handleCollapseOnClick = (market) => {
         market.collapsed = !market.collapsed;
@@ -19,11 +20,11 @@ const GetMarketsInfo = (markets, darkMode) => {
         <div className={ arbitrageCardStyle("20px", darkMode).cardClassName} 
             style={{ marginRight:"1rem", padding: "0rem", borderRadius: "20px"}}>
             <div className={ arbitrageCardStyle("20px", darkMode).cardBodyClassName} >
-                <table className="table">
+                <table className="table" style={{ color: textColor}}>
                     <thead>
                         <tr align="center">
                             <th>Market ({markets.length})</th>
-                            <th style={{verticalAlign:"top"}}>Available Tickers</th>
+                            <th style={{verticalAlign:"top"}}>Available Currency Pairs</th>
                             <th></th>
                             <th></th>
                         </tr>
@@ -44,12 +45,12 @@ const GetMarketsInfo = (markets, darkMode) => {
                                                 { market.name }
                                             </a>
                                         </td>             
-                                        <td>
+                                        <td title={`${market.tickers.websocket.length} currency pairs`}>
                                             <div style={ market.currensStyle || hiddenStyle }> 
                                                 { market.tickers.websocket.toString() } 
                                             </div>
                                         </td>
-                                        <td>
+                                        <td title={`${market.tickers.rest.length} currency pairs`}>
                                             <div style={ market.currensStyle || hiddenStyle }>  
                                                 { market.tickers.rest.toString() } 
                                             </div>

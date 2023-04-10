@@ -9,7 +9,7 @@ const Navbar = (props)=> {
 
     return(
         <nav className={"navbar navbar-expand-sm " + (darkMode ? "bg-dark navbar-dark" : "navbar-light")}
-            style={{backgroundColor: !darkMode ? "#E9ECEF" : null}}>
+            style={{backgroundColor: !darkMode ? "#E9ECEF" : null, padding:".5rem 1rem"}}>
             <a className="navbar-brand" href="/#" onClick={ brandFunction } >
                 <b><i>Real-Time Arbitrage Monitor</i></b>
             </a>

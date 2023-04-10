@@ -10,7 +10,8 @@ const Arbitrage = (props)=> {
     const isBestArbitrage = header.toLowerCase().includes("best arbitrage")
     const displayedArbitrage = props.arbitrage
     const ticker = displayedArbitrage.transactions[0].pair
-    const darkCardMode = props.darkMode
+    const darkCardMode = props.darkMode;
+    const textColor = props.darkMode ? "white" : "black";
 
     let styles = isBestArbitrage ? arbitrageCardStyle("40px", darkCardMode) : arbitrageCardStyle("20px", darkCardMode)
 
@@ -35,17 +36,22 @@ const Arbitrage = (props)=> {
     return(
         <div className={styles.cardClassName} style={styles.cardStyle}>
             { getHeader(header, header2) }
-            <div className={styles.cardBodyClassName}>
-                <table className="table">
+            <div className={styles.cardBodyClassName} style={{paddingTop:"0px"}}>
+                <table className="table" style={{ color: textColor}}>
+                    <thead>
+                        <tr>
+                            <th style={{paddingTop:"0px"}}></th><th style={{paddingTop:"0px"}}></th><th style={{paddingTop:"0px"}}></th>
+                        </tr>
+                    </thead>
                     <tbody>
                         <tr>
                             <td align="center" style={{width: "100px"}}>Operation</td>
                             <td align="center" style={{width: "80px"}}>Market</td>
-                            <td align="center">Price</td>
+                            <td align="center" >Price</td>
                         </tr>
                         <tr>
-                            <td align="center">{displayedArbitrage.transactions[0].type}</td>             
-                            <td>{displayedArbitrage.transactions[0].market}</td>
+                            <td align="center" >{displayedArbitrage.transactions[0].type}</td>             
+                            <td >{displayedArbitrage.transactions[0].market}</td>
                             <td align="center" style={{color:greenHex}} title={displayedArbitrage.transactions[0].price}>
                                 { displayedArbitrage.transactions[0].price.toLocaleString(navigator.language, {maximumSignificantDigits:7}) }
                             </td>
@@ -84,8 +90,8 @@ const Arbitrage = (props)=> {
                                 </td>
                                 :
                                 <>
-                                    <td style = {{fontWeight: 'bold', textAlign:"center", fontSize:"90%"}} colSpan="2" title={displayedArbitrage.profitPerUnit + ' ' + ticker.split('-')[1]}>
-                                        Profit per {ticker.split('-')[0]} unit: 
+                                    <td style = {{fontWeight: 'bold', textAlign:"center", fontSize:"90%"}} colSpan="2" title={`Profit per ${ticker.split('-')[0]} unit`}>
+                                        Profit / {ticker.split('-')[0]}:
                                     </td>
                                     <td style = {{fontWeight: 'bold', textAlign:"center", fontSize:"90%"}} colSpan="1" title={displayedArbitrage.profitPerUnit + ' ' + ticker.split('-')[1]}>
                                         <span style={{color:greenHex}}>{displayedArbitrage.profitPerUnit.toLocaleString(navigator.language,{maximumSignificantDigits: 8})} {ticker.split('-')[1]}</span>

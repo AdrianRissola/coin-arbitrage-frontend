@@ -19,14 +19,15 @@ const MarketsArbitrage = (props) => {
     const marketFilter = props.marketFilter
     const marketsFilter = props.marketsFilter
     const minProfitFilter = props.minProfitFilter
-    const marketPairs = Object.keys(arbitrages).sort()
+    const marketPairs = props.arbitrages ? Object.keys(arbitrages).sort() : [];
     const arbitrageComponents = []
+
     arbitrageComponents.push(
       <Arbitrage
         key="Best Arbitrage"
         darkMode = { darkMode }
-        header={ "Best Arbitrage" }
-        arbitrage={ arbitrages[Object.keys(arbitrages)[0]] }
+        header= { arbitrages.arbitrage_not_available ? arbitrages.arbitrage_not_available.message : "Best Arbitrage" }
+        arbitrage= { arbitrages[Object.keys(arbitrages)[0]] }
         tableStyle= { tableStyleForBestArbitrage }
       />
     )
