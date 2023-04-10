@@ -22,7 +22,7 @@ const MarketsStatus = (props)=> {
                             marketsStatus.connectedMarkets.map(connectedMarket => {
                                 return (
                                     <tr key={connectedMarket}>
-                                        <td style={{ textAlign:"left", fontWeight: 'bold' }}>{ connectedMarket }</td>
+                                        <td style={{ textAlign:"left", fontWeight: 'bold', color: textColor }}>{ connectedMarket }</td>
                                         <td style={{ color:greenHex, textAlign:"right", fontWeight: 'bold' }} title={connectedMarket}>
                                             Connected
                                         </td>
