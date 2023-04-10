@@ -11,7 +11,6 @@ const Arbitrage = (props)=> {
     const displayedArbitrage = props.arbitrage
     const ticker = displayedArbitrage.transactions[0].pair
     const darkCardMode = props.darkMode;
-
     const textColor = props.darkMode ? "white" : "black";
 
     let styles = isBestArbitrage ? arbitrageCardStyle("40px", darkCardMode) : arbitrageCardStyle("20px", darkCardMode)
