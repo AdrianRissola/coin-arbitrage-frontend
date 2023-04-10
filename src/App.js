@@ -18,11 +18,11 @@ const App = () => {
   const [arbitrageChannelMessage, setArbitrageChannelMessage] = useState()
   const [marketPriceChannelMessage, setMarketPriceChannelMessage] = useState()
   const [darkMode, setDarkMode] = useState(true)
-  const [currentWsResponse, setCurrentWsResponse] = useState({channel: "arbitrage", ticker: "btc-usdt"})
+  const [currentWsResponse, setCurrentWsResponse] = useState({channel: "arbitrage", ticker: "BTC-USDT"})
   const [marketStatus, setMarketStatus] = useState(null)
   const [webSocketOnMessageEnabled, setWebSocketOnMessageEnabled] = useState(true)
   const [menuSelection, setMenuSelection] = useState('arbitrage');
-  const [webSocketRequest, setWebSocketRequest] = useState({ channel:"arbitrage", ticker:"btc-usdt" });
+  const [webSocketRequest, setWebSocketRequest] = useState({ channel:"arbitrage", ticker:"BTC-USDT" });
 
   const isCurrentSubscription = (channelSubscription) => currentWsResponse.channel === channelSubscription.channel && currentWsResponse.ticker === channelSubscription.ticker
   const isOpen = ws => ws.readyState === ws.OPEN
@@ -71,13 +71,17 @@ const App = () => {
         setArbitrages(response.arbitrages[ticker])
         setArbitrageChannelMessage(null)
       } else {
-        setArbitrages(prev=>prev)
-        setArbitrageChannelMessage(response.message)
+        setTicker(webSocketRequest.ticker)
+        setArbitrages(helper.arbitrageNotAvailable(webSocketRequest.ticker))
       }
       if(response.marketPrices) {
         const ticker = Object.keys(response.marketPrices)[0];
-        setMarketPrices([response.marketPrices[ticker]
-          .sort((mp1, mp2) => (mp1.market > mp2.market) ? 1 : ((mp2.market > mp1.market) ? -1 : 0))]);
+        if(response.marketPrices[ticker])
+          setMarketPrices(
+            [
+              response.marketPrices[ticker].sort((mp1, mp2) => (mp1.market > mp2.market) ? 1 : ((mp2.market > mp1.market) ? -1 : 0))
+            ]
+          );
       } else {
         setMarketPrices(prev=>prev)
         setMarketPriceChannelMessage(response.message)
@@ -147,10 +151,10 @@ const App = () => {
           handleChangeChannelSubscriptionClick({channel: 'Markets'})} }
         darkModeButton = { {component: DarkModeButton, darkMode: darkMode, darkModeSetFunction: setDarkMode} }
       />
-      
-      <span style={{color:'red'}}>{arbitrageChannelMessage}</span>
       <br/>
-      <span style={{color:'red'}}>{marketPriceChannelMessage}</span>
+
+      <span style={{color:'red'}}>{arbitrageChannelMessage}</span>
+      <span style={{color:'red'}}>{marketPriceChannelMessage}</span> 
 
       <div style={{ marginLeft:"1rem", marginRight:"1rem" }}>
 
