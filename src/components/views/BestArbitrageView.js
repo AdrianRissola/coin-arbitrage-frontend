@@ -2,17 +2,11 @@ import { useState } from "react";
 import Arbitrage from "../Arbitrage";
 import MarketPrices from "../MarketPrices";
 
-
-
-
 const BestArbitrageView = (props)=> {
     const [coin, setCoin] = useState();
     const darkMode = props.darkMode;
     const bestArbitrages = props.bestArbitrage;
     const marketPrices = props.marketPrices;
-
-    console.log("bestArbitrages: ", bestArbitrages);
-    console.log("profitPercentage: ", bestArbitrages[0].profitPercentage);
     
     const selectedArbitrage =
     coin ?
@@ -24,22 +18,19 @@ const BestArbitrageView = (props)=> {
 
     const btnGroupClassName = darkMode ? "btn btn-dark" : "btn btn-light";
 
-
-
-
     return(
         <div style={{ marginLeft:"10rem", marginRight:"10rem" }}>
             <div className="row" style={{ textAlign: "center" }}>
                 <div className="col" >
                     <div className="btn-group" role="group" >
 
-                        <input onClick={ () => {setCoin()} } defaultChecked={true} type="radio" class="btn-check" name="btnradio" id="btnradio1" autocomplete="off"/>
+                        <input onClick={ () => {setCoin()} } defaultChecked={true} type="radio" className="btn-check" name="btnradio" id="btnradio1" autoComplete="off"/>
                         <label className={btnGroupClassName} htmlFor="btnradio1">Best</label>
 
-                        <input onClick={ () => {setCoin('USDT')} } type="radio" class="btn-check" name="btnradio" id="btnradio2" autoComplete="off"/>
+                        <input onClick={ () => {setCoin('USDT')} } type="radio" className="btn-check" name="btnradio" id="btnradio2" autoComplete="off"/>
                         <label className={btnGroupClassName} htmlFor="btnradio2">USDT</label>
 
-                        <input onClick={ () => {setCoin('BTC')} } type="radio" class="btn-check" name="btnradio" id="btnradio3" autoComplete="off"/>
+                        <input onClick={ () => {setCoin('BTC')} } type="radio" className="btn-check" name="btnradio" id="btnradio3" autoComplete="off"/>
                         <label className={btnGroupClassName} htmlFor="btnradio3">BTC</label>
 
                     </div>
