@@ -9,6 +9,8 @@ import "../../HorizontalScroll.css";
 import MarketsComboBoxFilter from "../filters/MarketsCheckboxDropdownFilter";
 
 const availableTickers = JSON.parse(localStorage.getItem("availableWebsocketTickers"));
+const quoteCurrencies = JSON.parse(localStorage.getItem("availableWebsocketQuoteCurrencies"));
+
 
 const leftScroll = (id) => {
     const left = document.querySelector("#"+id.concat('scroll'));
@@ -32,8 +34,6 @@ const ArbitrageView = (props)=> {
     const marketPrices = props.marketPrices;
     const darkMode = props.darkMode;
     const btnGroupClassName = darkMode ? "btn btn-dark" : "btn btn-light";
-
-    const quoteCurrencies = Array.from(new Set(pairCurrencies.map(bc => bc.name.split('-')[1]))).sort();
 
     const getTickerButtonsComponent = (coin) => {
         return (
