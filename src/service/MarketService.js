@@ -25,7 +25,10 @@ const getAllAvailableTickers = async () => {
     }).catch(e => console.log(e));
 }
 getAllAvailableTickers().then( response => {
-    localStorage.setItem('availableWebsocketTickers', JSON.stringify(response.data));
+    const pairCurrencies = response.data;
+    localStorage.setItem('availableWebsocketTickers', JSON.stringify(pairCurrencies));
+    const quoteCurrencies = Array.from(new Set(pairCurrencies.map(bc => bc.name.split('-')[1]))).sort();
+    localStorage.setItem('availableWebsocketQuoteCurrencies', JSON.stringify(quoteCurrencies));
 })
 
 export { getMarkets, getAllAvailableTickers }

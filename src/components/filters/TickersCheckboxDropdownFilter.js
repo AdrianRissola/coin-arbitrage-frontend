@@ -9,9 +9,14 @@ const availableTickers = JSON.parse(localStorage.getItem("availableWebsocketTick
     }
 });
 
+const quoteCurrencies = JSON.parse(localStorage.getItem("availableWebsocketQuoteCurrencies"));
+
 const TickersCheckboxDropdown = (props)=> {
+    const quoteToChecked = new Map();
+    quoteCurrencies.forEach(qc=>quoteToChecked.set(qc, false));
     const [selectedTickers, setSelectedTickers] = useState([defaultSelectecdTicker]);
     const [allChecked, setAllChecked] = useState(false);
+    const [allQuotesChecked, setAllQuotesChecked] = useState(quoteToChecked);
     const [allUsdtChecked, setAllUsdtChecked] = useState(false);
     const [allBtcChecked, setAllBtcChecked] = useState(false);
     const coinSetter = { USDT: setAllUsdtChecked, BTC: setAllBtcChecked };
@@ -60,14 +65,15 @@ const TickersCheckboxDropdown = (props)=> {
         }
     }
 
-    const handleSelectAllByCoinOnClick = (checked, coin) => {
-        Object.entries(coinSetter).forEach((entry) =>{ entry[1](entry[0] === coin) });
+    const handleSelectAllByQuoteCurrencyOnClick = (checked, currency) => {
+        [...allQuotesChecked.keys()].forEach(quoteCurrency => allQuotesChecked.set(quoteCurrency, quoteCurrency === currency));
+        setAllQuotesChecked(allQuotesChecked);
         if(checked) {
             setAllChecked(false);
             const selectedTickersByCoin = [];
             availableTickers.forEach( ticker => {
                 ticker.checked = false;
-                if(ticker.tickerName.split("-")[1] === coin){
+                if(ticker.tickerName.split("-")[1] === currency){
                     ticker.checked = checked;
                     selectedTickersByCoin.push(ticker.tickerName);
                 }
@@ -106,7 +112,22 @@ const TickersCheckboxDropdown = (props)=> {
                                 </div>
                             </a>
                         </li>
-                        <li>
+                        {
+                            quoteCurrencies.map( qc => (
+                                <li key={qc}>
+                                    <a className="dropdown-item" href="/#">
+                                        <div className="form-check">
+                                            <input className="form-check-input" type="checkbox" value="" id={`selectAll${qc}Id`}
+                                                checked = { allQuotesChecked.get(qc) }
+                                                onChange={(event)=>{ handleSelectAllByQuoteCurrencyOnClick(event.target.checked, qc) }}
+                                            />
+                                            <label className="form-check-label" htmlFor="selectAllUSDTId">Select All {qc}</label>
+                                        </div>
+                                    </a>
+                                </li>
+                            ))
+                        }
+                        {/* <li>
                             <a className="dropdown-item" href="/#">
                                 <div className="form-check">
                                     <input className="form-check-input" type="checkbox" value="" id="selectAllUSDTId"
@@ -127,7 +148,7 @@ const TickersCheckboxDropdown = (props)=> {
                                     <label className="form-check-label" htmlFor="selectAllBTCId">Select All BTC</label>
                                 </div>
                             </a>
-                        </li>
+                        </li> */}
                         <li><hr className="dropdown-divider"/></li>
                         { availableTickers.map(option => 
                             <li key= { option.tickerName } >
