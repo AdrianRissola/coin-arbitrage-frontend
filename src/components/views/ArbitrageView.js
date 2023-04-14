@@ -67,7 +67,7 @@ const ArbitrageView = (props)=> {
                         <label className={btnGroupClassName} style={{opacity: '1'}} >Select Quote Currency:</label>
                         
                         {
-                            quoteCurrencies.map(qc => (
+                            quoteCurrencies?.map(qc => (
                                 <React.Fragment key={qc}>
                                     <input onClick={() => {setCoin(qc)}} defaultChecked={qc==='USDT' ? true : false} type="radio" className="btn-check" name="btnradio" id={qc} autoComplete="off"/>
                                     <label className={btnGroupClassName} htmlFor={qc}>{qc}</label>
@@ -101,8 +101,8 @@ const ArbitrageView = (props)=> {
                 ))
             }
             <div className="row">
-                <div className="col" style={{textAlign: "center"}}>
-                    <h1 style={{width:"1300px", fontWeight: 'bold', fontSize:"2.5rem"}}>
+                <div className="col-sm-12" style={{textAlign: "center"}}>
+                    <h1 style={{fontWeight: 'bold', fontSize:"2.5rem"}}>
                         { ticker } Arbitrage
                     </h1>
                 </div>

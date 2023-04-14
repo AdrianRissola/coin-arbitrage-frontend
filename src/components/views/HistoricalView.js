@@ -100,8 +100,8 @@ const HistoricalView = (props)=> {
     return(
         <>
             <div className="row">
-                <div className="col" style={{textAlign: "center"}}>
-                    <h1 style={{width:"1300px", fontWeight: 'bold', fontSize:"2.5rem"}}>
+                <div className="col-sm-12" style={{ textAlign: "center" }}>
+                    <h1 style={{fontWeight: 'bold', fontSize:"2.5rem"}}>
                         Historical
                     </h1>
                 </div>
