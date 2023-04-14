@@ -10,12 +10,12 @@ const getHistoricalArbitrages = async (tickers) => {
     return await axios.get(baseURL.concat(historicalArbitrages), {
         params: {
             tickers,
-        }
-      }).then(
+        }  
+    }).then(
         (response) => {
         console.log(`HistoricalArbitrageService.getHistoricalArbitrages(${tickers}):`, response.data)
         return response;
-    }).catch(e => console.log(e));
+    }).catch(e => console.log("Axios Error in HistoricalArbitrageService.getHistoricalArbitrages:", e));
 }
 
 getHistoricalArbitrages(["BTC-USDT"]).then(

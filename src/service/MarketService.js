@@ -11,7 +11,7 @@ const getMarkets = async () => {
         (response) => {
         console.log("MarketService.getMarkets:", response.data)
         return response;
-    }).catch(e => console.log(e));
+    }).catch(e => console.log("Axios Error in MarketService.getMarkets:", e));
 }
 getMarkets().then( response => {
     localStorage.setItem('marketsCheckboxDropdown', JSON.stringify(response.data.map(market => market.name).sort()));
@@ -22,7 +22,7 @@ const getAllAvailableTickers = async () => {
         (response) => {
         console.log("MarketService.getAllAvailableTickers:", response.data)
         return response;
-    }).catch(e => console.log(e));
+    }).catch(e => console.log("Axios Error in MarketService.getAllAvailableTickers:", e));
 }
 getAllAvailableTickers().then( response => {
     const pairCurrencies = response.data;

@@ -11,7 +11,7 @@ const getHistoricalArbitrages = async () => {
         (response) => {
         console.log("ArbitrageService.getHistoricalArbitrages:", response.data)
         return response;
-    }).catch(e => console.log(e));;
+    }).catch(e => console.log("Axios Error in ArbitrageService.getHistoricalArbitrages:", e));;
 }
 
 export { getHistoricalArbitrages }
