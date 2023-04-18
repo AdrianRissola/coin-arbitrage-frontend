@@ -9,7 +9,7 @@ const BestArbitrageView = (props)=> {
     const marketPrices = props.marketPrices;
     
     const selectedArbitrage =
-    coin ?
+    coin && bestArbitrages ?
     bestArbitrages.filter(arbitrage => arbitrage.transactions[0].pair.split('-')[1]===coin)[0]
     : bestArbitrages[0].profitPercentage > bestArbitrages[1].profitPercentage ? 
         bestArbitrages[0] : bestArbitrages[1];

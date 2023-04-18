@@ -13,9 +13,6 @@ const getMarkets = async () => {
         return response;
     }).catch(e => console.log("Axios Error in MarketService.getMarkets:", e));
 }
-getMarkets().then( response => {
-    localStorage.setItem('marketsCheckboxDropdown', JSON.stringify(response.data.map(market => market.name).sort()));
-})
 
 const getAllAvailableTickers = async () => {
     return await axios.get(baseURL.concat(availableTickers)).then(

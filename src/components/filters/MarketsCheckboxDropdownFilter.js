@@ -1,13 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
+import { getMarkets } from '../../service/MarketService';
 
-const availableMarkets = JSON.parse(localStorage.getItem("marketsCheckboxDropdown")).map(market => {
-    return {
-        marketName: market,
-        checked: true,
-    }
-});
 
 const MarketsCheckboxDropdown = (props)=> {
+    const availableMarkets = useRef([]);
     const [check, setCheck] = useState(true);
     const marketsFilter = props.marketsFilter;
     const buttonText = props.buttonText;
@@ -19,12 +15,20 @@ const MarketsCheckboxDropdown = (props)=> {
     } : { backgroundColor: null, color: null };
 
     React.useEffect(() => {
-        onClickFunction([...availableMarkets.map(market=>market.marketName)]);
+        getMarkets().then( response => {
+            availableMarkets.current = response.data.map(market =>  {
+                return {
+                    marketName: market.name,
+                    checked: true,
+                }
+            })
+            onClickFunction([...availableMarkets.current.map(market=>market.marketName)]);
+        })
     }, [onClickFunction]);
 
     const handleSelectedMarketsOnClick = (checked, selectedMarket) => {
-        availableMarkets.filter(market => market.marketName===selectedMarket.marketName)[0].checked = checked
-        if(!availableMarkets.some(market=>!market.checked))
+        availableMarkets.current.filter(market => market.marketName===selectedMarket.marketName)[0].checked = checked
+        if(!availableMarkets.current.some(market=>!market.checked))
             setCheck(true);
         if(checked){
             onClickFunction([...marketsFilter, selectedMarket.marketName]);
@@ -37,11 +41,11 @@ const MarketsCheckboxDropdown = (props)=> {
 
     const handleSelectAllOnClick = (checked) => {
         setCheck(checked);
-        availableMarkets.forEach(market => {
+        availableMarkets.current.forEach(market => {
             market.checked = checked
         });
         if(checked) {
-            onClickFunction([...availableMarkets.map(market=>market.marketName)]);
+            onClickFunction([...availableMarkets.current.map(market=>market.marketName)]);
         } else {
             onClickFunction([]);
         }
@@ -67,7 +71,7 @@ const MarketsCheckboxDropdown = (props)=> {
                         </a>
                     </li>
                     <li><hr className="dropdown-divider"/></li>
-                    { availableMarkets.map(option => 
+                    { availableMarkets.current.map(option => 
                         <li key= { option.marketName }>
                             <a className="dropdown-item" href="/#">
                                 <div className="form-check">
