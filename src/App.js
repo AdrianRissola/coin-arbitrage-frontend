@@ -151,10 +151,13 @@ const App = () => {
         darkModeButton = { {component: DarkModeButton, darkMode: darkMode, darkModeSetFunction: setDarkMode} }
       />
       
-
-      <span style={{color:'red'}}>{arbitrageChannelMessage}</span>
-      <br/>
-      <span style={{color:'red'}}>{marketPriceChannelMessage}</span> 
+      { arbitrageChannelMessage || marketPriceChannelMessage? 
+        <>
+          <span style={{color:'red', padding:'10px'}}>{arbitrageChannelMessage}</span>
+          <span style={{color:'red', padding:'10px'}}>{marketPriceChannelMessage}</span> 
+        </>
+        : null
+      }
 
       <div style={{ marginLeft:"1rem", marginRight:"1rem" }}>
 
