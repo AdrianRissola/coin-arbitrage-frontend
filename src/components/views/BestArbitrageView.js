@@ -19,7 +19,7 @@ const BestArbitrageView = (props)=> {
     const btnGroupClassName = darkMode ? "btn btn-dark" : "btn btn-light";
 
     return(
-        <div style={{ marginLeft:"10rem", marginRight:"10rem" }}>
+        <div style={{ marginLeft:"10rem", marginRight:"10rem", marginTop: '10px' }}>
             <div className="row" style={{ textAlign: "center" }}>
                 <div className="col" >
                     <div className="btn-group" role="group" >
