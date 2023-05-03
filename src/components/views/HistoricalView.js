@@ -4,7 +4,6 @@ import ArbitrageList from "../ArbitrageList";
 import helper from "../../helper";
 import RowFilter from "../../components/filters/RowFilter";
 import SplitButtonComboBox from "../../components/filters/SplitButtonComboBox";
-import ComboBoxFilter from "../../components/filters/ComboBoxFilter";
 import MarketFilter from "../../components/filters/MarketFilter";
 import MinProfitFilter from "../../components/filters/MinProfitFilter";
 import MarketsCheckboxDropdownFilter from "../filters/MarketsCheckboxDropdownFilter";
@@ -13,7 +12,8 @@ import TickersCheckboxDropdownFilter from "../filters/TickersCheckboxDropdownFil
 
 
 const HistoricalView = (props)=> {
-    const [historicalArbitrages, setHistoricalArbitrages] = useState(JSON.parse(localStorage.getItem("historicalArbitrages")));
+    const init = JSON.parse(localStorage.getItem("historicalArbitrages"));
+    const [historicalArbitrages, setHistoricalArbitrages] = useState( init ? init : null );
     const [marketFilter, setMarketFilter] = useState("");
     const [marketsFilter, setMarketsFilter] = useState([]);
     const [minProfitFilter, setMinProfitFilter] = useState(0)
@@ -31,6 +31,7 @@ const HistoricalView = (props)=> {
 
     const handleOnClickFindButton = (selectedTickers) => {
         if(selectedTickers && selectedTickers.length>0) {
+            setHistoricalArbitrages(null); 
             callGetHistoricalArbitrages(selectedTickers);
         };
     }
@@ -70,12 +71,6 @@ const HistoricalView = (props)=> {
                 buttonText = { "Tickers"} styleWidth = {"150px"}
             />
         );
-        // historicalFilters.push(
-        //     <ComboBoxFilter darkMode = { darkMode } onClickFunction = { handleSelectedTickerOnClick }
-        //         currentSelection = { tickerFilter } buttonText = { "Ticker: "}
-        //         options = { availableTickers } styleWidth = {"175px"}
-        //     />
-        // );
         
         historicalFilters.push(
         <SplitButtonComboBox darkMode = { darkMode } 
@@ -107,9 +102,18 @@ const HistoricalView = (props)=> {
                 </div>
             </div>
             { getHistoricalRowFilterComponent() }
+            {
+                !historicalArbitrages ?
+                <div className="row justify-content-center">
+                    <div className="spinner-border" role="status">
+                        <span className="visually-hidden">Loading...</span>
+                    </div>
+                </div>
+                : null
+            }
             <div className="row">
                 <div className="col-sm-12" style={{display: "flex", flexDirection: "row", flexWrap: "wrap"}}>
-                    { historicalArbitrages.length>0 ?
+                    { historicalArbitrages && historicalArbitrages.length>0 ?
                         <ArbitrageList
                             arbitrages = { historicalArbitrages }
                             initArb = { helper.initialArbitrage }
