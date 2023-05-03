@@ -1,25 +1,27 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import search_svg from "../../../src/search.svg";
+import { getAllAvailableTickers } from '../../service/MarketService';
 
 const defaultSelectecdTicker = 'BTC-USDT';
-const availableTickers = JSON.parse(localStorage.getItem("availableWebsocketTickers")).map(ticker => ticker.name).sort().map(ticker => {
-    return {
-        tickerName: ticker,
-        checked: ticker === defaultSelectecdTicker ? true : false,
-    }
-});
+// const availableTickers = JSON.parse(localStorage.getItem("availableWebsocketTickers")).map(ticker => ticker.name).sort().map(ticker => {
+//     return {
+//         tickerName: ticker,
+//         checked: ticker === defaultSelectecdTicker ? true : false,
+//     }
+// });
 
-const quoteCurrencies = JSON.parse(localStorage.getItem("availableWebsocketQuoteCurrencies"));
+// const quoteCurrencies = JSON.parse(localStorage.getItem("availableWebsocketQuoteCurrencies"));
 
 const TickersCheckboxDropdown = (props)=> {
-    const quoteToChecked = new Map();
-    quoteCurrencies.forEach(qc=>quoteToChecked.set(qc, false));
+    const quoteCurrencies = useRef([]);
+    const availableTickers = useRef([]);
+    //const quoteToChecked = useRef(new Map());
+    
     const [selectedTickers, setSelectedTickers] = useState([defaultSelectecdTicker]);
     const [allChecked, setAllChecked] = useState(false);
-    const [allQuotesChecked, setAllQuotesChecked] = useState(quoteToChecked);
-    const [allUsdtChecked, setAllUsdtChecked] = useState(false);
-    const [allBtcChecked, setAllBtcChecked] = useState(false);
-    const coinSetter = { USDT: setAllUsdtChecked, BTC: setAllBtcChecked };
+    const [allQuotesChecked, setAllQuotesChecked] = useState(new Map());
+    
+
     const handleOnClickFindButton = props.handleOnClickFindButton;
     const buttonText = props.buttonText;
     const darkMode = props.darkMode;
@@ -35,13 +37,29 @@ const TickersCheckboxDropdown = (props)=> {
         backgroundColor: "#E9ECEF", color: "black", border: "0px", height: "38px",
     } : { backgroundColor: null, color: null, borderTopRightRadius: "0.25rem", borderBottomRightRadius: "0.25rem" };
 
-    React.useEffect(() => {
-        setSelectedTickers([...availableTickers.filter(ticker=>ticker.checked).map(ticker=>ticker.tickerName)]);
-    }, [setSelectedTickers]);
+    // React.useEffect(() => {
+    //     setSelectedTickers([...availableTickers.filter(ticker=>ticker.checked).map(ticker=>ticker.tickerName)]);
+    // }, [setSelectedTickers]);
+
+    useEffect(() => {
+        getAllAvailableTickers().then( response => {
+            availableTickers.current = response.data.map(ticker => ticker.name).sort().map(ticker => {
+                return {
+                    tickerName: ticker,
+                    checked: ticker === defaultSelectecdTicker ? true : false,
+                }
+            });
+            setSelectedTickers([...availableTickers.current.filter(ticker=>ticker.checked).map(ticker=>ticker.tickerName)]);
+            quoteCurrencies.current = Array.from(new Set(response.data.map(bc => bc.name.split('-')[1]))).sort();
+            const map = new Map();
+            quoteCurrencies.current.forEach( qc => map.set(qc, false));
+            setAllQuotesChecked(map);
+        })
+    }, []);
 
     const handleSelectedTickersOnClick = (checked, selectedTicker) => {
-        availableTickers.filter(ticker => ticker.tickerName===selectedTicker.tickerName)[0].checked = checked
-        if(!availableTickers.some(ticker=>!ticker.checked))
+        availableTickers.current.filter(ticker => ticker.tickerName===selectedTicker.tickerName)[0].checked = checked
+        if(!availableTickers.current.some(ticker=>!ticker.checked))
             setAllChecked(true);
         if(checked){
             setSelectedTickers([...selectedTickers, selectedTicker.tickerName]);
@@ -53,25 +71,34 @@ const TickersCheckboxDropdown = (props)=> {
     }
 
     const handleSelectAllOnClick = (checked) => {
-        Object.values(coinSetter).forEach(setter => setter(false));
+        [...allQuotesChecked.keys()].forEach( quoteCurrency => 
+            allQuotesChecked.set(quoteCurrency, false)
+        );
         setAllChecked(checked);
-        availableTickers.forEach(ticker => {
+        availableTickers.current.forEach(ticker => {
             ticker.checked = checked
         });
         if(checked) {
-            setSelectedTickers([...availableTickers.map(ticker=>ticker.tickerName)]);
+            setSelectedTickers([...availableTickers.current.map(ticker=>ticker.tickerName)]);
         } else {
             setSelectedTickers([]);
         }
     }
 
     const handleSelectAllByQuoteCurrencyOnClick = (checked, currency) => {
-        [...allQuotesChecked.keys()].forEach(quoteCurrency => allQuotesChecked.set(quoteCurrency, quoteCurrency === currency));
+        [...allQuotesChecked.keys()].forEach( quoteCurrency => {
+            quoteCurrency === currency ? allQuotesChecked.set(quoteCurrency, checked) : allQuotesChecked.set(quoteCurrency, false)
+            if(quoteCurrency === currency){
+                console.log(quoteCurrency, checked);
+                allQuotesChecked.set(quoteCurrency, checked);
+            }
+        });
+        console.log(allQuotesChecked);
         setAllQuotesChecked(allQuotesChecked);
         if(checked) {
             setAllChecked(false);
             const selectedTickersByCoin = [];
-            availableTickers.forEach( ticker => {
+            availableTickers.current.forEach( ticker => {
                 ticker.checked = false;
                 if(ticker.tickerName.split("-")[1] === currency){
                     ticker.checked = checked;
@@ -91,6 +118,7 @@ const TickersCheckboxDropdown = (props)=> {
                 <div className="btn-group" role="group">
                     
                     <button className= { dropdownButtonClassName } type="button" id="dropdownMenuButton"
+                        title = {"Current selection: " + selectedTickers}
                         data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style={ buttonStyle }>
                         { buttonText }
                     </button>
@@ -113,7 +141,8 @@ const TickersCheckboxDropdown = (props)=> {
                             </a>
                         </li>
                         {
-                            quoteCurrencies.map( qc => (
+                            // quoteCurrencies.current.map( qc => (
+                                [...allQuotesChecked.keys()].map( qc => (
                                 <li key={qc}>
                                     <a className="dropdown-item" href="/#">
                                         <div className="form-check">
@@ -150,7 +179,7 @@ const TickersCheckboxDropdown = (props)=> {
                             </a>
                         </li> */}
                         <li><hr className="dropdown-divider"/></li>
-                        { availableTickers.map(option => 
+                        { availableTickers.current.map(option => 
                             <li key= { option.tickerName } >
                                 <a className="dropdown-item" href="/#">
                                     <div className="form-check">
