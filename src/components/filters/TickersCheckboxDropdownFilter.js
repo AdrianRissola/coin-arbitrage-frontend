@@ -3,24 +3,14 @@ import search_svg from "../../../src/search.svg";
 import { getAllAvailableTickers } from '../../service/MarketService';
 
 const defaultSelectecdTicker = 'BTC-USDT';
-// const availableTickers = JSON.parse(localStorage.getItem("availableWebsocketTickers")).map(ticker => ticker.name).sort().map(ticker => {
-//     return {
-//         tickerName: ticker,
-//         checked: ticker === defaultSelectecdTicker ? true : false,
-//     }
-// });
-
-// const quoteCurrencies = JSON.parse(localStorage.getItem("availableWebsocketQuoteCurrencies"));
 
 const TickersCheckboxDropdown = (props)=> {
     const quoteCurrencies = useRef([]);
     const availableTickers = useRef([]);
-    //const quoteToChecked = useRef(new Map());
     
     const [selectedTickers, setSelectedTickers] = useState([defaultSelectecdTicker]);
     const [allChecked, setAllChecked] = useState(false);
     const [allQuotesChecked, setAllQuotesChecked] = useState(new Map());
-    
 
     const handleOnClickFindButton = props.handleOnClickFindButton;
     const buttonText = props.buttonText;
@@ -37,9 +27,6 @@ const TickersCheckboxDropdown = (props)=> {
         backgroundColor: "#E9ECEF", color: "black", border: "0px", height: "38px",
     } : { backgroundColor: null, color: null, borderTopRightRadius: "0.25rem", borderBottomRightRadius: "0.25rem" };
 
-    // React.useEffect(() => {
-    //     setSelectedTickers([...availableTickers.filter(ticker=>ticker.checked).map(ticker=>ticker.tickerName)]);
-    // }, [setSelectedTickers]);
 
     useEffect(() => {
         getAllAvailableTickers().then( response => {
@@ -89,11 +76,9 @@ const TickersCheckboxDropdown = (props)=> {
         [...allQuotesChecked.keys()].forEach( quoteCurrency => {
             quoteCurrency === currency ? allQuotesChecked.set(quoteCurrency, checked) : allQuotesChecked.set(quoteCurrency, false)
             if(quoteCurrency === currency){
-                console.log(quoteCurrency, checked);
                 allQuotesChecked.set(quoteCurrency, checked);
             }
         });
-        console.log(allQuotesChecked);
         setAllQuotesChecked(allQuotesChecked);
         if(checked) {
             setAllChecked(false);
