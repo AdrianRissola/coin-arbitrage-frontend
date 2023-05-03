@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useCallback } from "react";
 import { getHistoricalArbitrages } from "../../service/HistoricalArbitrageService"
 import ArbitrageList from "../ArbitrageList";
 import helper from "../../helper";
@@ -12,8 +12,7 @@ import TickersCheckboxDropdownFilter from "../filters/TickersCheckboxDropdownFil
 
 
 const HistoricalView = (props)=> {
-    const init = JSON.parse(localStorage.getItem("historicalArbitrages"));
-    const [historicalArbitrages, setHistoricalArbitrages] = useState( init ? init : null );
+    const [historicalArbitrages, setHistoricalArbitrages] = useState(null);
     const [marketFilter, setMarketFilter] = useState("");
     const [marketsFilter, setMarketsFilter] = useState([]);
     const [minProfitFilter, setMinProfitFilter] = useState(0)
@@ -21,13 +20,17 @@ const HistoricalView = (props)=> {
     const availableTickers = [...JSON.parse(localStorage.getItem("availableWebsocketTickers"))];
     const darkMode = props.darkMode;
 
- 
-    const callGetHistoricalArbitrages = async (tickersFilter) => {
+    const callGetHistoricalArbitrages = useCallback(async (tickersFilter) => {
         const {data} = await getHistoricalArbitrages(
             availableTickers.length===tickersFilter.length ? null : tickersFilter
         );
         setHistoricalArbitrages(data);
-    }
+    }, [availableTickers.length])
+
+    React.useEffect(() => {
+        console.log('React.useEffect: callGetHistoricalArbitrages')
+        callGetHistoricalArbitrages(["BTC-USDT"]);
+    }, [callGetHistoricalArbitrages]);
 
     const handleOnClickFindButton = (selectedTickers) => {
         if(selectedTickers && selectedTickers.length>0) {
