@@ -22,7 +22,7 @@ const MarketsCheckboxDropdown = (props)=> {
                     checked: true,
                 }
             })
-            onClickFunction([...availableMarkets.current.map(market=>market.marketName)]);
+            onClickFunction(availableMarkets.current.map(market=>market.marketName));
         })
     }, [onClickFunction]);
 
@@ -45,7 +45,7 @@ const MarketsCheckboxDropdown = (props)=> {
             market.checked = checked
         });
         if(checked) {
-            onClickFunction([...availableMarkets.current.map(market=>market.marketName)]);
+            onClickFunction(availableMarkets.current.map(market=>market.marketName));
         } else {
             onClickFunction([]);
         }
