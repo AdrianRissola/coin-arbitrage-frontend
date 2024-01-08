@@ -181,7 +181,8 @@ const ArbitrageView = (props)=> {
             </div>
             <RowFilter filters = { getArbitrageFilters() }/>
             <div style={{display: "flex", flexDirection: "col", flexWrap: "wrap", justifyContent: "center"}}>
-                <div className="col-sm-6 col-m-7 col-lg-8 col-xl-9" style={{display: "flex", flexDirection: "row", flexWrap: "wrap"}}> 
+                <div className="col-sm-6 col-m-7 col-lg-8 col-xl-9" 
+                    style={{display: "flex", flexDirection: "row", flexWrap: "wrap", justifyContent: "center"}}> 
                     <MarketsArbitrage
                         arbitrages = {arbitrages}
                         marketFilter = {marketFilter}
