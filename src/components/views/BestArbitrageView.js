@@ -19,20 +19,18 @@ const BestArbitrageView = (props)=> {
     const btnGroupClassName = darkMode ? "btn btn-dark" : "btn btn-light";
 
     return(
-        <div style={{ marginLeft:"10rem", marginRight:"10rem", marginTop: '10px' }}>
-            <div className="row" style={{ textAlign: "center" }}>
-                <div className="col" >
+        <div style={{marginTop:"10px"}}>
+            <div className="row" style={{display: "flex", flexDirection: "col", flexWrap: "wrap", justifyContent: "center" }}>
+                <div className="col-4" style={{display: "flex", flexDirection: "row", flexWrap: "wrap", justifyContent: "center"}}>
                     <div className="btn-group" role="group" >
-
                         <input onClick={ () => {setCoin()} } defaultChecked={true} type="radio" className="btn-check" name="btnradio" id="btnradio1" autoComplete="off"/>
                         <label className={btnGroupClassName} htmlFor="btnradio1">Best</label>
-
+                        
                         <input onClick={ () => {setCoin('USDT')} } type="radio" className="btn-check" name="btnradio" id="btnradio2" autoComplete="off"/>
                         <label className={btnGroupClassName} htmlFor="btnradio2">USDT</label>
 
                         <input onClick={ () => {setCoin('BTC')} } type="radio" className="btn-check" name="btnradio" id="btnradio3" autoComplete="off"/>
                         <label className={btnGroupClassName} htmlFor="btnradio3">BTC</label>
-
                     </div>
                 </div>
             </div>
@@ -43,18 +41,19 @@ const BestArbitrageView = (props)=> {
                 </div>
             </div>
             <br/>
-            <div className="row" style={{display: "flex", flexDirection: "row", flexWrap: "wrap"}}>
-                <div className="col-sm" align="center">
-                    <Arbitrage
-                        darkMode = { darkMode }
+            <div style={{display: "flex", flexDirection: "col", flexWrap: "wrap", justifyContent: "center"}}>
+                <div  
+                style={{display: "flex", flexDirection: "row", flexWrap: "wrap", justifyContent: "center"}}> 
+                    <Arbitrage darkMode = { darkMode }
                         header = { "Best Arbitrage: " + selectedArbitrage.transactions[0].pair }
                         arbitrage = { selectedArbitrage }
                     />
                 </div>
-                <div className="col-sm" align="center" > 
+                <div style={{ display: "flex", flexDirection: "row", flexWrap: "nowrap",
+                    alignContent: "stretch", justifyContent: "center", alignItems: "baseline"}}>
                     <MarketPrices ticker = { selectedArbitrage.transactions[0].pair } 
                         marketPrices={ selectedMarketPrices } darkMode = { darkMode }
-                    /> 
+                    />
                 </div>
             </div>
         </div>
