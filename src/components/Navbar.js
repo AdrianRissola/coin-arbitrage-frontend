@@ -8,7 +8,7 @@ const Navbar = (props)=> {
     const marketsFunction = props.marketsFunction;
 
     return(
-        <nav className={"navbar navbar-expand-lg " + (darkMode ? "bg-dark navbar-dark" : "navbar-light")}
+        <nav className={"navbar navbar-expand-md " + (darkMode ? "bg-dark navbar-dark" : "navbar-light")}
             style={{ backgroundColor: !darkMode ? "#E9ECEF" : null, padding:".5rem 1rem"}}>
             <a className="navbar-brand" href="/#" onClick={ brandFunction } style={{fontSize:"15px", textAlign:"center", padding:"0px"}}>
                 <b><i>Real-Time<br/>Arbitrage Monitor</i></b>
@@ -39,12 +39,20 @@ const Navbar = (props)=> {
                     <li className="nav-item">
                         <a className="nav-link" href="/#" onClick={ marketsFunction } >Markets</a>
                     </li>
-                    <li className="nav-item my-2 my-lg-0 right" style={{right:"10px"}}>
+                    {/* <li className="nav-item my-2 my-lg-0 right" style={{right:"10px"}}>
                         <darkModeButton.component darkMode = {darkModeButton.darkMode}
                         darkModeSetFunction = {darkModeButton.darkModeSetFunction}/>
-                    </li>
+                    </li> */}
+                    
                 </ul>
             </div>
+            <ul className="navbar-nav mr-auto">
+                <li className="nav-item" style={{right:"10px"}}>
+                    <darkModeButton.component darkMode = {darkModeButton.darkMode}
+                    darkModeSetFunction = {darkModeButton.darkModeSetFunction}/>
+                </li>
+            </ul>
+            
         </nav>    
     )
 }
