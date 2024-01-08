@@ -180,7 +180,7 @@ const ArbitrageView = (props)=> {
                 </div>
             </div>
             <RowFilter filters = { getArbitrageFilters() }/>
-            <div className="row">
+            <div  className="col-sm-12" style={{display: "flex", flexDirection: "col", flexWrap: "wrap"}}>
                 <div className="col-sm-9" style={{display: "flex", flexDirection: "row", flexWrap: "wrap"}}> 
                     <MarketsArbitrage
                         arbitrages = {arbitrages}
@@ -190,7 +190,9 @@ const ArbitrageView = (props)=> {
                         darkMode = {darkMode}
                     />
                 </div>
-                <div className="col-3" style={{verticalAlign:"top"}}>
+                <div className="col-sm-3" 
+                    style={{ display: "flex", flexDirection: "row", flexWrap: "nowrap", 
+                    alignContent: "stretch", justifyContent: "center", alignItems: "baseline"}}>
                     <MarketPrices ticker={ticker} marketPrices={marketPrices} darkMode = {darkMode}/>
                 </div>
             </div>
