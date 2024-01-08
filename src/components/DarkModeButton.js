@@ -5,7 +5,7 @@ const DarkModeButton = (props)=> {
     const buttonText = darkMode ? "| Light" : "| Dark";
 
     return(
-        <button className={buttonClassName} style={{float: "right"}} onClick={()=>{props.darkModeSetFunction(!darkMode)}}>
+        <button className={buttonClassName}  onClick={()=>{props.darkModeSetFunction(!darkMode)}}>
             <i className={iClassName} style={{fontSize:"20px" }}></i> {buttonText}
         </button>
     )
