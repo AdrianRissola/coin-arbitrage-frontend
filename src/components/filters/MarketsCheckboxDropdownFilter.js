@@ -16,12 +16,14 @@ const MarketsCheckboxDropdown = (props)=> {
 
     React.useEffect(() => {
         getMarkets().then( response => {
-            availableMarkets.current = response.data.map(market =>  {
+            availableMarkets.current = response.data
+            .sort((m1, m2) => (m1.name > m2.name) ? 1 : ((m2.name > m1.name) ? -1 : 0))
+            .map(market =>  {
                 return {
                     marketName: market.name,
                     checked: true,
                 }
-            })
+            });
             onClickFunction(availableMarkets.current.map(market=>market.marketName));
         })
     }, [onClickFunction]);
@@ -71,7 +73,7 @@ const MarketsCheckboxDropdown = (props)=> {
                         </a>
                     </li>
                     <li><hr className="dropdown-divider"/></li>
-                    { availableMarkets.current.map(option => 
+                    { availableMarkets.current.sort().map(option => 
                         <li key= { option.marketName }>
                             <a className="dropdown-item" href="/#">
                                 <div className="form-check">
