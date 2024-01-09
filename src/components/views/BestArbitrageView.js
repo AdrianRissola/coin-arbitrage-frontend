@@ -41,7 +41,7 @@ const BestArbitrageView = (props)=> {
                 </div>
             </div>
             <br/>
-            <div style={{display: "flex", flexDirection: "col", flexWrap: "wrap", justifyContent: "center"}}>
+            <div style={{display: "flex", flexWrap: "wrap", justifyContent: "space-evenly"}}>
                 <div  
                 style={{display: "flex", flexDirection: "row", flexWrap: "wrap", justifyContent: "center"}}> 
                     <Arbitrage darkMode = { darkMode }
