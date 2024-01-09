@@ -96,14 +96,25 @@ const MarketStatusView = (props)=> {
                     </h1>
                 </div>
             </div>
-            <div className="row">
+            <div style={{display: "flex", flexWrap: "wrap", justifyContent: "center"}}>
+                <div className="col-sm-9 col-m-8 col-lg-7 col-xl-6" 
+                    style={{display: "flex", flexDirection: "row", flexWrap: "wrap", justifyContent: "center"}}> 
+                    { GetMarketsInfo(markets, darkMode) }
+                </div>
+                <div className="col-sm-3, col-m-4 col-lg-5 col-xl-6" 
+                    style={{ display: "flex", flexDirection: "row", flexWrap: "nowrap", 
+                    alignContent: "stretch", justifyContent: "center", alignItems: "baseline"}}>
+                    <MarketStatus marketsStatus = {marketStatus} darkMode = {darkMode}/>
+                </div>
+            </div>
+            {/* <div className="row">
                 <div className="col-sm-8" style={{display: "flex", flexDirection: "row", flexWrap: "wrap"}}>
                     { GetMarketsInfo(markets, darkMode) }
                 </div>
                 <div className="col-sm-4" style={{flexDirection: "row", flexWrap: "wrap", marginLeft: "-1rem"}}>
                     <MarketStatus marketsStatus = {marketStatus} darkMode = {darkMode}/>
                 </div>
-            </div>
+            </div> */}
         </>
     )
 }
