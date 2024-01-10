@@ -114,8 +114,8 @@ const HistoricalView = (props)=> {
                 </div>
                 : null
             }
-            <div className="row">
-                <div className="col-sm-12" style={{display: "flex", flexDirection: "row", flexWrap: "wrap"}}>
+            <div className="row" style={{justifyContent: "center"}}>
+                <div className="col-sm-12" style={{display: "flex", flexDirection: "row", flexWrap: "wrap", justifyContent: "center"}}>
                     { historicalArbitrages && historicalArbitrages.length>0 ?
                         <ArbitrageList
                             arbitrages = { historicalArbitrages }

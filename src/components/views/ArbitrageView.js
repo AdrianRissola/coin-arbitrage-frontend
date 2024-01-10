@@ -106,12 +106,13 @@ const ArbitrageView = (props)=> {
                     </div>
                 </div>
             </div> */}
+            
             <div className="row justify-content-center">
                 <div className="col-sm-10" >
                     <div className="btn-group position-relative overflow-auto" role="group" style={{marginTop: '10px', width:'-webkit-fill-available'}}>
                         <input disabled={true} className="btn-check" />
-                        <label className={btnGroupClassName} style={{opacity: '1', width: '-webkit-fill-available', maxWidth:'fit-content'}} >
-                            Select Base Currency:
+                        <label className={btnGroupClassName} style={{opacity: '0.5', width: '-webkit-fill-available', maxWidth:'fit-content'}} >
+                            Base Currency:
                         </label>
                         {
                             baseCurrencies?.map(bc => (
@@ -134,8 +135,8 @@ const ArbitrageView = (props)=> {
                     <div className="btn-group position-relative overflow-auto" role="group" style={{marginTop: '10px', width:'-webkit-fill-available'}}>
 
                         <input disabled={true} className="btn-check" />
-                        <label className={btnGroupClassName} style={{opacity: '1', width: '-webkit-fill-available', maxWidth:'fit-content'}} >
-                            Select Quote Currency:
+                        <label className={btnGroupClassName} style={{opacity: '0.5', width: '-webkit-fill-available', maxWidth:'fit-content'}} >
+                            Quote Currency:
                         </label>
                         
                         {
@@ -170,11 +171,10 @@ const ArbitrageView = (props)=> {
                     </div>
                 </div>
             </div>
-    
             
             <div className="row">
                 <div className="col-sm-12" style={{textAlign: "center"}}>
-                    <h1 style={{fontWeight: 'bold', fontSize:"2.5rem"}}>
+                    <h1 style={{fontWeight: 'bold'}}>
                         { ticker } Arbitrage
                     </h1>
                 </div>
