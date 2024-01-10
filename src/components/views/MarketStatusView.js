@@ -90,31 +90,23 @@ const MarketStatusView = (props)=> {
     return(
         <>
             <div className="row">
-                <div className="col" style={{textAlign: "center"}}>
-                    <h1 style={{width:"1300px", fontWeight: 'bold', fontSize:"2.5rem"}}>
-                        Markets
+                <div className="col-sm-12" style={{textAlign: "center"}}>
+                    <h1 style={{fontWeight: 'bold', fontSize:"2.5rem"}}>
+                    Markets
                     </h1>
                 </div>
             </div>
             <div style={{display: "flex", flexWrap: "wrap", justifyContent: "center"}}>
-                <div className="col-sm-9 col-m-8 col-lg-7 col-xl-6" 
+                <div className="col-12 col-sm-12 col-m-6 col-lg-6 col-xl-6" 
                     style={{display: "flex", flexDirection: "row", flexWrap: "wrap", justifyContent: "center"}}> 
                     { GetMarketsInfo(markets, darkMode) }
                 </div>
-                <div className="col-sm-3, col-m-4 col-lg-5 col-xl-6" 
-                    style={{ display: "flex", flexDirection: "row", flexWrap: "nowrap", 
+                <div className="col-0 col-sm-0, col-m-6 col-lg-6 col-xl-6" 
+                    style={{ display: "flex", flexDirection: "row", flexWrap: "wrap", 
                     alignContent: "stretch", justifyContent: "center", alignItems: "baseline"}}>
                     <MarketStatus marketsStatus = {marketStatus} darkMode = {darkMode}/>
                 </div>
             </div>
-            {/* <div className="row">
-                <div className="col-sm-8" style={{display: "flex", flexDirection: "row", flexWrap: "wrap"}}>
-                    { GetMarketsInfo(markets, darkMode) }
-                </div>
-                <div className="col-sm-4" style={{flexDirection: "row", flexWrap: "wrap", marginLeft: "-1rem"}}>
-                    <MarketStatus marketsStatus = {marketStatus} darkMode = {darkMode}/>
-                </div>
-            </div> */}
         </>
     )
 }
