@@ -18,12 +18,6 @@ const Navbar = (props)=> {
             style={{fontSize:"15px", textAlign:"center", padding:"0px", margin: "auto"}}>
                 <b><i>Real-Time<br/>Arbitrage Monitor</i></b>
             </a>
-            <ul className="navbar-nav mr-auto">
-                <li className="nav-item right" style={{right:"10px"}}>
-                    <darkModeButton.component darkMode = {darkModeButton.darkMode}
-                    darkModeSetFunction = {darkModeButton.darkModeSetFunction}/>
-                </li>
-            </ul>
             <div className="collapse navbar-collapse" id="navbarSupportedContent" style={{marginLeft:"25px"}}>
                 <ul className="navbar-nav mr-auto">
                     <li className="nav-item dropdown">
@@ -48,7 +42,9 @@ const Navbar = (props)=> {
                         <a className="nav-link" href="/#" onClick={ marketsFunction } >Markets</a>
                     </li>
                 </ul>
-            </div>   
+            </div>
+            <darkModeButton.component darkMode = {darkModeButton.darkMode}
+            darkModeSetFunction = {darkModeButton.darkModeSetFunction}/>
         </nav>    
     )
 }
