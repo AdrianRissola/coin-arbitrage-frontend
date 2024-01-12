@@ -7,8 +7,10 @@ const RowFilter = (props)=> {
                 filtersComponents.map(filterComponent => {
                     return (
                         <div key= {filterComponent.type.name} className="input-group mb-3" 
-                            style={{
-                                width: filterComponent.props.styleWidth || '200px'
+                            style={{ 
+                                display:"flex",
+                                width: filterComponent.props.styleWidth || '210px',
+                                marginRight: filterComponent.props.marginRight
                             }}
                         >
                             { filterComponent }

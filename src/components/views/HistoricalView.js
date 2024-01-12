@@ -39,15 +39,6 @@ const HistoricalView = (props)=> {
         };
     }
 
-    const getArbitrageFilters = () => {
-        return (
-          [
-            <MarketFilter marketFilter = {marketFilter} marketFilterSetFunction = {setMarketFilter} darkMode={darkMode} />,
-            <MinProfitFilter minProfitFilter = {minProfitFilter} minProfitFilterSetFunction = {setMinProfitFilter} darkMode={darkMode} />,
-          ]
-        )
-    }
-
     const handleSelectedHistoricalArbitrageOrderOnClick = (selectedHistoricalArbitrageOrder) => {
         if(selectedHistoricalArbitrageOrder.field) {
           if(historicalArbitrageOrder.field!==selectedHistoricalArbitrageOrder.field) 
@@ -60,18 +51,31 @@ const HistoricalView = (props)=> {
     const handleSelectedHistoricalArbitrageOrderOnClickk = (selectedHistoricalArbitrageOrder) => {
         setHistoricalArbitrageOrder(selectedHistoricalArbitrageOrder)  
     }
+
+    const getArbitrageFilters = () => {
+        return (
+          [
+            <MarketFilter marketFilter = {marketFilter} marketFilterSetFunction = {setMarketFilter} darkMode={darkMode} 
+                marginRight={"0.1rem"} styleWidth = {"210px"}
+            />,
+            <MinProfitFilter minProfitFilter = {minProfitFilter} minProfitFilterSetFunction = {setMinProfitFilter} 
+                darkMode={darkMode} marginRight={"0.1rem"} styleWidth = {"210px"}
+            />,
+          ]
+        )
+    }
     
     const getHistoricalFilters = () => {
         const historicalFilters = getArbitrageFilters();
         historicalFilters.push(
             <MarketsCheckboxDropdownFilter darkMode = { darkMode } onClickFunction = { setMarketsFilter }
-                marketsFilter = { marketsFilter } buttonText = { "Markets"} styleWidth = {"100px"}
+                marketsFilter = { marketsFilter } buttonText = { "Markets"} styleWidth = {"110px"} marginRight={"0.1rem"}
             />
         );
         historicalFilters.push(
             <TickersCheckboxDropdownFilter darkMode = { darkMode }
                 handleOnClickFindButton = { handleOnClickFindButton }
-                buttonText = { "Tickers"} styleWidth = {"150px"}
+                buttonText = { "Tickers"} styleWidth = {"150px"} marginRight={"0.1rem"}
             />
         );
         
@@ -83,7 +87,7 @@ const HistoricalView = (props)=> {
             options = { 
                 [{key: "profitPercentage", value: "DESC", label: "Profit %"}, {key: "date", value: "DESC", label: "Date"}]
             }
-            styleWidth = {"350px"} 
+            styleWidth = {"200px"}
         />);
 
         return historicalFilters;

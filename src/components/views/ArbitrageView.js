@@ -60,8 +60,12 @@ const ArbitrageView = (props)=> {
     const getArbitrageFilters = () => {
         return (
           [
-            <MarketFilter marketFilter = {marketFilter} marketFilterSetFunction = {setMarketFilter} darkMode={darkMode} />,
-            <MinProfitFilter minProfitFilter = {minProfitFilter} minProfitFilterSetFunction = {setMinProfitFilter} darkMode={darkMode} />,
+            <MarketFilter marketFilter = {marketFilter} marketFilterSetFunction = {setMarketFilter} 
+                darkMode={darkMode} marginRight={"5px"}
+            />,
+            <MinProfitFilter minProfitFilter = {minProfitFilter} minProfitFilterSetFunction = {setMinProfitFilter} 
+                darkMode={darkMode} marginRight={"5px"}
+            />,
             <MarketsComboBoxFilter darkMode = { darkMode } onClickFunction = { setMarketsFilter }
                 marketsFilter = { marketsFilter } buttonText = { "Markets"} styleWidth = {"100px"}
             />
