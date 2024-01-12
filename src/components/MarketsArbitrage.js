@@ -24,7 +24,7 @@ const MarketsArbitrage = (props) => {
     const arbitrageComponents = []
 
     arbitrageComponents.push(
-      <ArbitrageMiniCard
+      <Arbitrage
         key="Best Arbitrage"
         darkMode = { darkMode }
         header= { arbitrages.arbitrage_not_available ? arbitrages.arbitrage_not_available.message : "Best Arbitrage" }
@@ -40,7 +40,7 @@ const MarketsArbitrage = (props) => {
           && (!minProfitFilter || arbitrages[marketPair].profitPercentage>=minProfitFilter)
         )
         arbitrageComponents.push(
-          <ArbitrageMiniCard
+          <Arbitrage
             key={marketPair}
             darkMode = {darkMode}
             header={marketPair} 
