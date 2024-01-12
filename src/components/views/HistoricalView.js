@@ -97,8 +97,6 @@ const HistoricalView = (props)=> {
         return ( <RowFilter filters = { getHistoricalFilters() }/> )
     }
 
-
-
     return(
         <>
             <div className="row">
@@ -119,21 +117,19 @@ const HistoricalView = (props)=> {
                 : null
             }
             <div className="row" style={{justifyContent: "center"}}>
-                {/* <div className="col-sm-12" style={{display: "flex", flexDirection: "row", flexWrap: "wrap", justifyContent: "center"}}> */}
-                    { historicalArbitrages && historicalArbitrages.length>0 ?
-                        <ArbitrageList
-                            arbitrages = { historicalArbitrages }
-                            initArb = { helper.initialArbitrage }
-                            marketFilter = { marketFilter }
-                            marketsFilter = { marketsFilter }
-                            minProfitFilter = { minProfitFilter }
-                            darkMode = { darkMode }
-                            orderBy = { historicalArbitrageOrder }
-                            withHeader = { true }
-                        />
-                        : null
-                    }
-                {/* </div> */}
+                { historicalArbitrages && historicalArbitrages.length>0 ?
+                    <ArbitrageList
+                        arbitrages = { historicalArbitrages }
+                        initArb = { helper.initialArbitrage }
+                        marketFilter = { marketFilter }
+                        marketsFilter = { marketsFilter }
+                        minProfitFilter = { minProfitFilter }
+                        darkMode = { darkMode }
+                        orderBy = { historicalArbitrageOrder }
+                        withHeader = { true }
+                    />
+                    : null
+                }
             </div>
         </>
     )

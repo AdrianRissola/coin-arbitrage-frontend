@@ -18,7 +18,7 @@ const Navbar = (props)=> {
                 style={{fontSize:"15px", textAlign:"center", padding:"0px", margin: "auto"}}>
                 <b><i>Real-Time<br/>Arbitrage Monitor</i></b>
             </a>
-            <p style={{color:"red", fontSize:"10px", margin: "auto 20px auto 20px"}}><i>NO FESS<br/>INCLUDED</i></p>
+            <p style={{color:"red", fontSize:"10px", margin: "auto 20px auto 20px"}}><i>NO FEES<br/>INCLUDED</i></p>
             
             <div className="collapse navbar-collapse" id="navbarSupportedContent" style={{marginLeft:"25px"}}>
                 <ul className="navbar-nav mr-auto">

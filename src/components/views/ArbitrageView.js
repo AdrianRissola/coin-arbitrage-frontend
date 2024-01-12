@@ -7,8 +7,8 @@ import TickerButtons from "../TickerButtons";
 import MarketsArbitrage from "../MarketsArbitrage";
 import "../../HorizontalScroll.css";
 import MarketsComboBoxFilter from "../filters/MarketsCheckboxDropdownFilter";
-import { getAllAvailableTickers } from "../../service/MarketService"
-
+import { getAllAvailableTickers } from "../../service/MarketService";
+// import { Tooltip as MuiTooltip} from '@mui/material';
 
 const leftScroll = (id) => {
     const left = document.querySelector("#"+id.concat('scroll'));
@@ -114,10 +114,10 @@ const ArbitrageView = (props)=> {
             <div className="row justify-content-center">
                 <div className="col-sm-10" >
                     <div className="btn-group position-relative overflow-auto" role="group" style={{marginTop: '10px', width:'-webkit-fill-available'}}>
-                        <input disabled={true} className="btn-check" />
-                        <label className={btnGroupClassName} style={{opacity: '0.5', width: '-webkit-fill-available', maxWidth:'fit-content'}} >
-                            Base Currency:
-                        </label>
+                            <input disabled={true} className="btn-check" />
+                            <label className={btnGroupClassName} style={{opacity: '0.5', width: '-webkit-fill-available', maxWidth:'fit-content'}} >
+                                Base:
+                            </label>
                         {
                             baseCurrencies?.map(bc => (
                                 <React.Fragment key={ `quoteCurrency_${bc}` }>
@@ -140,7 +140,7 @@ const ArbitrageView = (props)=> {
 
                         <input disabled={true} className="btn-check" />
                         <label className={btnGroupClassName} style={{opacity: '0.5', width: '-webkit-fill-available', maxWidth:'fit-content'}} >
-                            Quote Currency:
+                            Quote:
                         </label>
                         
                         {
