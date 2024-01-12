@@ -62,10 +62,8 @@ const ArbitrageList = (props) => {
     if(withHeader){
       result = (
         <div className="col-sm-12" style={{display: "flex", flexDirection: "row", flexWrap: "wrap"}}>
-          <div className="col-sm-12">
-            <h3>Arbitrage: { arbitrageComponents.length }</h3>
-          </div>
-          <div className="row">
+          <div className="row" style={{justifyContent: "center"}}>
+            <h3>Arbitrage Found: { arbitrageComponents.length }</h3>
             { arbitrageComponents }
           </div>
         </div>

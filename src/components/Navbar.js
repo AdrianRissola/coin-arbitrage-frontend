@@ -15,9 +15,11 @@ const Navbar = (props)=> {
                 <span className="navbar-toggler-icon"></span>
             </button>
             <a className="navbar-brand" href="/#" onClick={ brandFunction } 
-            style={{fontSize:"15px", textAlign:"center", padding:"0px", margin: "auto"}}>
+                style={{fontSize:"15px", textAlign:"center", padding:"0px", margin: "auto"}}>
                 <b><i>Real-Time<br/>Arbitrage Monitor</i></b>
             </a>
+            <p style={{color:"red", fontSize:"10px", margin: "auto 30px auto 30px"}}><i>NO FESS<br/>INCLUDED</i></p>
+            
             <div className="collapse navbar-collapse" id="navbarSupportedContent" style={{marginLeft:"25px"}}>
                 <ul className="navbar-nav mr-auto">
                     <li className="nav-item dropdown">
@@ -43,8 +45,12 @@ const Navbar = (props)=> {
                     </li>
                 </ul>
             </div>
-            <darkModeButton.component darkMode = {darkModeButton.darkMode}
-            darkModeSetFunction = {darkModeButton.darkModeSetFunction}/>
+            
+            <ul className="navbar-nav mr-auto">
+                <darkModeButton.component darkMode = {darkModeButton.darkMode}
+                darkModeSetFunction = {darkModeButton.darkModeSetFunction}/>
+            </ul>
+            
         </nav>    
     )
 }

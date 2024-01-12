@@ -87,7 +87,7 @@ const HistoricalView = (props)=> {
             options = { 
                 [{key: "profitPercentage", value: "DESC", label: "Profit %"}, {key: "date", value: "DESC", label: "Date"}]
             }
-            styleWidth = {"200px"}
+            styleWidth = {"220px"}
         />);
 
         return historicalFilters;
@@ -119,7 +119,7 @@ const HistoricalView = (props)=> {
                 : null
             }
             <div className="row" style={{justifyContent: "center"}}>
-                <div className="col-sm-12" style={{display: "flex", flexDirection: "row", flexWrap: "wrap", justifyContent: "center"}}>
+                {/* <div className="col-sm-12" style={{display: "flex", flexDirection: "row", flexWrap: "wrap", justifyContent: "center"}}> */}
                     { historicalArbitrages && historicalArbitrages.length>0 ?
                         <ArbitrageList
                             arbitrages = { historicalArbitrages }
@@ -133,7 +133,7 @@ const HistoricalView = (props)=> {
                         />
                         : null
                     }
-                </div>
+                {/* </div> */}
             </div>
         </>
     )
