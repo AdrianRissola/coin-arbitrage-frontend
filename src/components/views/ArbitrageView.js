@@ -8,7 +8,7 @@ import MarketsArbitrage from "../MarketsArbitrage";
 import "../../HorizontalScroll.css";
 import MarketsComboBoxFilter from "../filters/MarketsCheckboxDropdownFilter";
 import { getAllAvailableTickers } from "../../service/MarketService";
-// import { Tooltip as MuiTooltip} from '@mui/material';
+import { Box, Button, Tooltip, Typography } from '@mui/material';
 
 const leftScroll = (id) => {
     const left = document.querySelector("#"+id.concat('scroll'));
@@ -75,6 +75,7 @@ const ArbitrageView = (props)=> {
 
     return(
         <>
+            
             {/* <div className="row" style={{ textAlign: "left" }}>
                 <div className="col" >
                     <div className="btn-group position-relative overflow-auto w-75" role="group" style={{marginTop: '10px', width:'-webkit-fill-available'}}>
@@ -112,12 +113,17 @@ const ArbitrageView = (props)=> {
             </div> */}
             
             <div className="row justify-content-center">
-                <div className="col-sm-10" >
-                    <div className="btn-group position-relative overflow-auto" role="group" style={{marginTop: '10px', width:'-webkit-fill-available'}}>
-                            <input disabled={true} className="btn-check" />
-                            <label className={btnGroupClassName} style={{opacity: '0.5', width: '-webkit-fill-available', maxWidth:'fit-content'}} >
-                                Base:
-                            </label>
+                <div className="col-10">
+                    <div className="btn-group position-relative overflow-auto" role="group" style={{marginTop: '10px', width:'-webkit-fill-available'}}>                        
+                        <Tooltip title="Select Base Currency" placement="left" arrow enterTouchDelay="0" >
+                            <div>
+                                <Button className={btnGroupClassName} disabled 
+                                    style={{borderRadius:'0', opacity: '0.5', backgroundColor: 'black', height:"38px",
+                                        color:"white", width: '-webkit-fill-available', maxWidth:'fit-content'}} >
+                                    Base:
+                                </Button>
+                            </div>  
+                        </Tooltip>
                         {
                             baseCurrencies?.map(bc => (
                                 <React.Fragment key={ `quoteCurrency_${bc}` }>
@@ -137,12 +143,15 @@ const ArbitrageView = (props)=> {
             <div className="row justify-content-center" >
                 <div className="col-10" >
                     <div className="btn-group position-relative overflow-auto" role="group" style={{marginTop: '10px', width:'-webkit-fill-available'}}>
-
-                        <input disabled={true} className="btn-check" />
-                        <label className={btnGroupClassName} style={{opacity: '0.5', width: '-webkit-fill-available', maxWidth:'fit-content'}} >
-                            Quote:
-                        </label>
-                        
+                        <Tooltip title="Select Quote Currency" placement="left" arrow enterTouchDelay="0">
+                            <div>
+                                <Button className={btnGroupClassName} disabled 
+                                    style={{borderRadius:'0', opacity: '0.5', backgroundColor: 'black', height:"38px",
+                                        color:"white", width: '-webkit-fill-available', maxWidth:'fit-content'}} >
+                                    Quote:
+                                </Button>
+                            </div>
+                        </Tooltip>
                         {
                             quoteCurrencies?.map(qc => (
                                 <React.Fragment key={ `quoteCurrency_${qc}` }>
@@ -163,7 +172,7 @@ const ArbitrageView = (props)=> {
             <div className="row justify-content-center" style={{ height: "71px", marginTop: '10px' }}>
                 <div className="col-sm-10" >
                     <div className="cover" >
-                        <button className="left" onClick={ ()=>{rightScroll(baseCurrency || quoteCurrency)} } >
+                        <button type="button" className="left" onClick={ ()=>{rightScroll(baseCurrency || quoteCurrency)} } >
                             <i className='fa fa-angle-double-left' style={{fontSize:"38px"}}></i>
                         </button>
                         <div className="scroll-images" id={(baseCurrency || quoteCurrency).concat('scroll')}>

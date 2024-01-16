@@ -1,3 +1,4 @@
+import { Tooltip } from "@mui/material";
 import { useState } from "react";
 import Arbitrage from "../Arbitrage";
 import MarketPrices from "../MarketPrices";
@@ -24,13 +25,17 @@ const BestArbitrageView = (props)=> {
                 <div className="col-4" style={{display: "flex", flexDirection: "row", flexWrap: "wrap", justifyContent: "center"}}>
                     <div className="btn-group" role="group" >
                         <input onClick={ () => {setCoin()} } defaultChecked={true} type="radio" className="btn-check" name="btnradio" id="btnradio1" autoComplete="off"/>
-                        <label className={btnGroupClassName} htmlFor="btnradio1">Best</label>
-                        
+                        <Tooltip title="Select Best Arbitrage" arrow enterTouchDelay="0" >
+                            <label className={btnGroupClassName} htmlFor="btnradio1">Best</label>
+                        </Tooltip>
                         <input onClick={ () => {setCoin('USDT')} } type="radio" className="btn-check" name="btnradio" id="btnradio2" autoComplete="off"/>
-                        <label className={btnGroupClassName} htmlFor="btnradio2">USDT</label>
-
+                        <Tooltip title="Select Best USDT Arbitrage" arrow enterTouchDelay="0" >
+                            <label className={btnGroupClassName} htmlFor="btnradio2">USDT</label>
+                        </Tooltip>
                         <input onClick={ () => {setCoin('BTC')} } type="radio" className="btn-check" name="btnradio" id="btnradio3" autoComplete="off"/>
-                        <label className={btnGroupClassName} htmlFor="btnradio3">BTC</label>
+                        <Tooltip title="Select Best BTC Arbitrage" arrow enterTouchDelay="0" >
+                            <label className={btnGroupClassName} htmlFor="btnradio3">BTC</label>
+                        </Tooltip>
                     </div>
                 </div>
             </div>

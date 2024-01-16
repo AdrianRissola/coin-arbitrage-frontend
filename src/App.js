@@ -5,11 +5,22 @@ import helper from "./helper";
 import Navbar from "./components/Navbar";
 import DarkModeButton from "./components/DarkModeButton";
 import { buildArbitrageView, buildHistoricalView, buildMarketStatusView, buildBestArbitrageView } from "./components/views/ViewBuilder";
+import { Alert, Snackbar } from "@mui/material";
+import { useSnackbar } from 'notistack'
 
 console.log(process.env);
 let ws = null;
+let currentWsStatus = -1;
+
+const wsReadyState = Object.freeze({
+  0: {status: "CONNECTING", variant: "info"},
+  1: {status: "OPEN", variant: "success"},
+  2: {status: "CLOSING", variant: "warning"},
+  3: {status: "CLOSED", variant: "error"},
+}) 
 
 const App = () => {
+  const {enqueueSnackbar} = useSnackbar()
   const [arbitrages, setArbitrages] = useState(helper.initialArbitrage);
   const [bestArbitrage, setBestArbitrage] = useState(helper.initialArbitrage);
   const [marketPrices, setMarketPrices] = useState(null);
@@ -24,8 +35,12 @@ const App = () => {
   const [webSocketRequest, setWebSocketRequest] = useState({ channel:"arbitrage", ticker:"BTC-USDT" });
 
   const isCurrentSubscription = (channelSubscription) => currentWsResponse.channel === channelSubscription.channel && currentWsResponse.ticker === channelSubscription.ticker
+  
+  // const isConnecting = ws => ws.readyState === ws.CONNECTING
   const isOpen = ws => ws.readyState === ws.OPEN
+  // const isClosing = ws => ws.readyState === ws.CLOSING
   const isClosed = ws => ws.readyState === ws.CLOSED
+
 
   const handleChangeChannelSubscriptionClick = (channelSubscription) => {
     setWebSocketOnMessageEnabled(true);
@@ -117,7 +132,17 @@ const App = () => {
     }
 
   };
-
+  
+  const handleSnackbar = () => {
+    if(currentWsStatus!==ws.readyState) {
+      const currentWsReadyState = wsReadyState[ws.readyState]
+      enqueueSnackbar(
+        "WebSocket status: " + currentWsReadyState.status,
+        { autoHideDuration: 5000, variant: currentWsReadyState.variant }
+      )
+      currentWsStatus = ws ? ws.readyState : -1;
+    }
+  }
 
   const menuSelector = Object.freeze({
     arbitrage : () => {return buildArbitrageView(
@@ -128,9 +153,10 @@ const App = () => {
   })
 
   return (
-    
-    <div style={{ backgroundColor: darkMode ? "#E9ECEF" : "white" }}>
       
+    <div style={{ backgroundColor: darkMode ? "#E9ECEF" : "white" }}>
+      {handleSnackbar()}
+        
       <Navbar darkMode = {darkMode}
         brandFunction = { ()=>{
           setMenuSelection('arbitrage');
@@ -168,6 +194,12 @@ const App = () => {
         { menuSelector[currentWsResponse.channel || menuSelection]() }
 
       </div>
+      
+        {/* <Snackbar open={true} autoHideDuration={1000} anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}>
+          <Alert severity="info">{`WebSocket Connection: ${ws.readyState}`}</Alert>
+        </Snackbar> */}
+     
+      
     </div>
   )
 };

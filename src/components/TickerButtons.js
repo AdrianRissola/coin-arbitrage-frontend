@@ -1,3 +1,4 @@
+import { Tooltip } from "@mui/material";
 import React from "react";
 
 const TickerButtons = (props) => {
@@ -12,11 +13,12 @@ const TickerButtons = (props) => {
             type="radio" className="btn-check" name="btnradioTciker" defaultChecked={ticker.name==='BTC-USDT' ? true : false}
             id={ticker.name} autoComplete="off"
           />
-          <label className={btnClassName} htmlFor={ticker.name} title={ticker.description}
-            style={{whiteSpace:'nowrap', marginRight: '0.3rem', marginTop: '0.3rem'}} 
-          >
-            {ticker.name}
-          </label>
+          <Tooltip title={ticker.description} placement="bottom" arrow>
+            <label className={btnClassName} htmlFor={ticker.name}
+              style={{whiteSpace:'nowrap', marginRight: '0.3rem', marginTop: '0.3rem'}}>
+              {ticker.name}
+            </label>
+          </Tooltip>
         </React.Fragment>
       )
     })
