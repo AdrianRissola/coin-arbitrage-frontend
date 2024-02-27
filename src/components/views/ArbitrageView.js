@@ -8,7 +8,7 @@ import MarketsArbitrage from "../MarketsArbitrage";
 import "../../HorizontalScroll.css";
 import MarketsComboBoxFilter from "../filters/MarketsCheckboxDropdownFilter";
 import { getAllAvailableTickers } from "../../service/MarketService";
-import { Box, Button, Tooltip, Typography } from '@mui/material';
+import { Alert, Box, Button, Snackbar, Tooltip, Typography } from '@mui/material';
 
 const leftScroll = (id) => {
     const left = document.querySelector("#"+id.concat('scroll'));
@@ -115,7 +115,7 @@ const ArbitrageView = (props)=> {
             <div className="row justify-content-center">
                 <div className="col-10">
                     <div className="btn-group position-relative overflow-auto" role="group" style={{marginTop: '10px', width:'-webkit-fill-available'}}>                        
-                        <Tooltip title="Select Base Currency" placement="left" arrow enterTouchDelay="0" >
+                        <Tooltip title="Select Base Currency" placement="left" arrow enterTouchDelay={0} >
                             <div>
                                 <Button className={btnGroupClassName} disabled 
                                     style={{borderRadius:'0', opacity: '0.5', backgroundColor: 'black', height:"38px",
@@ -143,7 +143,7 @@ const ArbitrageView = (props)=> {
             <div className="row justify-content-center" >
                 <div className="col-10" >
                     <div className="btn-group position-relative overflow-auto" role="group" style={{marginTop: '10px', width:'-webkit-fill-available'}}>
-                        <Tooltip title="Select Quote Currency" placement="left" arrow enterTouchDelay="0">
+                        <Tooltip title="Select Quote Currency" placement="left" arrow enterTouchDelay={0}>
                             <div>
                                 <Button className={btnGroupClassName} disabled 
                                     style={{borderRadius:'0', opacity: '0.5', backgroundColor: 'black', height:"38px",
@@ -176,14 +176,19 @@ const ArbitrageView = (props)=> {
                             <i className='fa fa-angle-double-left' style={{fontSize:"38px"}}></i>
                         </button>
                         <div className="scroll-images" id={(baseCurrency || quoteCurrency).concat('scroll')}>
-                            { getTickerButtonsComponent(baseCurrency, quoteCurrency) }
-                        </div>
+                                    { getTickerButtonsComponent(baseCurrency, quoteCurrency) }
+                                </div>
+                        {/* <Snackbar style={{position:"absolute"}} open={true} autoHideDuration={1000} anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}>
+                            <Alert severity="success" variant="outlined">{`WebSocket Connection: `}</Alert>
+                        </Snackbar> */}
                         <button className="right" onClick={ ()=>{leftScroll(baseCurrency || quoteCurrency)} }>
                             <i className='fa fa-angle-double-right' style={{fontSize:"38px"}}></i>
                         </button>
                     </div>
                 </div>
             </div>
+
+            
             
             <div className="row">
                 <div className="col-sm-12" style={{textAlign: "center"}}>
