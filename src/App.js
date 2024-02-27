@@ -5,7 +5,6 @@ import helper from "./helper";
 import Navbar from "./components/Navbar";
 import DarkModeButton from "./components/DarkModeButton";
 import { buildArbitrageView, buildHistoricalView, buildMarketStatusView, buildBestArbitrageView } from "./components/views/ViewBuilder";
-import { Alert, Snackbar } from "@mui/material";
 import { useSnackbar } from 'notistack'
 
 console.log(process.env);
@@ -19,8 +18,8 @@ const wsReadyState = Object.freeze({
   3: {status: "CLOSED", variant: "error"},
 }) 
 
+
 const App = () => {
-  const {enqueueSnackbar} = useSnackbar()
   const [arbitrages, setArbitrages] = useState(helper.initialArbitrage);
   const [bestArbitrage, setBestArbitrage] = useState(helper.initialArbitrage);
   const [marketPrices, setMarketPrices] = useState(null);
@@ -133,7 +132,8 @@ const App = () => {
 
   };
   
-  const handleSnackbar = () => {
+  const HandleSnackbar = () => {
+    const {enqueueSnackbar} = useSnackbar()
     if(currentWsStatus!==ws.readyState) {
       const currentWsReadyState = wsReadyState[ws.readyState]
       enqueueSnackbar(
@@ -155,7 +155,8 @@ const App = () => {
   return (
       
     <div style={{ backgroundColor: darkMode ? "#E9ECEF" : "white" }}>
-      {handleSnackbar()}
+ 
+      <HandleSnackbar/>
         
       <Navbar darkMode = {darkMode}
         brandFunction = { ()=>{
@@ -194,11 +195,6 @@ const App = () => {
         { menuSelector[currentWsResponse.channel || menuSelection]() }
 
       </div>
-      
-        {/* <Snackbar open={true} autoHideDuration={1000} anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}>
-          <Alert severity="info">{`WebSocket Connection: ${ws.readyState}`}</Alert>
-        </Snackbar> */}
-     
       
     </div>
   )
