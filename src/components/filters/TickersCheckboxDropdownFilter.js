@@ -98,88 +98,92 @@ const TickersCheckboxDropdown = (props)=> {
 
     return(
         <>
-            <div className="dropdown">
-
-                <div className="btn-group" role="group">
-                    
-                    <button className= { dropdownButtonClassName } type="button" id="dropdownMenuButton"
-                        title = {"Current selection: " + selectedTickers}
-                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style={ buttonStyle }>
-                        { buttonText }
-                    </button>
-                    <button className= { findButtonClassName } type="button" id="findButtonId"
-                        onClick = {()=> handleOnClickFindButton(selectedTickers) }
-                        style= { findButtonStyle }>
-                        <img src={ search_svg } alt="Find" />
-                    </button> 
-                    
-                    <ul className="dropdown-menu" aria-labelledby="dropdownMenuButton" style= {{ maxHeight:"500px", overflow:"auto" }} >
-                        <li>
-                            <a className="dropdown-item" href="/#">
-                                <div className="form-check">
-                                    <input className="form-check-input" type="checkbox" value="" id="selectAllTickersId"
-                                        checked = { allChecked }
-                                        onChange={(event)=>{ handleSelectAllOnClick(event.target.checked) }}
-                                    />
-                                    <label className="form-check-label" htmlFor="selectAllTickersId">Select All</label>
-                                </div>
-                            </a>
-                        </li>
-                        {
-                            // quoteCurrencies.current.map( qc => (
-                                [...allQuotesChecked.keys()].map( qc => (
-                                <li key={qc}>
-                                    <a className="dropdown-item" href="/#">
-                                        <div className="form-check">
-                                            <input className="form-check-input" type="checkbox" value="" id={`selectAll${qc}Id`}
-                                                checked = { allQuotesChecked.get(qc) }
-                                                onChange={(event)=>{ handleSelectAllByQuoteCurrencyOnClick(event.target.checked, qc) }}
-                                            />
-                                            <label className="form-check-label" htmlFor="selectAllUSDTId">Select All {qc}</label>
-                                        </div>
-                                    </a>
-                                </li>
-                            ))
-                        }
-                        {/* <li>
-                            <a className="dropdown-item" href="/#">
-                                <div className="form-check">
-                                    <input className="form-check-input" type="checkbox" value="" id="selectAllUSDTId"
-                                        checked = { allUsdtChecked }
-                                        onChange={(event)=>{ handleSelectAllByCoinOnClick(event.target.checked, "USDT") }}
-                                    />
-                                    <label className="form-check-label" htmlFor="selectAllUSDTId">Select All USDT</label>
-                                </div>
-                            </a>
-                        </li>
-                        <li>
-                            <a className="dropdown-item" href="/#">
-                                <div className="form-check">
-                                    <input className="form-check-input" type="checkbox" value="" id="selectAllBTCId"
-                                        checked = { allBtcChecked }
-                                        onChange={(event)=>{ handleSelectAllByCoinOnClick(event.target.checked, "BTC") }}
-                                    />
-                                    <label className="form-check-label" htmlFor="selectAllBTCId">Select All BTC</label>
-                                </div>
-                            </a>
-                        </li> */}
-                        <li><hr className="dropdown-divider"/></li>
-                        { availableTickers.current.map(option => 
-                            <li key= { option.tickerName } >
+            <div >
+                <div className="dropdown">
+                    <div className="btn-group" role="group">
+                        
+                        {/* <label style={{verticalAlign:"middle", alignSelf:"center", fontSize:"20px", 
+                        fontWeight:"bolder", fontStyle:"italic"}}>Search:&nbsp;</label> */}
+                        
+                        <button className= { dropdownButtonClassName } type="button" id="dropdownMenuButton"
+                            title = {"Current selection: " + selectedTickers}
+                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style={ buttonStyle }>
+                            { buttonText }
+                        </button>
+                        <button className= { findButtonClassName } type="button" id="findButtonId"
+                            onClick = {()=> handleOnClickFindButton(selectedTickers) }
+                            style= { findButtonStyle }>
+                            <img src={ search_svg } alt="Find" />
+                        </button> 
+                        
+                        <ul className="dropdown-menu" aria-labelledby="dropdownMenuButton" style= {{ maxHeight:"500px", overflow:"auto" }} >
+                            <li>
                                 <a className="dropdown-item" href="/#">
                                     <div className="form-check">
-                                        <input className="form-check-input" type="checkbox" value="" id="checkTickerId"
-                                            checked = { option.checked }
-                                            onChange = { (event)=>{
-                                                handleSelectedTickersOnClick(event.target.checked, option);
-                                            }}
+                                        <input className="form-check-input" type="checkbox" value="" id="selectAllTickersId"
+                                            checked = { allChecked }
+                                            onChange={(event)=>{ handleSelectAllOnClick(event.target.checked) }}
                                         />
-                                        <label className="form-check-label" htmlFor="checkTickerId">{ option.tickerName }</label>
+                                        <label className="form-check-label" htmlFor="selectAllTickersId">Select All</label>
                                     </div>
                                 </a>
-                            </li>)
-                        }
-                    </ul>
+                            </li>
+                            {
+                                // quoteCurrencies.current.map( qc => (
+                                    [...allQuotesChecked.keys()].map( qc => (
+                                    <li key={qc}>
+                                        <a className="dropdown-item" href="/#">
+                                            <div className="form-check">
+                                                <input className="form-check-input" type="checkbox" value="" id={`selectAll${qc}Id`}
+                                                    checked = { allQuotesChecked.get(qc) }
+                                                    onChange={(event)=>{ handleSelectAllByQuoteCurrencyOnClick(event.target.checked, qc) }}
+                                                />
+                                                <label className="form-check-label" htmlFor="selectAllUSDTId">Select All {qc}</label>
+                                            </div>
+                                        </a>
+                                    </li>
+                                ))
+                            }
+                            {/* <li>
+                                <a className="dropdown-item" href="/#">
+                                    <div className="form-check">
+                                        <input className="form-check-input" type="checkbox" value="" id="selectAllUSDTId"
+                                            checked = { allUsdtChecked }
+                                            onChange={(event)=>{ handleSelectAllByCoinOnClick(event.target.checked, "USDT") }}
+                                        />
+                                        <label className="form-check-label" htmlFor="selectAllUSDTId">Select All USDT</label>
+                                    </div>
+                                </a>
+                            </li>
+                            <li>
+                                <a className="dropdown-item" href="/#">
+                                    <div className="form-check">
+                                        <input className="form-check-input" type="checkbox" value="" id="selectAllBTCId"
+                                            checked = { allBtcChecked }
+                                            onChange={(event)=>{ handleSelectAllByCoinOnClick(event.target.checked, "BTC") }}
+                                        />
+                                        <label className="form-check-label" htmlFor="selectAllBTCId">Select All BTC</label>
+                                    </div>
+                                </a>
+                            </li> */}
+                            <li><hr className="dropdown-divider"/></li>
+                            { availableTickers.current.map(option => 
+                                <li key= { option.tickerName } >
+                                    <a className="dropdown-item" href="/#">
+                                        <div className="form-check">
+                                            <input className="form-check-input" type="checkbox" value="" id="checkTickerId"
+                                                checked = { option.checked }
+                                                onChange = { (event)=>{
+                                                    handleSelectedTickersOnClick(event.target.checked, option);
+                                                }}
+                                            />
+                                            <label className="form-check-label" htmlFor="checkTickerId">{ option.tickerName }</label>
+                                        </div>
+                                    </a>
+                                </li>)
+                            }
+                        </ul>
+                    </div>
                 </div>
             </div>
         </>
