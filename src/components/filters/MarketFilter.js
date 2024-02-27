@@ -6,7 +6,9 @@ const MarketFilter = (props)=> {
     const className = darkMode ? "input-group-text text-white bg-dark" : "input-group-text";
 
     return(
-        <>
+        <>                  
+            {/* <label style={{verticalAlign:"middle", alignSelf:"center", fontSize:"20px", fontWeight:"bolder", fontStyle:"italic"}}>
+                Filters:&nbsp;</label> */}
             <div className="input-group-prepend">
                 <span className= {className} id="basic-addon3">Market</span>
             </div>
