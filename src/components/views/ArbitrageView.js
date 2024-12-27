@@ -27,7 +27,7 @@ const ArbitrageView = (props)=> {
     const [pairCurrencies, setPairCurrencies] = useState([]);
     const [baseCurrencies, setBaseCurrencies] = useState([]);
     const [quoteCurrencies, setQuoteCurrencies] = useState([]);
-    const [baseCurrency, setBaseCurrency]  = useState();
+    const [baseCurrency, setBaseCurrency]  = useState({ name: "BTC" });
     const [quoteCurrency, setQuoteCurrency]  = useState("USDT");
     const ticker = props.ticker;
     const handleChangeChannelSubscriptionClick = props.handleChangeChannelSubscriptionClick;
@@ -40,8 +40,39 @@ const ArbitrageView = (props)=> {
     useEffect(() => {
         getAllAvailableTickers().then( response => {
             setPairCurrencies(response.data);
-            setBaseCurrencies(Array.from(new Set(response.data.map(bc => bc.name.split('-')[0]))).sort())
-            setQuoteCurrencies(Array.from(new Set(response.data.map(bc => bc.name.split('-')[1]))).sort());
+            setBaseCurrencies(
+                Array.from(
+                    new Map(
+                        response.data.map(pc => {
+                            const key = pc.name.split('-')[0];
+                            return [
+                                key,
+                                {
+                                    name: key,
+                                    description: pc.description.split('-')[0].trim()
+                                }
+                            ];
+                        })
+                    ).values()
+                ).sort((a, b) => a.name.localeCompare(b.name))
+            )
+            //setQuoteCurrencies(Array.from(new Set(response.data.map(bc => bc.name.split('-')[1]))).sort());
+            setQuoteCurrencies(
+                Array.from(
+                    new Map(
+                        response.data.map(pc => {
+                            const key = pc.name.split('-')[1];
+                            return [
+                                key,
+                                {
+                                    name: key,
+                                    description: pc.description.split('-')[1].trim()
+                                }
+                            ];
+                        })
+                    ).values()
+                ).sort((a, b) => a.name.localeCompare(b.name))
+            )
         })
     }, []);
 
@@ -74,44 +105,7 @@ const ArbitrageView = (props)=> {
     }
 
     return(
-        <>
-            
-            {/* <div className="row" style={{ textAlign: "left" }}>
-                <div className="col" >
-                    <div className="btn-group position-relative overflow-auto w-75" role="group" style={{marginTop: '10px', width:'-webkit-fill-available'}}>
-                        <input disabled={true} className="btn-check" />
-                        <label className={btnGroupClassName} 
-                            style={{opacity: '1', width: '-webkit-fill-available', maxWidth:'fit-content', whiteSpace:'nowrap'}} 
-                        >
-                            Select Pair Currency:
-                        </label>
-                        <input id={"left"} type="radio" className="btn-check" onClick={ ()=>{rightScroll(baseCurrency || quoteCurrency)} } />
-                        <label className={btnGroupClassName} htmlFor={"left"} >
-                            {"<<"}
-                        </label>
-                        {
-                            pairCurrencies.filter(at => { 
-                                return baseCurrency ? at.name.split("-")[0] === baseCurrency : at.name.split("-")[1] === quoteCurrency
-                            })?.map(pc => (
-                                <React.Fragment key={ pc.name }>
-                                    <input onClick={ ()=>{ handleChangeChannelSubscriptionClick({channel: 'arbitrage', ticker: pc.name}) } } 
-                                        defaultChecked={pc.name==='BTC' ? true : false} type="radio" className="btn-check" 
-                                        name="btnradioPairCurrency" id={pc.name} autoComplete="off"
-                                    />
-                                    <label className={btnGroupClassName} htmlFor={pc.name} style={{whiteSpace:'nowrap'}} >
-                                        {pc.name}
-                                    </label>
-                                </React.Fragment>
-                            ))
-                        }
-                        <input id={"right"} type="radio" className="btn-check" onClick={ ()=>{leftScroll(baseCurrency || quoteCurrency)} } />
-                        <label className={btnGroupClassName} htmlFor={"right"} >
-                            {">>"}
-                        </label>
-                    </div>
-                </div>
-            </div> */}
-            
+        <>  
             <div className="row justify-content-center">
                 <div className="col-10">
                     <div className="btn-group position-relative overflow-auto" role="group" style={{marginTop: '10px', width:'-webkit-fill-available'}}>                        
@@ -126,14 +120,16 @@ const ArbitrageView = (props)=> {
                         </Tooltip>
                         {
                             baseCurrencies?.map(bc => (
-                                <React.Fragment key={ `quoteCurrency_${bc}` }>
+                                <React.Fragment key={ `quoteCurrency_${bc.name}` }>
                                     <input onClick={() => {setBaseCurrency(bc);setQuoteCurrency(null)}} 
-                                        defaultChecked={bc==='BTC' ? true : false} type="radio" className="btn-check" 
-                                        name="btnradio" id={`baseCurrency_${bc}`} autoComplete="off"
+                                        defaultChecked={bc.name==='BTC' ? true : false} type="radio" className="btn-check" 
+                                        name="btnradio" id={`baseCurrency_${bc.name}`} autoComplete="off"
                                     />
-                                    <label className={btnGroupClassName} htmlFor={`baseCurrency_${bc}`}  >
-                                        {bc}
-                                    </label>
+                                    <Tooltip title={bc.description} placement="bottom" arrow>
+                                        <label className={btnGroupClassName} htmlFor={`baseCurrency_${bc.name}`}  >
+                                            {bc.name}
+                                        </label>
+                                    </Tooltip>
                                 </React.Fragment>
                             ))
                         }
@@ -154,14 +150,16 @@ const ArbitrageView = (props)=> {
                         </Tooltip>
                         {
                             quoteCurrencies?.map(qc => (
-                                <React.Fragment key={ `quoteCurrency_${qc}` }>
+                                <React.Fragment key={ `quoteCurrency_${qc.name}` }>
                                     <input onClick={() => {setQuoteCurrency(qc);setBaseCurrency(null);}} 
-                                        defaultChecked={qc==='USDT' ? true : false} type="radio" className="btn-check" name="btnradio" 
-                                        id={`quoteCurrency_${qc}`} autoComplete="off"
+                                        defaultChecked={qc.name==='USDT' ? true : false} type="radio" className="btn-check" name="btnradio" 
+                                        id={`quoteCurrency_${qc.name}`} autoComplete="off"
                                     />
-                                    <label className={btnGroupClassName} htmlFor={`quoteCurrency_${qc}`} >
-                                        {qc}
-                                    </label>
+                                    <Tooltip title={qc.description} placement="bottom" arrow>
+                                        <label className={btnGroupClassName} htmlFor={`quoteCurrency_${qc.name}`} >
+                                            {qc.name}
+                                        </label>
+                                    </Tooltip>
                                 </React.Fragment>
                             ))
                         }
@@ -172,16 +170,16 @@ const ArbitrageView = (props)=> {
             <div className="row justify-content-center" style={{ height: "71px", marginTop: '10px' }}>
                 <div className="col-sm-10" >
                     <div className="cover" >
-                        <button type="button" className="left" onClick={ ()=>{rightScroll(baseCurrency || quoteCurrency)} } >
+                        <button type="button" className="left" onClick={ ()=>{rightScroll(baseCurrency?.name || quoteCurrency?.name)} } >
                             <i className='fa fa-angle-double-left' style={{fontSize:"38px"}}></i>
                         </button>
-                        <div className="scroll-images" id={(baseCurrency || quoteCurrency).concat('scroll')}>
-                                    { getTickerButtonsComponent(baseCurrency, quoteCurrency) }
-                                </div>
+                        <div className="scroll-images" id={(baseCurrency?.name || quoteCurrency?.name).concat('scroll')}>
+                            { getTickerButtonsComponent(baseCurrency?.name, quoteCurrency?.name) }
+                        </div>
                         {/* <Snackbar style={{position:"absolute"}} open={true} autoHideDuration={1000} anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}>
                             <Alert severity="success" variant="outlined">{`WebSocket Connection: `}</Alert>
                         </Snackbar> */}
-                        <button className="right" onClick={ ()=>{leftScroll(baseCurrency || quoteCurrency)} }>
+                        <button className="right" onClick={ ()=>{leftScroll(baseCurrency?.name || quoteCurrency?.name)} }>
                             <i className='fa fa-angle-double-right' style={{fontSize:"38px"}}></i>
                         </button>
                     </div>
