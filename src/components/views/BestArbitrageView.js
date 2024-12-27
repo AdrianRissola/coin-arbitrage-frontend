@@ -55,21 +55,25 @@ const BestArbitrageView = (props)=> {
                 </div>
             </div>
             <br/>
-            <div style={{display: "flex", flexWrap: "wrap", justifyContent: "space-evenly"}}>
-                <div  
-                style={{display: "flex", flexDirection: "row", flexWrap: "wrap", justifyContent: "center"}}> 
-                    <Arbitrage darkMode = { darkMode }
-                        header = { "Best Arbitrage: " + selectedArbitrage.transactions[0].pair }
-                        arbitrage = { selectedArbitrage }
-                    />
+            {selectedArbitrage ? (
+                <div style={{display: "flex", flexWrap: "wrap", justifyContent: "space-evenly"}}>
+                    <div  
+                    style={{display: "flex", flexDirection: "row", flexWrap: "wrap", justifyContent: "center"}}> 
+                        <Arbitrage darkMode = { darkMode }
+                            header = { "Best Arbitrage: " + selectedArbitrage.transactions[0].pair }
+                            arbitrage = { selectedArbitrage }
+                        />
+                    </div>
+                    <div style={{ display: "flex", flexDirection: "row", flexWrap: "nowrap",
+                        alignContent: "stretch", justifyContent: "center", alignItems: "baseline"}}>
+                        <MarketPrices ticker = { selectedArbitrage.transactions[0].pair } 
+                            marketPrices={ selectedMarketPrices } darkMode = { darkMode }
+                        />
+                    </div>
                 </div>
-                <div style={{ display: "flex", flexDirection: "row", flexWrap: "nowrap",
-                    alignContent: "stretch", justifyContent: "center", alignItems: "baseline"}}>
-                    <MarketPrices ticker = { selectedArbitrage.transactions[0].pair } 
-                        marketPrices={ selectedMarketPrices } darkMode = { darkMode }
-                    />
-                </div>
-            </div>
+            ) : (
+                <div>No arbitrages available</div>
+            )}
         </div>
     )
 }
