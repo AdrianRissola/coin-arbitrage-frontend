@@ -7,7 +7,6 @@ import DarkModeButton from "./components/DarkModeButton";
 import { buildArbitrageView, buildHistoricalView, buildMarketStatusView, buildBestArbitrageView } from "./components/views/ViewBuilder";
 import { useSnackbar } from 'notistack'
 
-console.log(process.env);
 let ws = null;
 let currentWsStatus = -1;
 
