@@ -28,6 +28,7 @@
     "start": "npx cross-env NODE_ENV=production && react-scripts start",
     "build": "npx cross-env NODE_ENV=production && react-dotenv && react-scripts build",
     "test": "react-scripts test",
+    "test:security": "node --test test/security.test.cjs",
     "eject": "react-scripts eject"
   },
   "eslintConfig": {
@@ -60,7 +61,8 @@
   },
   "react-dotenv": {
     "whitelist": [
-      "URI"
+      "REACT_APP_API_REST_ENDPOINT",
+      "REACT_APP_WEB_SOCKET_ENDPOINT"
     ]
   }
 }

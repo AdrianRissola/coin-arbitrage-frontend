@@ -92,7 +92,8 @@ module.exports = {
   },
   plugins: [
     new webpack.DefinePlugin({
-      "process.env": JSON.stringify(dotenv.parsed)
+      "process.env.REACT_APP_API_REST_ENDPOINT": JSON.stringify((dotenv.parsed || {}).REACT_APP_API_REST_ENDPOINT || ""),
+      "process.env.REACT_APP_WEB_SOCKET_ENDPOINT": JSON.stringify((dotenv.parsed || {}).REACT_APP_WEB_SOCKET_ENDPOINT || "")
     }),
     new HtmlWebPackPlugin({
       template: './public/index.html'
