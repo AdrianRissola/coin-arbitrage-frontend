@@ -1,0 +1,17 @@
+{
+  "rest":[
+    {"name":"markets","method":"GET","path":"/coin-arbitrage/crypto/markets"},
+    {"name":"tickers","method":"GET","path":"/coin-arbitrage/crypto/available-tickers"},
+    {"name":"historySingle","method":"GET","params":{"tickers":["BTC-USDT"]},"path":"/coin-arbitrage/crypto/historical-arbitrages?tickers[]=BTC-USDT"},
+    {"name":"historyMultiple","method":"GET","params":{"tickers":["BTC-USDT","ETH-USDT"]},"path":"/coin-arbitrage/crypto/historical-arbitrages?tickers[]=BTC-USDT&tickers[]=ETH-USDT"},
+    {"name":"historyNull","method":"GET","params":{"tickers":null},"path":"/coin-arbitrage/crypto/historical-arbitrages"},
+    {"name":"historyAbsent","method":"GET","params":{},"path":"/coin-arbitrage/crypto/historical-arbitrages"},
+    {"name":"providerCurrent","method":"GET","path":"/coin-arbitrage/crypto/current-arbitrages?ticker=BTC-USDT&markets=Alpha,Beta&minProfitPercentage=20&top=3"}
+  ],
+  "websocket":{
+    "initial":{"channel":"arbitrage","ticker":"BTC-USDT"},
+    "navbar":{"channel":"arbitrage","ticker":"btc-usdt"},
+    "best":{"channel":"bestArbitrage","ticker":"all"},
+    "markets":{"channel":"Markets"}
+  }
+}

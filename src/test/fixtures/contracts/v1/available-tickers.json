@@ -1,0 +1,6 @@
+[
+  {"name":"BTC-USDT","description":"Bitcoin - Tether"},
+  {"name":"BTC-USD","description":"Bitcoin - US Dollar"},
+  {"name":"ETH-USDT","description":"Ethereum - Tether"},
+  {"name":"ETH-USD","description":"Ethereum - US Dollar"}
+]

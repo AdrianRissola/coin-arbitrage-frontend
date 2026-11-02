@@ -1,0 +1,31 @@
+{
+  "version": "1.0.0",
+  "protocolVersion": 1,
+  "providerCommit": "b8d1a6e685b7be0a5ec5ec93d2f652707e724e17",
+  "consumerCommit": "2c731ce387e3b4e0bbe5b0f2278c2e0eea7ada9b",
+  "fixedDate": "2024-01-02T03:04:05.000Z",
+  "validationScope": "Literal fixture consistency and parity only; provider and consumer execution remains pending.",
+  "files": {
+    "arbitrages.json": "8bed2352c94048e9e2562905168f39dc503ef2972a8e8f1077e17b5314d52b77",
+    "available-tickers.json": "d2b8bbc556c527d68411e0c669d4e865915db4c4c48e717fa6a2fdccbd545bc7",
+    "errors.json": "184ef5e84d0927d8ae6a1bd8d5eace64239dc31a02a6a5f9966db5f2a5f8f6f3",
+    "harness-interface.json": "49f799eb135f3ff9ac0e337b7020826e0cce04fda91bed10b6fcd2a479b01c32",
+    "historical-arbitrages.json": "b54a6c79d01bc2fbb8814f79ae0d1b606bcbbf75b3e1f4b57a070f55c67bdf57",
+    "historical-empty.json": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+    "market-prices.json": "55399ee7e13b9ff0df6fc21911084a93f9cd6cdad292c232b89c768afa8c5283",
+    "markets.json": "62acb772c60346b58fd636109151f03cf49f1a26353ca5f53391423cc7c511a5",
+    "no-data.json": "8ad9337ba06ceda0de4738ff48a739fc5834d9c16319991b117160e8fb54cc16",
+    "requests.json": "389649c4b21e6cde4911d7632d7be25342441bc5b2b09a3c84a2273b7c883962",
+    "seed.json": "48280fd3637433b6823ce4aa61e75587c97376d1e62f1543d0a292c9315c32a8",
+    "ws-arbitrage.json": "6fe826a2476bffb30638fccddcf164ff54bc5ef7e18db408020bc1243f535ed3",
+    "ws-best-arbitrage.json": "f8528388a7640c1fbab9d6256bb0f9e038b1b84c51aafd783ad330fc3a12e730",
+    "ws-markets.json": "369f7116b08348be79f7afe4f419ed7070d200695fcb5fe66fdf56f3f6a872e3",
+    "ws-welcome.json": "0ba97a9c71c4151566aa9ef3399cd7e0c1d844d36b690733cfe29c085368114f"
+  },
+  "interfaceFiles": {
+    "bootstrap.test.cjs": "116caeab95735a7a21d6aee8738d92a6047670f670436926e6d12ce85bacef44",
+    "catalog.cjs": "8818f1f80e3dfceed282a71e51ad5f6a610d9ca80bc182d29921a17df3647fee",
+    "context.cjs": "62d919520dc25471de35aa23c1b2a9877103fc72f6db1027b9406ca10769bf6d",
+    "verify.cjs": "7891d83ca1793f425ec032d00df05cb87ce009df656bc32cd1234ae469bbe02e"
+  }
+}

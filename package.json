@@ -27,9 +27,33 @@
     "dev": "cross-env NODE_ENV=development && react-scripts start",
     "start": "npx cross-env NODE_ENV=production && react-scripts start",
     "build": "npx cross-env NODE_ENV=production && react-dotenv && react-scripts build",
-    "test": "react-scripts test",
+    "test": "node test/frontend/run.cjs",
+    "test:services": "node test/frontend/run.cjs --suite services",
+    "test:ui": "node test/frontend/run.cjs --suite ui",
+    "test:components": "node test/frontend/run.cjs --suite components",
+    "test:all": "node test/frontend/run.cjs --suite all",
+    "test:ci": "node test/frontend/run.cjs --suite all --coverage --detect-open-handles",
+    "test:app": "node test/frontend/run.cjs --suite app",
+    "test:lifecycle": "node test/frontend/run.cjs --suite lifecycle",
+    "test:coverage": "node test/frontend/run.cjs --coverage",
+    "test:handles": "node test/frontend/run.cjs --detect-open-handles",
+    "test:lint": "eslint --no-cache --ext .js,.cjs src/test/frontend src/setupTests.js test/frontend",
     "test:security": "node --test test/security.test.cjs",
+    "test:bootstrap": "node --test src/test/integration-contracts/bootstrap.test.cjs",
+    "test:fixtures": "node src/test/integration-contracts/verify.cjs",
+    "test:int": "node src/test/integration-contracts/run.cjs",
+    "test:int:coverage": "node src/test/integration-contracts/run.cjs --coverage --detect-open-handles",
     "eject": "react-scripts eject"
+  },
+  "jest": {
+    "testMatch": ["<rootDir>/src/test/frontend/**/*.test.js"],
+    "globalSetup": "<rootDir>/test/frontend/support/require-runner.cjs",
+    "collectCoverageFrom": ["src/**/*.{js,jsx}", "!src/**/*.test.js", "!src/setupTests.js", "!src/test/**"],
+    "coverageReporters": ["json", "json-summary", "lcov", "text-summary"],
+    "transformIgnorePatterns": [
+      "[/\\\\]node_modules[/\\\\](?!axios[/\\\\]).+\\.(js|jsx|mjs|cjs|ts|tsx)$",
+      "^.+\\.module\\.(css|sass|scss)$"
+    ]
   },
   "eslintConfig": {
     "extends": [
