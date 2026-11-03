@@ -1,0 +1,22 @@
+{
+  "BTC-USDT": [
+    {"platform":"Alpha","ticker":"BTC-USDT","price":80},
+    {"platform":"Beta","ticker":"BTC-USDT","price":100},
+    {"platform":"Gamma","ticker":"BTC-USDT","price":125}
+  ],
+  "BTC-USD": [
+    {"platform":"Alpha","ticker":"BTC-USD","price":80},
+    {"platform":"Beta","ticker":"BTC-USD","price":100},
+    {"platform":"Gamma","ticker":"BTC-USD","price":100}
+  ],
+  "ETH-USDT": [
+    {"platform":"Alpha","ticker":"ETH-USDT","price":80},
+    {"platform":"Beta","ticker":"ETH-USDT","price":90},
+    {"platform":"Gamma","ticker":"ETH-USDT","price":100}
+  ],
+  "ETH-USD": [
+    {"platform":"Alpha","ticker":"ETH-USD","price":50},
+    {"platform":"Beta","ticker":"ETH-USD","price":60},
+    {"platform":"Gamma","ticker":"ETH-USD","price":80}
+  ]
+}

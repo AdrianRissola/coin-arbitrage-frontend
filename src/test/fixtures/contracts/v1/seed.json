@@ -1,0 +1,14 @@
+{
+  "currencies": [
+    {"symbol":"BTC","name":"Bitcoin","base":true,"quote":false},
+    {"symbol":"ETH","name":"Ethereum","base":true,"quote":false},
+    {"symbol":"USDT","name":"Tether","base":false,"quote":true},
+    {"symbol":"USD","name":"US Dollar","base":false,"quote":true}
+  ],
+  "legacyTickers": [
+    {"name":"BTC-USDT","description":"Bitcoin - Tether","rest":true,"websocket":true},
+    {"name":"BTC-USD","description":"Bitcoin - US Dollar","rest":true,"websocket":true},
+    {"name":"ETH-USDT","description":"Ethereum - Tether","rest":true,"websocket":true},
+    {"name":"ETH-USD","description":"Ethereum - US Dollar","rest":true,"websocket":true}
+  ]
+}

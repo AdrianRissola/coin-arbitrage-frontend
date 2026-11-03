@@ -1,0 +1,4 @@
+[
+  {"name":"missingTicker","method":"GET","path":"/coin-arbitrage/crypto/current-arbitrages","status":400,"body":{"error":{"code":400,"message":"BAD REQUEST","description":"ticker is mandatory"}}},
+  {"name":"oneMarket","method":"GET","path":"/coin-arbitrage/crypto/current-arbitrages?ticker=BTC-USDT&markets=Alpha","status":400,"body":{"error":{"code":400,"message":"BAD REQUEST","description":"more than one market is mandatory"}}}
+]

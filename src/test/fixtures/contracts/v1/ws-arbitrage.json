@@ -1,0 +1,10 @@
+{
+  "ticker":"BTC-USDT",
+  "channel":"arbitrage",
+  "marketPrices":{"BTC-USDT":[{"market":"Alpha","price":80},{"market":"Beta","price":100},{"market":"Gamma","price":125}]},
+  "arbitrages":{"BTC-USDT":{
+    "Alpha-Gamma":{"transactions":[{"type":"BUY","market":"Alpha","pair":"BTC-USDT","price":80},{"type":"SELL","market":"Gamma","pair":"BTC-USDT","price":125}],"profitPerUnit":45,"profitPercentage":36,"date":"2024-01-02T03:04:05.000Z"},
+    "Beta-Gamma":{"transactions":[{"type":"BUY","market":"Beta","pair":"BTC-USDT","price":100},{"type":"SELL","market":"Gamma","pair":"BTC-USDT","price":125}],"profitPerUnit":25,"profitPercentage":20,"date":"2024-01-02T03:04:05.000Z"},
+    "Alpha-Beta":{"transactions":[{"type":"BUY","market":"Alpha","pair":"BTC-USDT","price":80},{"type":"SELL","market":"Beta","pair":"BTC-USDT","price":100}],"profitPerUnit":20,"profitPercentage":20,"date":"2024-01-02T03:04:05.000Z"}
+  }}
+}

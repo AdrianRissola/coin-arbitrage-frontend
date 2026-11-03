@@ -1,0 +1,199 @@
+import React from 'react';
+import {
+  render,
+  screen,
+  within,
+  waitFor,
+  queryAllByAttribute,
+} from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import { history, seedStorage, tickers } from '../support/ui-fixtures';
+import {
+  deferred,
+  installTransport,
+  loadViews,
+  resolveResponse,
+  expectRenderFailure,
+} from '../support/ui-runtime';
+
+let views;
+beforeAll(async () => {
+  views = await loadViews();
+});
+beforeEach(() => seedStorage());
+const headers = (container) =>
+  queryAllByAttribute('class', container, 'card-header').map(
+    (node) => node.textContent.split('2024')[0]
+  );
+const tickerCheckbox = (text) =>
+  within(
+    screen
+      .getAllByRole('listitem')
+      .find((item) => within(item).queryByText(text, { selector: 'label' }))
+  ).getByRole('checkbox');
+const ready = () =>
+  screen.findByRole('heading', { name: 'Arbitrage Found: 3' });
+
+test('history shows Loading until its controlled response then renders real date-descending cards', async () => {
+  const pending = deferred();
+  const transport = installTransport({
+    history: [{ tickers: ['BTC-USDT'], deferred: pending }],
+  });
+  localStorage.setItem(
+    'historicalArbitrages',
+    JSON.stringify([{ stale: true }])
+  );
+  const { container } = render(<views.HistoricalView />);
+  expect(screen.getByRole('status')).toHaveTextContent('Loading...');
+  await resolveResponse(pending, history());
+  await ready();
+  expect(headers(container)).toEqual(['ETH-USD', 'BTC-USD', 'BTC-USDT']);
+  expect(screen.queryByRole('status')).not.toBeInTheDocument();
+  expect(
+    transport.calls.find((call) => call.kind === 'historical-arbitrages').params
+  ).toEqual({ tickers: ['BTC-USDT'] });
+});
+
+test('an empty array removes loading but does not add a count heading or invented empty message', async () => {
+  installTransport({ history: [{ tickers: ['BTC-USDT'], data: [] }] });
+  render(<views.HistoricalView />);
+  await waitFor(() =>
+    expect(screen.queryByRole('status')).not.toBeInTheDocument()
+  );
+  expect(
+    screen.queryByRole('heading', { name: /Arbitrage Found/ })
+  ).not.toBeInTheDocument();
+  expect(screen.queryByText(/No arbitrages available/)).not.toBeInTheDocument();
+});
+
+test('a null response keeps the existing loading state after the response settles', async () => {
+  const pending = deferred();
+  installTransport({ history: [{ tickers: ['BTC-USDT'], deferred: pending }] });
+  render(<views.HistoricalView />);
+  await resolveResponse(pending, null);
+  expect(screen.getByRole('status')).toHaveTextContent('Loading...');
+});
+
+test('Refine reveals real filters and exact minimum boundaries change observable historical rows', async () => {
+  const transport = installTransport({
+    history: [{ tickers: ['BTC-USDT'], data: history() }],
+  });
+  const { container } = render(<views.HistoricalView />);
+  await ready();
+  expect(screen.queryByRole('textbox')).not.toBeInTheDocument();
+  userEvent.click(screen.getByRole('button', { name: 'Refine' }));
+  userEvent.type(screen.getByRole('textbox'), 'aLpHa');
+  expect(headers(container)).toEqual(['BTC-USD', 'BTC-USDT']);
+  userEvent.clear(screen.getByRole('spinbutton'));
+  userEvent.type(screen.getByRole('spinbutton'), '36');
+  expect(headers(container)).toEqual(['BTC-USDT']);
+  userEvent.clear(screen.getByRole('spinbutton'));
+  userEvent.type(screen.getByRole('spinbutton'), '36.01');
+  expect(
+    screen.getByRole('heading', { name: 'Arbitrage Found: 0' })
+  ).toBeInTheDocument();
+  expect(
+    transport.calls.filter((call) => call.kind === 'historical-arbitrages')
+  ).toHaveLength(1);
+});
+
+test('sort option changes its button label but not rows until the primary direction button is clicked', async () => {
+  installTransport({ history: [{ tickers: ['BTC-USDT'], data: history() }] });
+  const { container } = render(<views.HistoricalView />);
+  await ready();
+  userEvent.click(screen.getByRole('button', { name: 'Refine' }));
+  userEvent.click(screen.getByRole('button', { name: 'Profit %' }));
+  expect(
+    screen.getByRole('button', { name: 'Order By: Profit % ↑' })
+  ).toBeInTheDocument();
+  expect(headers(container)).toEqual(['ETH-USD', 'BTC-USD', 'BTC-USDT']);
+  userEvent.click(screen.getByRole('button', { name: 'Order By: Profit % ↑' }));
+  expect(headers(container)).toEqual(['BTC-USD', 'BTC-USDT', 'ETH-USD']);
+  userEvent.click(screen.getByRole('button', { name: 'Order By: Profit % ↓' }));
+  expect(headers(container)).toEqual(['ETH-USD', 'BTC-USDT', 'BTC-USD']);
+});
+
+test('select-all Find makes the actual null/all-tickers request and resets the loading display', async () => {
+  const pending = deferred();
+  const transport = installTransport({
+    history: [
+      { tickers: ['BTC-USDT'], data: history() },
+      { tickers: null, deferred: pending },
+    ],
+  });
+  render(<views.HistoricalView />);
+  await ready();
+  userEvent.click(tickerCheckbox('Select All'));
+  userEvent.click(screen.getByRole('button', { name: 'Find' }));
+  expect(screen.getByRole('status')).toHaveTextContent('Loading...');
+  expect(
+    transport.calls.filter((call) => call.kind === 'historical-arbitrages')[1]
+  ).toMatchObject({
+    uri: 'http://127.0.0.1:1/coin-arbitrage/crypto/historical-arbitrages',
+    params: { tickers: null },
+  });
+  await resolveResponse(pending, []);
+  expect(screen.queryByRole('status')).not.toBeInTheDocument();
+});
+
+test('a selected subset is requested as actual ticker strings rather than the cached object records', async () => {
+  const transport = installTransport({
+    history: [
+      { tickers: ['BTC-USDT'], data: history() },
+      { tickers: ['ETH-USD'], data: [] },
+    ],
+  });
+  render(<views.HistoricalView />);
+  await ready();
+  userEvent.click(tickerCheckbox('BTC-USDT'));
+  userEvent.click(tickerCheckbox('ETH-USD'));
+  userEvent.click(screen.getByRole('button', { name: 'Find' }));
+  await waitFor(() =>
+    expect(screen.queryByRole('status')).not.toBeInTheDocument()
+  );
+  expect(
+    transport.calls.filter((call) => call.kind === 'historical-arbitrages')[1]
+      .params
+  ).toEqual({ tickers: ['ETH-USD'] });
+});
+
+test('empty Find selection makes no new request and leaves current rows visible', async () => {
+  const transport = installTransport({
+    history: [{ tickers: ['BTC-USDT'], data: history() }],
+  });
+  render(<views.HistoricalView />);
+  await ready();
+  userEvent.click(tickerCheckbox('Select All'));
+  userEvent.click(tickerCheckbox('Select All'));
+  userEvent.click(screen.getByRole('button', { name: 'Find' }));
+  expect(
+    screen.getByRole('heading', { name: 'Arbitrage Found: 3' })
+  ).toBeInTheDocument();
+  expect(
+    transport.calls.filter((call) => call.kind === 'historical-arbitrages')
+  ).toHaveLength(1);
+});
+
+test('the all-ticker decision uses only cached length, even when its one cached ticker differs', async () => {
+  seedStorage([tickers.find((ticker) => ticker.name === 'ETH-USD')]);
+  const transport = installTransport({
+    history: [{ tickers: null, data: [] }],
+  });
+  render(<views.HistoricalView />);
+  await waitFor(() =>
+    expect(screen.queryByRole('status')).not.toBeInTheDocument()
+  );
+  expect(
+    transport.calls.find((call) => call.kind === 'historical-arbitrages').params
+  ).toEqual({ tickers: null });
+});
+
+test('missing cached ticker metadata retains the local iterable render failure', () => {
+  localStorage.removeItem('availableWebsocketTickers');
+  expectRenderFailure(<views.HistoricalView />, /iterable/);
+});
+
+test('malformed cached JSON retains its SyntaxError instead of introducing fallback state', () => {
+  localStorage.setItem('availableWebsocketTickers', '[');
+  expectRenderFailure(<views.HistoricalView />, /JSON/);
+});

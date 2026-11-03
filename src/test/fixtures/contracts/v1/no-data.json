@@ -1,0 +1,6 @@
+{
+  "availableTickers":[],
+  "historicalArbitrages":[],
+  "currentArbitrages":null,
+  "arbitrageMessage":{"ticker":"BTC-USDT","channel":"arbitrage","marketPrices":{"BTC-USDT":[]},"arbitrages":null,"message":"No arbitrage available for: BTC-USDT"}
+}

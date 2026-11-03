@@ -1,0 +1,35 @@
+name: Frontend Regression Foundation
+
+on: [push, pull_request, workflow_dispatch]
+
+permissions:
+  contents: read
+
+jobs:
+  regression:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: 25.2.1
+          cache: npm
+      - run: npm ci
+      - run: npm run test:lint -- --max-warnings 0
+      - name: Execute Offline Consumer Profiles
+        run: npm run test:ci -- --report-dir "$RUNNER_TEMP/frontend-regression"
+      - name: Retain Regression Evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: frontend-regression
+          if-no-files-found: warn
+          retention-days: 7
+          path: |
+            ${{ runner.temp }}/frontend-regression/report.json
+            ${{ runner.temp }}/frontend-regression/jest-result.json
+            ${{ runner.temp }}/frontend-regression/coverage/
+            ${{ runner.temp }}/frontend-regression/*.log

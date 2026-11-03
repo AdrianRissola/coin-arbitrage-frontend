@@ -1,0 +1,8 @@
+{
+  "ticker":"ALL",
+  "channel":"bestArbitrage",
+  "bestArbitrages":{"arbitragesData":[
+    {"arbitrage":{"transactions":[{"type":"BUY","market":"Alpha","pair":"BTC-USDT","price":80},{"type":"SELL","market":"Gamma","pair":"BTC-USDT","price":125}],"profitPerUnit":45,"profitPercentage":36,"date":"2024-01-02T03:04:05.000Z"},"marketPrices":{"BTC-USDT":[{"market":"Alpha","price":80},{"market":"Beta","price":100},{"market":"Gamma","price":125}]}},
+    {"arbitrage":{"transactions":[{"type":"BUY","market":"Alpha","pair":"ETH-USD","price":50},{"type":"SELL","market":"Gamma","pair":"ETH-USD","price":80}],"profitPerUnit":30,"profitPercentage":37.5,"date":"2024-01-02T03:04:05.000Z"},"marketPrices":{"ETH-USD":[{"market":"Alpha","price":50},{"market":"Beta","price":60},{"market":"Gamma","price":80}]}}
+  ]}
+}

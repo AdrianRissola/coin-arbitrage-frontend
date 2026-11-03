@@ -1,0 +1,41 @@
+const test = require('node:test');
+const assert = require('node:assert/strict');
+const probe = require('./probe.cjs');
+
+test('a wrong initial subscription oracle is rejected against real App', () => {
+  const result = probe('app-wrong-initial-request');
+  assert.equal(result.status, 1, result.output);
+  assert.equal(result.report.stages[0].childCode, 1, result.output);
+  assert.equal(result.report.stages[0].failedTests, 1);
+  assert.equal(result.report.stages[0].timedOut, false);
+  assert.equal(result.report.success, false);
+  assert.match(result.output, /BTC-USD/);
+  assert.match(result.output, /BTC-USDT/);
+  assert.ok(!result.output.includes('FE_TEST_GUARD_BLOCKED'), result.output);
+});
+
+[
+  ['app-message-json-failure', /SyntaxError/, 'src/App.js'],
+  ['app-best-missing-failure', /reading 'arbitragesData'/, 'src/App.js'],
+  ['app-prices-shape-failure', /sort is not a function/, 'src/App.js'],
+  [
+    'app-history-rejection',
+    /Cannot destructure property 'data'/,
+    'src/components/views/HistoricalView.js',
+  ],
+].forEach(([name, error, source]) => {
+  test(`${name} requires its exact application failure, not a timeout or policy error`, () => {
+    const result = probe(name);
+    assert.equal(result.status, 1, result.output);
+    assert.equal(result.report.stages[0].childCode, 1, result.output);
+    assert.equal(result.report.stages[0].timedOut, false);
+    assert.equal(result.report.success, false);
+    assert.ok(
+      result.failures.some(
+        (failure) => error.test(failure) && failure.includes(source)
+      ),
+      result.output
+    );
+    assert.ok(!result.output.includes('FE_TEST_GUARD_BLOCKED'), result.output);
+  });
+});

@@ -1,0 +1,14 @@
+{
+  "protocolVersion":1,
+  "transportModeVariable":"TEST_TRANSPORT_MODE",
+  "defaultMode":"offline",
+  "integrationMode":"real-loopback",
+  "contextVariable":"TEST_RUN_CONTEXT",
+  "contextEncoding":"json",
+  "contextFields":["protocolVersion","runId","token","fixtureDigest","backendRevision","frontendRevision","restEndpoint","websocketEndpoint","origin","mongoUri","containerId","ownerLabel"],
+  "tokenVariable":"TEST_RUN_TOKEN",
+  "ownershipLabel":"ai.devin.testfoundation.run",
+  "mongoDatabasePrefix":"testfoundation_",
+  "resourcePolicy":"Controller-created loopback resources only; validate live container labels and bound listeners independently before passing trusted expectations.",
+  "implementationBoundary":"C0 validates context data, not resource ownership or network isolation. B1/F1 install fail-closed guards and B5 implements the Mongo lifecycle."
+}

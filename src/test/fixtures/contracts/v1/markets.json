@@ -1,0 +1,5 @@
+[
+  {"name":"Alpha","website":"https://alpha.invalid/","tickers":{"rest":[],"websocket":["BTC-USDT","BTC-USD","ETH-USDT","ETH-USD"]},"tickerRestEndpoint":"https://alpha.invalid/ticker?symbol=${ticker}","type":"Synthetic exchange"},
+  {"name":"Beta","website":"https://beta.invalid/","tickers":{"rest":[],"websocket":["BTC-USDT","BTC-USD","ETH-USDT","ETH-USD"]},"tickerRestEndpoint":"https://beta.invalid/ticker?symbol=${ticker}","type":"Synthetic exchange"},
+  {"name":"Gamma","website":"https://gamma.invalid/","tickers":{"rest":[],"websocket":["BTC-USDT","BTC-USD","ETH-USDT","ETH-USD"]},"tickerRestEndpoint":"https://gamma.invalid/ticker?symbol=${ticker}","type":"Synthetic exchange"}
+]
