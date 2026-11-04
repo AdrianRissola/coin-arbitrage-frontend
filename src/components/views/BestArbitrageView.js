@@ -6,14 +6,14 @@ import MarketPrices from "../MarketPrices";
 const BestArbitrageView = (props)=> {
     const [coin, setCoin] = useState();
     const darkMode = props.darkMode;
-    const bestArbitrages = props.bestArbitrage;
+    const bestArbitrages = props.bestArbitrage || [];
     const marketPrices = props.marketPrices;
     const selectedArbitrage =
     (coin && bestArbitrages) 
         ? bestArbitrages.filter(arbitrage => arbitrage.transactions[0].pair.split('-')[1]===coin)[0]
-        : bestArbitrages.reduce((bestArbit1, bestArbit2) => bestArbit1.profitPercentage > bestArbit2.profitPercentage ? bestArbit1 : bestArbit2)
+        : bestArbitrages.reduce((bestArbit1, bestArbit2) => bestArbit1 && bestArbit1.profitPercentage > bestArbit2.profitPercentage ? bestArbit1 : bestArbit2, null)
     
-    const selectedMarketPrices = marketPrices[selectedArbitrage.transactions[0].pair]
+    const selectedMarketPrices = selectedArbitrage ? marketPrices[selectedArbitrage.transactions[0].pair] : null
 
     const btnGroupClassName = darkMode ? "btn btn-dark" : "btn btn-light";
 

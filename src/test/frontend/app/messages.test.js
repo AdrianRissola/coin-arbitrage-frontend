@@ -1,8 +1,7 @@
-import { act, screen } from '@testing-library/react';
+import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { prepareApps } from '../support/app-runtime';
 import { clone } from '../support/ui-fixtures';
-import { expectRenderFailure } from '../support/ui-runtime';
 import arbitrage from '../../fixtures/contracts/v1/ws-arbitrage.json';
 import best from '../../fixtures/contracts/v1/ws-best-arbitrage.json';
 import markets from '../../fixtures/contracts/v1/ws-markets.json';
@@ -171,19 +170,27 @@ test('shared market status drives the real status view and REST metadata togethe
   ).toHaveLength(1);
 });
 
-test('empty best data retains its real reduce failure instead of displaying a fabricated empty state', async () => {
+test('empty best frames clear stale cards and recover on the same subscription', async () => {
   const app = createApp();
   await app.open();
   userEvent.click(screen.getByRole('link', { name: 'Best Arbitrage' }));
-  expectRenderFailure(
-    () =>
-      act(() =>
-        app.socket.message({
-          channel: 'bestArbitrage',
-          ticker: 'ALL',
-          bestArbitrages: { arbitragesData: [] },
-        })
-      ),
-    /Reduce of empty array/i
-  );
+  const sent = app.socket.sent.slice();
+  const empty = {
+    channel: 'bestArbitrage',
+    ticker: 'ALL',
+    bestArbitrages: { arbitragesData: [] },
+    message: 'No arbitrage available for: ALL',
+  };
+  await app.message(empty);
+  expect(screen.getByText('No arbitrages available')).toBeInTheDocument();
+  expect(screen.queryByRole('table')).not.toBeInTheDocument();
+  await app.message(best);
+  expect(screen.getByText('Best Arbitrage: ETH-USD')).toBeInTheDocument();
+  await app.message(empty);
+  expect(screen.getByText('No arbitrages available')).toBeInTheDocument();
+  expect(screen.queryByText('Best Arbitrage: ETH-USD')).not.toBeInTheDocument();
+  expect(screen.queryByRole('table')).not.toBeInTheDocument();
+  await app.message(best);
+  expect(screen.getByText('Best Arbitrage: ETH-USD')).toBeInTheDocument();
+  expect(app.socket.sent).toEqual(sent);
 });
