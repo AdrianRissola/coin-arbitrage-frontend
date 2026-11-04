@@ -195,9 +195,10 @@ test-private copies; frozen INT fixture bytes are unchanged.
 The event adapter delegates to a document-owned DocumentFragment, not a bare
 custom EventTarget: the installed JSDOM silently swallows callback exceptions
 without an owning window. Property replacement detaches previous listeners and
-binds the real handler to the controlled socket. Native negative controls require
-the exact App malformed-JSON, missing-best and non-array-prices errors, so a
-window-less false green is rejected. The adapter models the data callbacks used
+binds the real handler to the controlled socket. Native controls now require
+malformed JSON, missing best payloads and non-array prices to be ignored, followed
+by valid data on the same subscription. Separate diagnostic controls still reject
+uncaught callback exceptions. The adapter models the data callbacks used
 by App, not native event target identity, a wire handshake or socket buffering.
 
 Initial uppercase requests, lowercase navbar requests, capital `Markets` without
@@ -206,11 +207,12 @@ acknowledgement-dependent duplicates, ticker changes, actual view/card/price
 updates, stale data, ignored channels, pause before JSON parsing, history
 loading/empty/resume and error banners. BE-07/FE-01 empty best frames use the
 normal `bestArbitrages.arbitragesData: []` envelope, remove stale cards/prices
-and recover on subsequent data without resubscribing. Event-handler and
-rejected-history failures outside this fix run in bounded subprocesses
-whose parents require matching errors and source frames in the same structured
-Jest failure (not an unrelated console warning) and natural nonzero exits, not a
-timeout or policy error. A wrong initial-request oracle is also rejected.
+and recover on subsequent data without resubscribing. Frames are validated before
+any state update: malformed envelopes, arbitrage records, price maps and market
+status cannot replace valid state. Valid empty arbitrage maps become unavailable
+rows. Rejection/recovery probes exit naturally without global exception suppression;
+the wrong initial-request oracle and diagnostic failure controls remain negative.
+Ignoring malformed input does not introduce a quote-expiry policy.
 
 FE-03 clears the market-price error banner when a matching arbitrage frame
 supplies prices or a best-arbitrage frame supplies its data array. Valid empty
