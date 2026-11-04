@@ -141,8 +141,10 @@ browser scrolling. A per-element scrollBy spy tests only the existing API call.
 
 Characterisations include literal locale rounding, zero/string/negative profits,
 unconditional best-card filter bypass, quote-first selection and ties, in-place
-price-order effects, historical loading/empty/null behaviour, count-only
-all-tickers requests and the sort-option/primary-button mismatch. Raw-object
+price-order effects, historical loading/empty/null behaviour and the
+sort-option/primary-button mismatch. Historical all-ticker requests now require
+matching ticker identities, not just counts. Metadata is read safely at request
+time so a same-size cache change cannot leave a stale selection closure. Raw-object
 children retain their local render failures. Historical ticker cache
 reads now tolerate absent, invalid JSON, non-array and malformed-record values;
 missing metadata falls back to an explicit default-ticker request. The

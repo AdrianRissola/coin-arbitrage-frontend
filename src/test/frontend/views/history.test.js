@@ -203,10 +203,10 @@ test('empty Find selection makes no new request and leaves current rows visible'
   ).toHaveLength(1);
 });
 
-test('the all-ticker decision uses only cached length, even when its one cached ticker differs', async () => {
+test('equal counts with different ticker identities do not broaden the request', async () => {
   seedStorage([tickers.find((ticker) => ticker.name === 'ETH-USD')]);
   const transport = installTransport({
-    history: [{ tickers: null, data: [] }],
+    history: [{ tickers: ['BTC-USDT'], data: [] }],
   });
   render(<views.HistoricalView />);
   await waitFor(() =>
@@ -214,7 +214,22 @@ test('the all-ticker decision uses only cached length, even when its one cached 
   );
   expect(
     transport.calls.find((call) => call.kind === 'historical-arbitrages').params
-  ).toEqual({ tickers: null });
+  ).toEqual({ tickers: ['BTC-USDT'] });
+});
+
+test('Find uses current ticker identities without resetting to a stale cached selection', async () => {
+  seedStorage([tickers.find((ticker) => ticker.name === 'BTC-USDT')]);
+  const transport = installTransport({ history: [
+    { tickers: null, data: history() },
+    { tickers: ['BTC-USDT'], data: [] },
+  ] });
+  render(<views.HistoricalView />);
+  await ready();
+  seedStorage([tickers.find((ticker) => ticker.name === 'ETH-USD')]);
+  userEvent.click(screen.getByRole('button', { name: 'Find' }));
+  await waitFor(() => expect(screen.queryByRole('status')).not.toBeInTheDocument());
+  expect(transport.calls.filter((call) => call.kind === 'historical-arbitrages').map((call) => call.params))
+    .toEqual([{ tickers: null }, { tickers: ['BTC-USDT'] }]);
 });
 
 test.each([null, '[', '{}', 'null', '"invalid"', '[null]', '[{"name":null}]'])(

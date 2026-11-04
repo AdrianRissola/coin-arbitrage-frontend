@@ -27,21 +27,22 @@ const HistoricalView = (props)=> {
     const [minProfitFilter, setMinProfitFilter] = useState(0)
     const [showFilters, setShowFilters] = useState(false)
     const [historicalArbitrageOrder, setHistoricalArbitrageOrder] = useState({key: "date", value: "DESC", label: "Date"})
-    const availableTickers = getCachedTickers();
     const darkMode = props.darkMode;
 
     const callGetHistoricalArbitrages = useCallback(async (tickersFilter) => {
         setHistoryError(null);
         try {
-            const {data} = await getHistoricalArbitrages(
-                availableTickers.length===tickersFilter.length ? null : tickersFilter
-            );
+            const available = new Set(getCachedTickers().map(ticker => ticker.name));
+            const selected = new Set(tickersFilter);
+            const allSelected = available.size > 0 && available.size === selected.size
+                && [...available].every(ticker => selected.has(ticker));
+            const {data} = await getHistoricalArbitrages(allSelected ? null : tickersFilter);
             setHistoricalArbitrages(data);
         } catch (error) {
             setHistoricalArbitrages([]);
             setHistoryError("Historical arbitrage service is not available");
         }
-    }, [availableTickers.length])
+    }, [])
 
     React.useEffect(() => {
         console.log('React.useEffect: callGetHistoricalArbitrages')
