@@ -13,7 +13,6 @@ import {
   installTransport,
   loadViews,
   resolveResponse,
-  expectRenderFailure,
 } from '../support/ui-runtime';
 
 let views;
@@ -218,12 +217,16 @@ test('the all-ticker decision uses only cached length, even when its one cached 
   ).toEqual({ tickers: null });
 });
 
-test('missing cached ticker metadata retains the local iterable render failure', () => {
-  localStorage.removeItem('availableWebsocketTickers');
-  expectRenderFailure(<views.HistoricalView />, /iterable/);
-});
-
-test('malformed cached JSON retains its SyntaxError instead of introducing fallback state', () => {
-  localStorage.setItem('availableWebsocketTickers', '[');
-  expectRenderFailure(<views.HistoricalView />, /JSON/);
-});
+test.each([null, '[', '{}', 'null', '"invalid"', '[null]', '[{"name":null}]'])(
+  'invalid or missing ticker cache %p does not prevent historical loading',
+  async (cached) => {
+    if (cached === null) localStorage.removeItem('availableWebsocketTickers');
+    else localStorage.setItem('availableWebsocketTickers', cached);
+    const transport = installTransport({ history: [{ tickers: ['BTC-USDT'], data: [] }] });
+    render(<views.HistoricalView />);
+    await waitFor(() => expect(screen.queryByRole('status')).not.toBeInTheDocument());
+    expect(screen.queryByRole('alert')).not.toBeInTheDocument();
+    expect(transport.calls.find((call) => call.kind === 'historical-arbitrages').params)
+      .toEqual({ tickers: ['BTC-USDT'] });
+  }
+);

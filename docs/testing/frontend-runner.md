@@ -142,8 +142,10 @@ browser scrolling. A per-element scrollBy spy tests only the existing API call.
 Characterisations include literal locale rounding, zero/string/negative profits,
 unconditional best-card filter bypass, quote-first selection and ties, in-place
 price-order effects, historical loading/empty/null behaviour, count-only
-all-tickers requests and the sort-option/primary-button mismatch. Missing
-metadata and raw-object children retain their local render failures. The
+all-tickers requests and the sort-option/primary-button mismatch. Raw-object
+children retain their local render failures. Historical ticker cache
+reads now tolerate absent, invalid JSON, non-array and malformed-record values;
+missing metadata falls back to an explicit default-ticker request. The
 render-failure helper accepts only the expected error/React boundary diagnostics,
 rather than suppressing unrelated console errors. FE-01 now renders
 "No arbitrages available" for empty best data, including null/absent inputs.

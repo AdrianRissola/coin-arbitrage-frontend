@@ -10,6 +10,15 @@ import TickersCheckboxDropdownFilter from "../filters/TickersCheckboxDropdownFil
 
 
 
+const getCachedTickers = () => {
+    try {
+        const cached = JSON.parse(localStorage.getItem('availableWebsocketTickers'));
+        return Array.isArray(cached) && cached.every(ticker => typeof ticker?.name === 'string') ? cached : [];
+    } catch {
+        return [];
+    }
+};
+
 const HistoricalView = (props)=> {
     const [historicalArbitrages, setHistoricalArbitrages] = useState(null);
     const [historyError, setHistoryError] = useState(null);
@@ -18,7 +27,7 @@ const HistoricalView = (props)=> {
     const [minProfitFilter, setMinProfitFilter] = useState(0)
     const [showFilters, setShowFilters] = useState(false)
     const [historicalArbitrageOrder, setHistoricalArbitrageOrder] = useState({key: "date", value: "DESC", label: "Date"})
-    const availableTickers = [...JSON.parse(localStorage.getItem("availableWebsocketTickers"))];
+    const availableTickers = getCachedTickers();
     const darkMode = props.darkMode;
 
     const callGetHistoricalArbitrages = useCallback(async (tickersFilter) => {
