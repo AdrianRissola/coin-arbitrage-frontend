@@ -7,16 +7,17 @@ beforeAll(async () => {
   createApp = await prepareApps();
 });
 
-test('actual App unmount omission is observed before explicit fixture socket/global cleanup', async () => {
+test('actual App closes and detaches before explicit fixture socket/global cleanup', async () => {
   const guarded = window.WebSocket;
   const app = createApp();
   await app.open();
   await app.message(arbitrage);
   const socket = app.socket;
   app.unmount();
-  expect(socket.readyState).toBe(socket.OPEN);
-  expect(socket.onmessage).toEqual(expect.any(Function));
-  expect(socket.closeCalls).toEqual([]);
+  expect(socket.readyState).toBe(socket.CLOSING);
+  expect(socket.onmessage).toBeNull();
+  expect(socket.listenerCount()).toBe(0);
+  expect(socket.closeCalls).toHaveLength(1);
   cleanupApps();
   expect(socket.readyState).toBe(socket.CLOSED);
   expect(

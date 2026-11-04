@@ -206,15 +206,17 @@ supplies prices or a best-arbitrage frame supplies its data array. Valid empty
 price/best arrays also clear it. Unrelated ticker/channel messages do not clear
 a still-unrecovered error; missing-price messages retain their existing behaviour.
 
-Open/close events do not themselves rerender App. Notifications observe status
-on a subsequent render; a closed socket is replaced during that render before a
-CLOSED notification can appear. There is no claimed autonomous reconnect or
-unsubscribe. History can still cause a render-triggered reconnect to resend the
-last request while consumption remains paused.
+FE-04 creates sockets and attaches handlers together in a mount-owned effect.
+Callbacks read the latest committed subscription/menu state and ignore retired
+sockets. Unmount detaches all property handlers and closes an open/connecting
+socket; remount opens and subscribes a fresh connection with fresh component
+data. Controlled cases cover StrictMode effect replay, same-module concurrent
+mounts and captured callbacks after unmount, before test-owned cleanup.
 
-App unmount does not close its module-scoped socket or detach handlers.
-Same-module remount reuses an open socket/status, does not resubscribe and starts
-with fresh component data. These are asserted before test-owned cleanup.
+Open/close events do not themselves rerender App. Notifications run in effects
+rather than rendering. A later render or interaction can replace a closed
+socket; no autonomous reconnect loop or unsubscribe protocol is added. History
+can still cause that reconnect while message consumption remains paused.
 RTL unmounts all trees, test-owned scopes cancel notification/transition timers, adapters verify
 completed/consumed plans and restore, and socket leases explicitly remove
 handlers, close controlled instances and restore the original guarded global.
@@ -230,8 +232,9 @@ cleanup and every deadline escalation branch are still unvalidated.
 listener-free default. Each child has explicit UTC, en-US locale variables and
 fixed numeric/date expectations rather than relying on the host defaults.
 
-Actual App unmount omissions are asserted before `cleanupApps`. The test-only
-cleanup API unmounts actual trees, detaches property and direct socket listeners,
+Actual App socket closing and handler detachment are asserted before
+`cleanupApps`. The test-only cleanup API unmounts actual trees, detaches property
+and direct socket listeners,
 closes controlled sockets and restores nested guarded globals in reverse order.
 Listener registration tracks type/callback/capture identity, including duplicate
 registration. Cleanup is idempotent and late dispatched events cannot recreate

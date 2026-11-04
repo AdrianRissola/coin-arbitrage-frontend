@@ -111,37 +111,93 @@ test('an unrelated ticker cannot clear the market-price error', async () => {
   expect(screen.getByText('Market prices service is not available')).toBeInTheDocument();
 });
 
-test('unmount does not close the module-scoped socket or remove its public handlers', async () => {
+test('unmount closes its socket, detaches handlers and ignores captured late callbacks', async () => {
   const app = createApp();
   await app.open();
   const socket = app.socket;
+  const lateOpen = socket.onopen;
+  const lateMessage = socket.onmessage;
+  const sent = socket.sent.slice();
   app.unmount();
-  expect(socket.closeCalls).toEqual([]);
-  expect(socket.readyState).toBe(socket.OPEN);
-  expect(typeof socket.onmessage).toBe('function');
-  expect(typeof socket.onerror).toBe('function');
+  expect(socket.closeCalls).toHaveLength(1);
+  expect(socket.readyState).toBe(socket.CLOSING);
+  expect(socket.onmessage).toBeNull();
+  expect(socket.onerror).toBeNull();
+  expect(socket.onopen).toBeNull();
+  expect(socket.listenerCount()).toBe(0);
+  await act(async () => {
+    lateOpen({});
+    lateMessage({ data: JSON.stringify(arbitrage) });
+  });
+  expect(socket.sent).toEqual(sent);
+  expect(app.sockets).toHaveLength(1);
 });
 
-test('remounting the same module reuses its open socket and status without resubscribing or restoring component data', async () => {
+test.each([
+  ['connecting', 1],
+  ['open', 1],
+  ['closing', 1],
+  ['closed', 0],
+])('unmount of a %s socket closes at most once and detaches handlers', async (state, calls) => {
+  const app = createApp();
+  if (state !== 'connecting') await app.open();
+  if (state === 'closing') app.socket.close();
+  if (state === 'closed') await app.serverClose();
+  const socket = app.socket;
+  app.unmount();
+  expect(socket.closeCalls).toHaveLength(calls);
+  expect(socket.listenerCount()).toBe(0);
+  expect(app.sockets).toHaveLength(1);
+});
+
+test('remounting opens a fresh socket and subscribes without reusing old data', async () => {
   const app = createApp();
   await app.open();
   await app.message(arbitrage);
-  expect(await screen.findByText('WebSocket status: OPEN')).toBeInTheDocument();
-  const sent = app.socket.sent.slice();
+  const old = app.socket;
   app.unmount();
   app.mount();
-  expect(app.sockets).toHaveLength(1);
-  expect(app.socket.sent).toEqual(sent);
+  expect(app.sockets).toHaveLength(2);
+  expect(app.socket).not.toBe(old);
   expect(screen.queryByRole('table')).not.toBeInTheDocument();
-  expect(screen.queryByText(/WebSocket status:/)).not.toBeInTheDocument();
+  expect(await screen.findByText('WebSocket status: CONNECTING')).toBeInTheDocument();
+  await app.open();
+  expect(app.socket.sent.map(JSON.parse)).toEqual([requests.websocket.initial]);
+  await app.message(arbitrage);
+  expect(screen.getByText('Alpha-Gamma')).toBeInTheDocument();
 });
 
-test('rerenders replace event properties rather than registering duplicate open subscriptions', async () => {
+test('StrictMode leaves only its committed socket active and cleans all handlers', async () => {
+  const app = createApp({ strict: true });
+  const active = app.socket;
+  expect(app.sockets.filter(socket => socket.readyState === socket.CONNECTING)).toEqual([active]);
+  expect(app.sockets.slice(0, -1).every(socket => socket.listenerCount() === 0 && socket.closeCalls.length === 1)).toBe(true);
+  await app.open();
+  expect(active.sent.map(JSON.parse)).toEqual([requests.websocket.initial]);
+  app.unmount();
+  expect(active.closeCalls).toHaveLength(1);
+  expect(active.listenerCount()).toBe(0);
+});
+
+test('two mounts of the same App module own independent sockets', async () => {
+  const app = createApp();
+  await app.open();
+  const first = app.socket;
+  const secondMount = app.mount();
+  const second = app.socket;
+  expect(second).not.toBe(first);
+  secondMount.unmount();
+  expect(second.closeCalls).toHaveLength(1);
+  expect(first.closeCalls).toEqual([]);
+  expect(first.readyState).toBe(first.OPEN);
+});
+
+test('unchanged rerenders preserve handlers without duplicate open subscriptions', async () => {
   const app = createApp();
   const handler = app.socket.onopen;
   app.rerender();
   app.rerender();
-  expect(app.socket.onopen).not.toBe(handler);
+  expect(app.socket.onopen).toBe(handler);
   await app.open();
   expect(app.socket.sent.map(JSON.parse)).toEqual([requests.websocket.initial]);
 });

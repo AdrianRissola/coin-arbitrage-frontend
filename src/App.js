@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import './App.scss';
 import { getWebsocketEndpoint } from './params'
 import helper from "./helper";
@@ -6,9 +6,6 @@ import Navbar from "./components/Navbar";
 import DarkModeButton from "./components/DarkModeButton";
 import { buildArbitrageView, buildHistoricalView, buildMarketStatusView, buildBestArbitrageView } from "./components/views/ViewBuilder";
 import { useSnackbar } from 'notistack'
-
-let ws = null;
-let currentWsStatus = -1;
 
 const wsReadyState = Object.freeze({
   0: {status: "CONNECTING", variant: "info"},
@@ -19,6 +16,18 @@ const wsReadyState = Object.freeze({
 
 
 const App = () => {
+  const [ws, setWs] = useState(null);
+  const [socketGeneration, setSocketGeneration] = useState(0);
+  const socketRef = useRef(null);
+  const currentWsStatus = useRef(-1);
+  const {enqueueSnackbar} = useSnackbar();
+  const socketReadyState = ws?.readyState;
+
+  useEffect(() => {
+    if (ws && socketRef.current === ws && socketReadyState === ws.CLOSED)
+      setSocketGeneration(generation => generation + 1);
+  }, [ws, socketReadyState]);
+
   const [arbitrages, setArbitrages] = useState(helper.initialArbitrage);
   const [bestArbitrage, setBestArbitrage] = useState(helper.initialArbitrage);
   const [marketPrices, setMarketPrices] = useState(null);
@@ -31,6 +40,11 @@ const App = () => {
   const [webSocketOnMessageEnabled, setWebSocketOnMessageEnabled] = useState(true)
   const [menuSelection, setMenuSelection] = useState('arbitrage');
   const [webSocketRequest, setWebSocketRequest] = useState({ channel:"arbitrage", ticker:"BTC-USDT" });
+  const streamState = useRef(null);
+
+  useEffect(() => {
+    streamState.current = {webSocketRequest, webSocketOnMessageEnabled, menuSelection};
+  }, [webSocketRequest, webSocketOnMessageEnabled, menuSelection]);
 
   const isCurrentSubscription = (channelSubscription) => currentWsResponse.channel === channelSubscription.channel && currentWsResponse.ticker === channelSubscription.ticker
   
@@ -43,30 +57,31 @@ const App = () => {
   const handleChangeChannelSubscriptionClick = (channelSubscription) => {
     setWebSocketOnMessageEnabled(true);
     setWebSocketRequest(channelSubscription);
-    if(isClosed(ws)) {
-      ws = new WebSocket(getWebsocketEndpoint());
-    } else if(!isCurrentSubscription(channelSubscription) && isOpen(ws)) {
+    if(ws && isClosed(ws)) {
+      setSocketGeneration(generation => generation + 1);
+    } else if(ws && !isCurrentSubscription(channelSubscription) && isOpen(ws)) {
       ws.send(JSON.stringify(channelSubscription));
     }
   }
 
-  if(!ws || isClosed(ws)) {
-    ws = new WebSocket(getWebsocketEndpoint());
-  }
-
+  useEffect(() => {
+  const ws = new WebSocket(getWebsocketEndpoint());
+  socketRef.current = ws;
+  setWs(ws);
   ws.onopen = (event) => {
-    if(isOpen(ws))
-      ws.send(JSON.stringify(webSocketRequest));
+    if(socketRef.current === ws && ws.readyState === ws.OPEN)
+      ws.send(JSON.stringify(streamState.current.webSocketRequest));
   };
 
   ws.onerror = (event) => {
+    if(socketRef.current !== ws) return;
     setArbitrageChannelMessage("Arbitrage service is not available")
     setMarketPriceChannelMessage("Market prices service is not available")
   } 
 
   ws.onmessage = function (event) {
-
-    if(!webSocketOnMessageEnabled) return;
+    const {webSocketRequest, webSocketOnMessageEnabled, menuSelection} = streamState.current;
+    if(socketRef.current !== ws || !webSocketOnMessageEnabled) return;
     
     const response = JSON.parse(event.data);
 
@@ -133,18 +148,24 @@ const App = () => {
     }
 
   };
+  return () => {
+    socketRef.current = null;
+    ws.onopen = ws.onmessage = ws.onerror = ws.onclose = null;
+    if(ws.readyState === ws.CONNECTING || ws.readyState === ws.OPEN) ws.close();
+  };
+  }, [socketGeneration]);
   
-  const HandleSnackbar = () => {
-    const {enqueueSnackbar} = useSnackbar()
-    if(currentWsStatus!==ws.readyState) {
-      const currentWsReadyState = wsReadyState[ws.readyState]
+  useEffect(() => {
+    if(!ws || socketRef.current !== ws || socketReadyState === ws.CLOSED) return;
+    if(currentWsStatus.current!==socketReadyState) {
+      const currentWsReadyState = wsReadyState[socketReadyState]
       enqueueSnackbar(
         "WebSocket status: " + currentWsReadyState.status,
         { autoHideDuration: 5000, variant: currentWsReadyState.variant }
       )
-      currentWsStatus = ws ? ws.readyState : -1;
+      currentWsStatus.current = socketReadyState;
     }
-  }
+  }, [enqueueSnackbar, ws, socketReadyState]);
 
   const menuSelector = Object.freeze({
     arbitrage : () => {return buildArbitrageView(
@@ -158,7 +179,6 @@ const App = () => {
       
     <div style={{ backgroundColor: darkMode ? "#E9ECEF" : "white" }}>
  
-      <HandleSnackbar/>
         
       <Navbar darkMode = {darkMode}
         brandFunction = { ()=>{
