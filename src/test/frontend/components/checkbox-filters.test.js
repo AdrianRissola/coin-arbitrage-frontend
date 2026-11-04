@@ -128,14 +128,35 @@ test('quote input selection replaces the previous group and deselecting it clear
   expect(selected).toHaveBeenLastCalledWith([]);
 });
 
-test('an individual change does not repair the stale quote-group checkbox', async () => {
+test('individual changes clear and restore the quote-group indicator', async () => {
   installTransport();
   const selected = await mountTickerChoices();
   userEvent.click(checkbox('Select All USDT'));
   userEvent.click(checkbox('BTC-USDT'));
-  expect(checkbox('Select All USDT')).toBeChecked();
+  expect(checkbox('Select All USDT')).not.toBeChecked();
   userEvent.click(screen.getByRole('button', { name: 'Find' }));
   expect(selected).toHaveBeenLastCalledWith(['ETH-USDT']);
+  userEvent.click(checkbox('BTC-USDT'));
+  expect(checkbox('Select All USDT')).toBeChecked();
+  expect(checkbox('Select All')).not.toBeChecked();
+});
+
+test('manually completing a quote group marks it selected', async () => {
+  installTransport();
+  await mountTickerChoices();
+  userEvent.click(checkbox('ETH-USDT'));
+  expect(checkbox('Select All USDT')).toBeChecked();
+  expect(checkbox('Select All USD')).not.toBeChecked();
+});
+
+test('global selection and clearing keep quote-group indicators consistent', async () => {
+  installTransport();
+  await mountTickerChoices();
+  userEvent.click(checkbox('Select All'));
+  expect(checkbox('Select All USD')).toBeChecked();
+  expect(checkbox('Select All USDT')).toBeChecked();
+  userEvent.click(checkbox('Select All'));
+  expect(screen.getAllByRole('checkbox').every((input) => !input.checked)).toBe(true);
 });
 
 test.each(['USD', 'USDT'])(

@@ -10,8 +10,11 @@ const TickersCheckboxDropdown = (props)=> {
     const availableTickers = useRef([]);
     
     const [selectedTickers, setSelectedTickers] = useState([defaultSelectecdTicker]);
-    const [allChecked, setAllChecked] = useState(false);
-    const [allQuotesChecked, setAllQuotesChecked] = useState(new Map());
+    const allChecked = availableTickers.current.length > 0 && availableTickers.current.every(ticker => ticker.checked);
+    const allQuotesChecked = new Map(quoteCurrencies.current.map(quote => {
+        const group = availableTickers.current.filter(ticker => ticker.tickerName.split('-')[1] === quote);
+        return [quote, group.length > 0 && group.every(ticker => ticker.checked)];
+    }));
 
     const handleOnClickFindButton = props.handleOnClickFindButton;
     const buttonText = props.buttonText;
@@ -37,32 +40,20 @@ const TickersCheckboxDropdown = (props)=> {
                     checked: ticker === defaultSelectecdTicker ? true : false,
                 }
             });
-            setSelectedTickers([...availableTickers.current.filter(ticker=>ticker.checked).map(ticker=>ticker.tickerName)]);
             quoteCurrencies.current = Array.from(new Set(response.data.map(bc => bc.name.split('-')[1]))).sort();
-            const map = new Map();
-            quoteCurrencies.current.forEach( qc => map.set(qc, false));
-            setAllQuotesChecked(map);
+            setSelectedTickers([...availableTickers.current.filter(ticker=>ticker.checked).map(ticker=>ticker.tickerName)]);
+
         })
     }, []);
 
     const handleSelectedTickersOnClick = (checked, selectedTicker) => {
-        availableTickers.current.filter(ticker => ticker.tickerName===selectedTicker.tickerName)[0].checked = checked
-        if(!availableTickers.current.some(ticker=>!ticker.checked))
-            setAllChecked(true);
-        if(checked){
-            setSelectedTickers([...selectedTickers, selectedTicker.tickerName]);
-        } else {
-            setAllChecked(false);
-            selectedTickers.splice(selectedTickers.indexOf(selectedTicker.tickerName), 1);
-            setSelectedTickers([...selectedTickers]);
-        }
+        selectedTicker.checked = checked;
+        setSelectedTickers(selected => checked
+            ? [...selected, selectedTicker.tickerName]
+            : selected.filter(ticker => ticker !== selectedTicker.tickerName));
     }
 
     const handleSelectAllOnClick = (checked) => {
-        [...allQuotesChecked.keys()].forEach( quoteCurrency => 
-            allQuotesChecked.set(quoteCurrency, false)
-        );
-        setAllChecked(checked);
         availableTickers.current.forEach(ticker => {
             ticker.checked = checked
         });
@@ -74,15 +65,7 @@ const TickersCheckboxDropdown = (props)=> {
     }
 
     const handleSelectAllByQuoteCurrencyOnClick = (checked, currency) => {
-        [...allQuotesChecked.keys()].forEach( quoteCurrency => {
-            quoteCurrency === currency ? allQuotesChecked.set(quoteCurrency, checked) : allQuotesChecked.set(quoteCurrency, false)
-            if(quoteCurrency === currency){
-                allQuotesChecked.set(quoteCurrency, checked);
-            }
-        });
-        setAllQuotesChecked(allQuotesChecked);
         if(checked) {
-            setAllChecked(false);
             const selectedTickersByCoin = [];
             availableTickers.current.forEach( ticker => {
                 ticker.checked = false;

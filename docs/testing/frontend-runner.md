@@ -132,6 +132,9 @@ provide some radio names. Quote and individual ticker inputs now have unique,
 mount-scoped IDs and correctly associated labels. Regressions distinguish clicking
 the text label from clicking the checkbox square: the original USD square selected
 USD correctly, but its text label targeted USDT. Both now select the same group.
+Global and quote-group checkmarks are derived from actual ticker selections,
+including individual additions/removals and global select/clear. Quote selection
+presets retain their existing replace-selection behaviour.
 Narrow attribute queries locate non-semantic card headers and scrolling strips.
 This does not prove Bootstrap's external dropdown plugin, real pixel layout or
 browser scrolling. A per-element scrollBy spy tests only the existing API call.
