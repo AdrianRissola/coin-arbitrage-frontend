@@ -3,6 +3,7 @@ import userEvent from '@testing-library/user-event';
 import { prepareApps } from '../support/app-runtime';
 import { clone } from '../support/ui-fixtures';
 import arbitrage from '../../fixtures/contracts/v1/ws-arbitrage.json';
+import best from '../../fixtures/contracts/v1/ws-best-arbitrage.json';
 import welcome from '../../fixtures/contracts/v1/ws-welcome.json';
 import requests from '../../fixtures/contracts/v1/requests.json';
 
@@ -66,7 +67,7 @@ test('interaction with a closed socket replaces it and open uses the newly selec
   expect(app.socket.sent.map(JSON.parse)).toEqual([requests.websocket.markets]);
 });
 
-test('socket errors display both current service banners and valid data only clears the arbitrage banner', async () => {
+test('socket errors display both banners and valid data clears both', async () => {
   const app = createApp();
   await app.open();
   await app.error();
@@ -81,11 +82,33 @@ test('socket errors display both current service banners and valid data only cle
     screen.queryByText('Arbitrage service is not available')
   ).not.toBeInTheDocument();
   expect(
-    screen.getByText('Market prices service is not available')
-  ).toBeInTheDocument();
+    screen.queryByText('Market prices service is not available')
+  ).not.toBeInTheDocument();
   expect(
     screen.getByRole('columnheader', { name: 'BTC Markets (3)' })
   ).toBeInTheDocument();
+});
+
+test.each([
+  ['empty prices', { ...arbitrage, marketPrices: { 'BTC-USDT': [] } }],
+  ['best data', best],
+  ['empty best data', { channel: 'bestArbitrage', ticker: 'ALL', bestArbitrages: { arbitragesData: [] } }],
+])('%s clears the recovered market-price banner', async (name, frame) => {
+  const app = createApp();
+  await app.open();
+  if (frame.channel === 'bestArbitrage')
+    userEvent.click(screen.getByRole('link', { name: 'Best Arbitrage' }));
+  await app.error();
+  await app.message(frame);
+  expect(screen.queryByText('Market prices service is not available')).not.toBeInTheDocument();
+});
+
+test('an unrelated ticker cannot clear the market-price error', async () => {
+  const app = createApp();
+  await app.open();
+  await app.error();
+  await app.message({ ...arbitrage, ticker: 'ETH-USDT' });
+  expect(screen.getByText('Market prices service is not available')).toBeInTheDocument();
 });
 
 test('unmount does not close the module-scoped socket or remove its public handlers', async () => {

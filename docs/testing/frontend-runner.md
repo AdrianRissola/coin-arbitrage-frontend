@@ -201,6 +201,11 @@ whose parents require matching errors and source frames in the same structured
 Jest failure (not an unrelated console warning) and natural nonzero exits, not a
 timeout or policy error. A wrong initial-request oracle is also rejected.
 
+FE-03 clears the market-price error banner when a matching arbitrage frame
+supplies prices or a best-arbitrage frame supplies its data array. Valid empty
+price/best arrays also clear it. Unrelated ticker/channel messages do not clear
+a still-unrecovered error; missing-price messages retain their existing behaviour.
+
 Open/close events do not themselves rerender App. Notifications observe status
 on a subsequent render; a closed socket is replaced during that render before a
 CLOSED notification can appear. There is no claimed autonomous reconnect or

@@ -88,12 +88,14 @@ const App = () => {
       }
       if(response.marketPrices) {
         const ticker = Object.keys(response.marketPrices)[0];
-        if(response.marketPrices[ticker])
+        if(response.marketPrices[ticker]) {
           setMarketPrices(
             [
               response.marketPrices[ticker].sort((mp1, mp2) => (mp1.market > mp2.market) ? 1 : ((mp2.market > mp1.market) ? -1 : 0))
             ]
           );
+          setMarketPriceChannelMessage(null);
+        }
       } else {
         setMarketPrices(prev=>prev)
         setMarketPriceChannelMessage(response.message)
@@ -115,6 +117,7 @@ const App = () => {
       }
       if(response.bestArbitrages.arbitragesData) {
         setMarketPrices(marketPrices);
+        setMarketPriceChannelMessage(null);
       } else {
         setMarketPrices(prev=>prev)
         setMarketPriceChannelMessage(response.message)
