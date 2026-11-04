@@ -138,13 +138,26 @@ test('an individual change does not repair the stale quote-group checkbox', asyn
   expect(selected).toHaveBeenLastCalledWith(['ETH-USDT']);
 });
 
-test('the existing USD label targets the USDT checkbox, not its neighbouring USD input', async () => {
+test.each(['USD', 'USDT'])(
+  'the %s text label selects its own quote group just like its checkbox',
+  async (quote) => {
+    installTransport();
+    const selected = await mountTickerChoices();
+    userEvent.click(screen.getByText(`Select All ${quote}`, { selector: 'label' }));
+    userEvent.click(screen.getByRole('button', { name: 'Find' }));
+    expect(selected).toHaveBeenLastCalledWith([`BTC-${quote}`, `ETH-${quote}`]);
+    expect(checkbox(`Select All ${quote}`)).toBeChecked();
+  }
+);
+
+test('an individual ticker label toggles that ticker rather than the first input', async () => {
   installTransport();
   const selected = await mountTickerChoices();
-  userEvent.click(screen.getByText('Select All USD', { selector: 'label' }));
+  userEvent.click(screen.getByText('ETH-USD', { selector: 'label' }));
   userEvent.click(screen.getByRole('button', { name: 'Find' }));
-  expect(selected).toHaveBeenLastCalledWith(['BTC-USDT', 'ETH-USDT']);
-  expect(checkbox('Select All USD')).not.toBeChecked();
+  expect(selected).toHaveBeenLastCalledWith(['BTC-USDT', 'ETH-USD']);
+  expect(checkbox('ETH-USD')).toBeChecked();
+  expect(checkbox('BTC-USD')).not.toBeChecked();
 });
 
 test('empty available ticker metadata produces an empty Find payload', async () => {

@@ -128,9 +128,10 @@ preserving callback results, then restores its original value. No dependency
 replacement, shared React reset or component/state mock is used.
 
 Prefer roles, visible text and scoped lists/rows. Tooltip descriptions currently
-provide some radio names. Duplicate checkbox IDs and misassociated quote labels
-remain unchanged: scoped list-item queries exercise the actual input, with an
-additional case protecting the current incorrect USD-label/USDT-checkbox action.
+provide some radio names. Quote and individual ticker inputs now have unique,
+mount-scoped IDs and correctly associated labels. Regressions distinguish clicking
+the text label from clicking the checkbox square: the original USD square selected
+USD correctly, but its text label targeted USDT. Both now select the same group.
 Narrow attribute queries locate non-semantic card headers and scrolling strips.
 This does not prove Bootstrap's external dropdown plugin, real pixel layout or
 browser scrolling. A per-element scrollBy spy tests only the existing API call.

@@ -1,10 +1,11 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useId } from "react";
 import search_svg from "../../../src/search.svg";
 import { getAllAvailableTickers } from '../../service/MarketService';
 
 const defaultSelectecdTicker = 'BTC-USDT';
 
 const TickersCheckboxDropdown = (props)=> {
+    const checkboxId = useId();
     const quoteCurrencies = useRef([]);
     const availableTickers = useRef([]);
     
@@ -120,11 +121,11 @@ const TickersCheckboxDropdown = (props)=> {
                             <li>
                                 <a className="dropdown-item" href="/#">
                                     <div className="form-check">
-                                        <input className="form-check-input" type="checkbox" value="" id="selectAllTickersId"
+                                        <input className="form-check-input" type="checkbox" value="" id={`${checkboxId}-all`}
                                             checked = { allChecked }
                                             onChange={(event)=>{ handleSelectAllOnClick(event.target.checked) }}
                                         />
-                                        <label className="form-check-label" htmlFor="selectAllTickersId">Select All</label>
+                                        <label className="form-check-label" htmlFor={`${checkboxId}-all`}>Select All</label>
                                     </div>
                                 </a>
                             </li>
@@ -134,11 +135,11 @@ const TickersCheckboxDropdown = (props)=> {
                                     <li key={qc}>
                                         <a className="dropdown-item" href="/#">
                                             <div className="form-check">
-                                                <input className="form-check-input" type="checkbox" value="" id={`selectAll${qc}Id`}
+                                                <input className="form-check-input" type="checkbox" value="" id={`${checkboxId}-quote-${qc}`}
                                                     checked = { allQuotesChecked.get(qc) }
                                                     onChange={(event)=>{ handleSelectAllByQuoteCurrencyOnClick(event.target.checked, qc) }}
                                                 />
-                                                <label className="form-check-label" htmlFor="selectAllUSDTId">Select All {qc}</label>
+                                                <label className="form-check-label" htmlFor={`${checkboxId}-quote-${qc}`}>Select All {qc}</label>
                                             </div>
                                         </a>
                                     </li>
@@ -171,13 +172,13 @@ const TickersCheckboxDropdown = (props)=> {
                                 <li key= { option.tickerName } >
                                     <a className="dropdown-item" href="/#">
                                         <div className="form-check">
-                                            <input className="form-check-input" type="checkbox" value="" id="checkTickerId"
+                                            <input className="form-check-input" type="checkbox" value="" id={`${checkboxId}-ticker-${option.tickerName}`}
                                                 checked = { option.checked }
                                                 onChange = { (event)=>{
                                                     handleSelectedTickersOnClick(event.target.checked, option);
                                                 }}
                                             />
-                                            <label className="form-check-label" htmlFor="checkTickerId">{ option.tickerName }</label>
+                                            <label className="form-check-label" htmlFor={`${checkboxId}-ticker-${option.tickerName}`}>{ option.tickerName }</label>
                                         </div>
                                     </a>
                                 </li>)
