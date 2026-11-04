@@ -100,14 +100,16 @@ are not validated.
 
 ## Characterisations And Remaining Gaps
 
-All three production REST modules remain unchanged. Tests preserve GET paths,
-literal slash concatenation and import-time endpoint capture; ticker array,
-null and omitted query forms; response identity/data; logged undefined-return
-catch behaviour and both import-time cache writers.
+Tests preserve GET paths, literal slash concatenation and import-time endpoint
+capture; ticker array, null and omitted query forms; response identity/data and
+both import-time cache writers. FE-02 makes historical requests log and reject
+with the original error, while the import-time cache writer contains that
+rejection and leaves cached data unchanged. The historical view stops loading,
+removes stale rows, displays a generic error and permits Find to retry.
 
-Historical/Market import rejection still produces an unhandled `.data` follow-up
-TypeError in production code. Separate subprocess controls assert that exact
-existing failure without suppressing unhandled rejections in the main suite.
+Market import rejection still produces an unhandled `.data` follow-up TypeError.
+Historical import/view/App subprocess controls instead require successful error
+handling and natural zero exits; unrelated failure controls remain enabled.
 
 ## Component And View Profile
 
@@ -145,9 +147,9 @@ A removed quote retains its selection and shows no data rather than switching
 currencies; choosing Best or receiving that quote again restores the cards.
 
 Separate guarded subprocess cases render actual Historical, MarketStatus and
-Arbitrage views under rejected responses. Their parents require the current
-unhandled follow-up error and production view location, not a generic failure.
-They do not add error banners, fallbacks or unhandled-rejection suppression.
+Arbitrage views under rejected responses. Historical probes require the FE-02
+error state and recovery; other view probes retain their source-specific
+unhandled failures. No global unhandled-rejection suppression is installed.
 
 The unchanged `src/App.test.js` scaffold's obsolete “learn react” assertion is
 outside the active profiles. Step A retains its raw Axios/Jest parse failure and

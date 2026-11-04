@@ -54,6 +54,36 @@ test('history shows Loading until its controlled response then renders real date
   ).toEqual({ tickers: ['BTC-USDT'] });
 });
 
+test('a rejected history request shows an error, clears loading and permits retry', async () => {
+  installTransport({ history: [
+    { tickers: ['BTC-USDT'], reject: true },
+    { tickers: ['BTC-USDT'], data: history() },
+  ] });
+  render(<views.HistoricalView />);
+  expect(await screen.findByRole('alert')).toHaveTextContent('Historical arbitrage service is not available');
+  expect(screen.queryByRole('status')).not.toBeInTheDocument();
+  userEvent.click(screen.getByRole('button', { name: 'Find' }));
+  await ready();
+  expect(screen.queryByRole('alert')).not.toBeInTheDocument();
+});
+
+test('a later rejected history request removes stale results and recovers', async () => {
+  installTransport({ history: [
+    { tickers: ['BTC-USDT'], data: history() },
+    { tickers: ['BTC-USDT'], reject: true },
+    { tickers: ['BTC-USDT'], data: [] },
+  ] });
+  render(<views.HistoricalView />);
+  await ready();
+  userEvent.click(screen.getByRole('button', { name: 'Find' }));
+  await screen.findByRole('alert');
+  expect(screen.queryByRole('heading', { name: /Arbitrage Found/ })).not.toBeInTheDocument();
+  expect(screen.queryByRole('status')).not.toBeInTheDocument();
+  userEvent.click(screen.getByRole('button', { name: 'Find' }));
+  await waitFor(() => expect(screen.queryByRole('status')).not.toBeInTheDocument());
+  expect(screen.queryByRole('alert')).not.toBeInTheDocument();
+});
+
 test('an empty array removes loading but does not add a count heading or invented empty message', async () => {
   installTransport({ history: [{ tickers: ['BTC-USDT'], data: [] }] });
   render(<views.HistoricalView />);
