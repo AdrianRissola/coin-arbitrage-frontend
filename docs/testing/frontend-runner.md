@@ -137,9 +137,12 @@ Characterisations include literal locale rounding, zero/string/negative profits,
 unconditional best-card filter bypass, quote-first selection and ties, in-place
 price-order effects, historical loading/empty/null behaviour, count-only
 all-tickers requests and the sort-option/primary-button mismatch. Missing
-metadata, raw-object children and empty best data retain their local render
-failures. The render-failure helper accepts only the expected error/React
-boundary diagnostics, rather than suppressing unrelated console errors.
+metadata and raw-object children retain their local render failures. The
+render-failure helper accepts only the expected error/React boundary diagnostics,
+rather than suppressing unrelated console errors. FE-01 now renders
+"No arbitrages available" for empty best data, including null/absent inputs.
+A removed quote retains its selection and shows no data rather than switching
+currencies; choosing Best or receiving that quote again restores the cards.
 
 Separate guarded subprocess cases render actual Historical, MarketStatus and
 Arbitrage views under rejected responses. Their parents require the current
@@ -188,8 +191,10 @@ Initial uppercase requests, lowercase navbar requests, capital `Markets` without
 a ticker and uppercase `ALL` responses are characterised as-is. State tests cover
 acknowledgement-dependent duplicates, ticker changes, actual view/card/price
 updates, stale data, ignored channels, pause before JSON parsing, history
-loading/empty/resume and error banners. Empty best data still fails reduce;
-other event-handler and rejected-history failures run in bounded subprocesses
+loading/empty/resume and error banners. BE-07/FE-01 empty best frames use the
+normal `bestArbitrages.arbitragesData: []` envelope, remove stale cards/prices
+and recover on subsequent data without resubscribing. Event-handler and
+rejected-history failures outside this fix run in bounded subprocesses
 whose parents require matching errors and source frames in the same structured
 Jest failure (not an unrelated console warning) and natural nonzero exits, not a
 timeout or policy error. A wrong initial-request oracle is also rejected.

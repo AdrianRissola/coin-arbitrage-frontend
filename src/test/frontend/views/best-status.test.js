@@ -7,7 +7,6 @@ import {
   installTransport,
   loadViews,
   resolveResponse,
-  expectRenderFailure,
 } from '../support/ui-runtime';
 
 let views;
@@ -70,27 +69,37 @@ test('equal maximum percentages choose the later supplied record', () => {
   expect(screen.getByText('Best Arbitrage: ETH-USD')).toBeInTheDocument();
 });
 
-test('empty best data throws before its current no-arbitrages fallback can render', () => {
-  expectRenderFailure(
-    <views.BestArbitrageView bestArbitrage={[]} marketPrices={{}} />,
-    /Reduce of empty array/i
+test.each([[], null, undefined])('empty best data %p renders the no-arbitrages state and recovers', (empty) => {
+  const data = bestProps();
+  const { rerender } = render(
+    <views.BestArbitrageView bestArbitrage={empty} marketPrices={null} />
   );
+  expect(screen.getByText('No arbitrages available')).toBeInTheDocument();
+  expect(screen.queryByRole('table')).not.toBeInTheDocument();
+  rerender(<views.BestArbitrageView {...data} />);
+  expect(screen.getByText('Best Arbitrage: ETH-USD')).toBeInTheDocument();
+  rerender(<views.BestArbitrageView bestArbitrage={[]} marketPrices={{}} />);
+  expect(screen.getByText('No arbitrages available')).toBeInTheDocument();
+  expect(screen.queryByRole('table')).not.toBeInTheDocument();
 });
 
-test('a selected quote removed by new props keeps its current undefined.transactions failure', () => {
+test('a removed quote shows no data without switching currency and can recover', () => {
   const data = bestProps();
   const { rerender } = render(<views.BestArbitrageView {...data} />);
   userEvent.click(screen.getByText('USDT', { selector: 'label' }));
-  expectRenderFailure(
-    () =>
-      rerender(
-        <views.BestArbitrageView
-          {...data}
-          bestArbitrage={[data.bestArbitrage[1]]}
-        />
-      ),
-    /transactions/
+  rerender(
+    <views.BestArbitrageView {...data} bestArbitrage={[data.bestArbitrage[1]]} />
   );
+  expect(screen.getByRole('heading', { name: 'Best USDT Arbitrage' })).toBeInTheDocument();
+  expect(screen.getByText('No arbitrages available')).toBeInTheDocument();
+  expect(screen.queryByRole('table')).not.toBeInTheDocument();
+  rerender(<views.BestArbitrageView {...data} />);
+  expect(screen.getByText('Best Arbitrage: BTC-USDT')).toBeInTheDocument();
+  rerender(
+    <views.BestArbitrageView {...data} bestArbitrage={[data.bestArbitrage[1]]} />
+  );
+  userEvent.click(screen.getByText('Best', { selector: 'label' }));
+  expect(screen.getByText('Best Arbitrage: ETH-USD')).toBeInTheDocument();
 });
 
 test('status metadata begins at count zero, then renders sorted links and real connection counts', async () => {
