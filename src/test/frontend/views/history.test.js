@@ -217,10 +217,10 @@ test('equal counts with different ticker identities do not broaden the request',
   ).toEqual({ tickers: ['BTC-USDT'] });
 });
 
-test('Find uses current ticker identities without resetting to a stale cached selection', async () => {
+test('cache changes cannot broaden the initial or subsequent explicit selection', async () => {
   seedStorage([tickers.find((ticker) => ticker.name === 'BTC-USDT')]);
   const transport = installTransport({ history: [
-    { tickers: null, data: history() },
+    { tickers: ['BTC-USDT'], data: history() },
     { tickers: ['BTC-USDT'], data: [] },
   ] });
   render(<views.HistoricalView />);
@@ -229,7 +229,53 @@ test('Find uses current ticker identities without resetting to a stale cached se
   userEvent.click(screen.getByRole('button', { name: 'Find' }));
   await waitFor(() => expect(screen.queryByRole('status')).not.toBeInTheDocument());
   expect(transport.calls.filter((call) => call.kind === 'historical-arbitrages').map((call) => call.params))
-    .toEqual([{ tickers: null }, { tickers: ['BTC-USDT'] }]);
+    .toEqual([{ tickers: ['BTC-USDT'] }, { tickers: ['BTC-USDT'] }]);
+});
+
+test('a one-ticker inventory does not turn the default ticker into an implicit ALL request', async () => {
+  const available = [tickers.find((ticker) => ticker.name === 'BTC-USDT')];
+  seedStorage(available);
+  const transport = installTransport({ tickers: [{ data: available }], history: [
+    { tickers: ['BTC-USDT'], data: [] }, { tickers: ['BTC-USDT'], data: [] },
+  ] });
+  render(<views.HistoricalView />);
+  await screen.findByText('BTC-USDT', { selector: 'label' });
+  await waitFor(() => expect(screen.queryByRole('status')).not.toBeInTheDocument());
+  userEvent.click(screen.getByRole('button', { name: 'Find' }));
+  await waitFor(() => expect(screen.queryByRole('status')).not.toBeInTheDocument());
+  expect(transport.calls.filter((call) => call.kind === 'historical-arbitrages').map((call) => call.params))
+    .toEqual([{ tickers: ['BTC-USDT'] }, { tickers: ['BTC-USDT'] }]);
+});
+
+test('a quote preset covering the inventory remains an explicit quote selection, not ALL', async () => {
+  const available = tickers.filter((ticker) => ticker.name.endsWith('-USD'));
+  seedStorage(available);
+  const transport = installTransport({ tickers: [{ data: available }], history: [
+    { tickers: ['BTC-USDT'], data: [] }, { tickers: ['BTC-USD', 'ETH-USD'], data: [] },
+  ] });
+  render(<views.HistoricalView />);
+  await screen.findByText('Select All USD', { selector: 'label' });
+  userEvent.click(tickerCheckbox('Select All USD'));
+  userEvent.click(screen.getByRole('button', { name: 'Find' }));
+  await waitFor(() => expect(screen.queryByRole('status')).not.toBeInTheDocument());
+  expect(transport.calls.filter((call) => call.kind === 'historical-arbitrages')[1].params)
+    .toEqual({ tickers: ['BTC-USD', 'ETH-USD'] });
+});
+
+test('individual changes after global Select All restore an explicit ticker request', async () => {
+  const selected = ['BTC-USD', 'ETH-USD', 'ETH-USDT', 'BTC-USDT'];
+  const transport = installTransport({ history: [
+    { tickers: ['BTC-USDT'], data: history() }, { tickers: selected, data: [] },
+  ] });
+  render(<views.HistoricalView />);
+  await ready();
+  userEvent.click(tickerCheckbox('Select All'));
+  userEvent.click(tickerCheckbox('BTC-USDT'));
+  userEvent.click(tickerCheckbox('BTC-USDT'));
+  userEvent.click(screen.getByRole('button', { name: 'Find' }));
+  await waitFor(() => expect(screen.queryByRole('status')).not.toBeInTheDocument());
+  expect(transport.calls.filter((call) => call.kind === 'historical-arbitrages')[1].params)
+    .toEqual({ tickers: selected });
 });
 
 test.each([null, '[', '{}', 'null', '"invalid"', '[null]', '[{"name":null}]'])(

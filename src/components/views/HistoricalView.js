@@ -10,15 +10,6 @@ import TickersCheckboxDropdownFilter from "../filters/TickersCheckboxDropdownFil
 
 
 
-const getCachedTickers = () => {
-    try {
-        const cached = JSON.parse(localStorage.getItem('availableWebsocketTickers'));
-        return Array.isArray(cached) && cached.every(ticker => typeof ticker?.name === 'string') ? cached : [];
-    } catch {
-        return [];
-    }
-};
-
 const HistoricalView = (props)=> {
     const [historicalArbitrages, setHistoricalArbitrages] = useState(null);
     const [historyError, setHistoryError] = useState(null);
@@ -32,11 +23,7 @@ const HistoricalView = (props)=> {
     const callGetHistoricalArbitrages = useCallback(async (tickersFilter) => {
         setHistoryError(null);
         try {
-            const available = new Set(getCachedTickers().map(ticker => ticker.name));
-            const selected = new Set(tickersFilter);
-            const allSelected = available.size > 0 && available.size === selected.size
-                && [...available].every(ticker => selected.has(ticker));
-            const {data} = await getHistoricalArbitrages(allSelected ? null : tickersFilter);
+            const {data} = await getHistoricalArbitrages(tickersFilter);
             setHistoricalArbitrages(data);
         } catch (error) {
             setHistoricalArbitrages([]);
@@ -50,7 +37,7 @@ const HistoricalView = (props)=> {
     }, [callGetHistoricalArbitrages]);
 
     const handleOnClickFindButton = (selectedTickers) => {
-        if(selectedTickers && selectedTickers.length>0) {
+        if(selectedTickers === null || (selectedTickers && selectedTickers.length>0)) {
             setHistoricalArbitrages(null); 
             callGetHistoricalArbitrages(selectedTickers);
         };
@@ -92,6 +79,7 @@ const HistoricalView = (props)=> {
                         buildInputGroup(
                             <TickersCheckboxDropdownFilter darkMode = { darkMode }
                                 handleOnClickFindButton = { handleOnClickFindButton }
+                                handleOnClickFindAllButton = { () => handleOnClickFindButton(null) }
                                 buttonText = { "Tickers "} styleWidth = {"200px"}
                             />, 
                             "auto"

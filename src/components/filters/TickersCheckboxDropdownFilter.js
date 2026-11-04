@@ -8,6 +8,7 @@ const TickersCheckboxDropdown = (props)=> {
     const checkboxId = useId();
     const quoteCurrencies = useRef([]);
     const availableTickers = useRef([]);
+    const selectAllRequested = useRef(false);
     
     const [selectedTickers, setSelectedTickers] = useState([defaultSelectecdTicker]);
     const [requestError, setRequestError] = useState(null);
@@ -39,6 +40,7 @@ const TickersCheckboxDropdown = (props)=> {
         setRequestError(null);
         getAllAvailableTickers().then( response => {
             if (!active) return;
+            selectAllRequested.current = false;
             availableTickers.current = response.data.map(ticker => ticker.name).sort().map(ticker => {
                 return {
                     tickerName: ticker,
@@ -58,6 +60,7 @@ const TickersCheckboxDropdown = (props)=> {
     }, [requestVersion]);
 
     const handleSelectedTickersOnClick = (checked, selectedTicker) => {
+        selectAllRequested.current = false;
         selectedTicker.checked = checked;
         setSelectedTickers(selected => checked
             ? [...selected, selectedTicker.tickerName]
@@ -65,6 +68,7 @@ const TickersCheckboxDropdown = (props)=> {
     }
 
     const handleSelectAllOnClick = (checked) => {
+        selectAllRequested.current = checked;
         availableTickers.current.forEach(ticker => {
             ticker.checked = checked
         });
@@ -76,6 +80,7 @@ const TickersCheckboxDropdown = (props)=> {
     }
 
     const handleSelectAllByQuoteCurrencyOnClick = (checked, currency) => {
+        selectAllRequested.current = false;
         if(checked) {
             const selectedTickersByCoin = [];
             availableTickers.current.forEach( ticker => {
@@ -109,7 +114,8 @@ const TickersCheckboxDropdown = (props)=> {
                             { buttonText }
                         </button>
                         <button className= { findButtonClassName } type="button" id="findButtonId"
-                            onClick = {()=> handleOnClickFindButton(selectedTickers) }
+                            onClick = {()=> allChecked && selectAllRequested.current && props.handleOnClickFindAllButton
+                                ? props.handleOnClickFindAllButton() : handleOnClickFindButton(selectedTickers) }
                             style= { findButtonStyle }>
                             <img src={ search_svg } alt="Find" />
                         </button> 

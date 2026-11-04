@@ -142,12 +142,14 @@ browser scrolling. A per-element scrollBy spy tests only the existing API call.
 Characterisations include literal locale rounding, zero/string/negative profits,
 unconditional best-card filter bypass, quote-first selection and ties, in-place
 price-order effects, historical loading/empty/null behaviour and the
-sort-option/primary-button mismatch. Historical all-ticker requests now require
-matching ticker identities, not just counts. Metadata is read safely at request
-time so a same-size cache change cannot leave a stale selection closure. Raw-object
-children retain their local render failures. Historical ticker cache
-reads now tolerate absent, invalid JSON, non-array and malformed-record values;
-missing metadata falls back to an explicit default-ticker request. The
+sort-option/primary-button mismatch. Historical searches no longer read cached
+ticker metadata or infer ALL from counts or cached identities. Default, individual
+and quote-group searches send explicit ticker IDs. Only the global Select All action
+can use the optional `handleOnClickFindAllButton` callback, retaining a compact
+request for large inventories. Without that callback, Find still sends the selected
+array as before. Individual/quote changes clear that global intent. Missing, malformed
+or stale cache data cannot crash the view or broaden its search. Direct raw-object
+component children retain their local render failures. The
 render-failure helper accepts only the expected error/React boundary diagnostics,
 rather than suppressing unrelated console errors. FE-01 now renders
 "No arbitrages available" for empty best data, including null/absent inputs.
@@ -286,9 +288,9 @@ as passes. Exit-zero, incomplete, all-skipped and timed-out output remain failur
 
 | Boundary | Executed standalone coverage | Not established |
 | --- | --- | --- |
-| Three REST services | 27 real-Axios request/serialization/response/import-storage cases | Actual backend HTTP/CORS or production URLs |
-| Components and views | 84 RTL/user-event cases for cards, collections, filters, sorting, loading, empty and error behaviour | Browser pixel layout, external dropdown plugins or accessibility correctness |
-| App and socket messages | 39 real-App cases for subscription strings, channel consumption, navigation, pause/resume, banners and notifications | Native socket handshake/reconnection or provider wire compatibility |
+| Three REST services | 29 real-Axios request/serialization/response/import-storage cases | Actual backend HTTP/CORS or production URLs |
+| Components and views | 103 RTL/user-event cases for cards, collections, filters, sorting, loading, empty and error behaviour | Browser pixel layout, external dropdown plugins or accessibility correctness |
+| App and socket messages | 69 real-App cases for subscription strings, channel consumption, navigation, pause/resume, banners and notifications | Native socket handshake/reconnection or provider wire compatibility |
 | Fixture lifecycle and locale | Eight cases for observed omissions, owned cleanup and fixed expectations | Automatic production cleanup or native browser resource semantics |
 | Native controls | Bootstrap/security/guard/failure controls and five result-accounting checks plus four diagnostics controls | Additional application statement coverage |
 
