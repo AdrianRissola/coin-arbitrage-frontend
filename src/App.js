@@ -15,6 +15,35 @@ const wsReadyState = Object.freeze({
 }) 
 
 
+const isRecord = value => value !== null && typeof value === 'object' && !Array.isArray(value);
+const isTicker = value => typeof value === 'string' && value.split('-').length === 2 && value.split('-').every(Boolean);
+const isArbitrage = value => isRecord(value) && Array.isArray(value.transactions)
+  && value.transactions.length === 2 && value.transactions.every(transaction => isRecord(transaction)
+    && isTicker(transaction.pair) && typeof transaction.market === 'string'
+    && typeof transaction.type === 'string' && Number.isFinite(transaction.price))
+  && Number.isFinite(value.profitPercentage) && Number.isFinite(value.profitPerUnit)
+  && typeof value.date === 'string' && (value.message == null || typeof value.message === 'string');
+const isPriceMap = value => isRecord(value) && Object.entries(value).every(([ticker, rows]) =>
+  isTicker(ticker) && Array.isArray(rows) && rows.every(row => isRecord(row)
+    && typeof row.market === 'string' && Number.isFinite(row.price)));
+const isValidFrame = response => {
+  if (response.message != null && typeof response.message !== 'string') return false;
+  if ((response.channel === 'arbitrage' || response.channel === 'bestArbitrage') && typeof response.ticker !== 'string') return false;
+  if (response.channel === 'arbitrage')
+    return (response.arbitrages == null || (isRecord(response.arbitrages)
+      && Object.entries(response.arbitrages).every(([ticker, records]) => isTicker(ticker) && isRecord(records)
+        && Object.entries(records).every(([key, record]) => isArbitrage(record)
+          && (key !== 'arbitrage_not_available' || typeof record.message === 'string')))))
+      && (response.marketPrices == null || isPriceMap(response.marketPrices));
+  if (response.channel === 'bestArbitrage' && response.ticker === 'ALL')
+    return isRecord(response.bestArbitrages) && Array.isArray(response.bestArbitrages.arbitragesData)
+      && response.bestArbitrages.arbitragesData.every(row => isRecord(row) && isArbitrage(row.arbitrage) && isPriceMap(row.marketPrices));
+  if (response.channel === 'markets' && response.markets != null)
+    return isRecord(response.markets) && ['connectedMarkets', 'disconnectedMarkets'].every(key =>
+      Array.isArray(response.markets[key]) && response.markets[key].every(market => typeof market === 'string'));
+  return true;
+};
+
 const App = () => {
   const [ws, setWs] = useState(null);
   const [socketGeneration, setSocketGeneration] = useState(0);
@@ -83,9 +112,13 @@ const App = () => {
     const {webSocketRequest, webSocketOnMessageEnabled, menuSelection} = streamState.current;
     if(socketRef.current !== ws || !webSocketOnMessageEnabled) return;
     
-    const response = JSON.parse(event.data);
-
-    if(menuSelection!==response.channel) return;
+    let response;
+    try {
+      response = JSON.parse(event.data);
+    } catch {
+      return;
+    }
+    if (!isRecord(response) || menuSelection !== response.channel || !isValidFrame(response)) return;
      
     if(response?.channel!=='prices') {
       setCurrentWsResponse({channel: response.channel, ticker: response.ticker})
@@ -95,7 +128,8 @@ const App = () => {
       if(response.arbitrages && Object.keys(response.arbitrages).length>0) {
         const ticker = Object.keys(response.arbitrages)[0]
         setTicker(ticker)
-        setArbitrages(response.arbitrages[ticker])
+        setArbitrages(Object.keys(response.arbitrages[ticker]).length
+          ? response.arbitrages[ticker] : helper.arbitrageNotAvailable(ticker))
         setArbitrageChannelMessage(null)
       } else {
         setTicker(webSocketRequest.ticker)

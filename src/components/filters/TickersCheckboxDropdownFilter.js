@@ -1,16 +1,23 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useId } from "react";
 import search_svg from "../../../src/search.svg";
 import { getAllAvailableTickers } from '../../service/MarketService';
 
 const defaultSelectecdTicker = 'BTC-USDT';
 
 const TickersCheckboxDropdown = (props)=> {
+    const checkboxId = useId();
     const quoteCurrencies = useRef([]);
     const availableTickers = useRef([]);
+    const selectAllRequested = useRef(false);
     
     const [selectedTickers, setSelectedTickers] = useState([defaultSelectecdTicker]);
-    const [allChecked, setAllChecked] = useState(false);
-    const [allQuotesChecked, setAllQuotesChecked] = useState(new Map());
+    const [requestError, setRequestError] = useState(null);
+    const [requestVersion, setRequestVersion] = useState(0);
+    const allChecked = availableTickers.current.length > 0 && availableTickers.current.every(ticker => ticker.checked);
+    const allQuotesChecked = new Map(quoteCurrencies.current.map(quote => {
+        const group = availableTickers.current.filter(ticker => ticker.tickerName.split('-')[1] === quote);
+        return [quote, group.length > 0 && group.every(ticker => ticker.checked)];
+    }));
 
     const handleOnClickFindButton = props.handleOnClickFindButton;
     const buttonText = props.buttonText;
@@ -29,39 +36,39 @@ const TickersCheckboxDropdown = (props)=> {
 
 
     useEffect(() => {
+        let active = true;
+        setRequestError(null);
         getAllAvailableTickers().then( response => {
+            if (!active) return;
+            selectAllRequested.current = false;
             availableTickers.current = response.data.map(ticker => ticker.name).sort().map(ticker => {
                 return {
                     tickerName: ticker,
                     checked: ticker === defaultSelectecdTicker ? true : false,
                 }
             });
-            setSelectedTickers([...availableTickers.current.filter(ticker=>ticker.checked).map(ticker=>ticker.tickerName)]);
             quoteCurrencies.current = Array.from(new Set(response.data.map(bc => bc.name.split('-')[1]))).sort();
-            const map = new Map();
-            quoteCurrencies.current.forEach( qc => map.set(qc, false));
-            setAllQuotesChecked(map);
-        })
-    }, []);
+            setSelectedTickers([...availableTickers.current.filter(ticker=>ticker.checked).map(ticker=>ticker.tickerName)]);
+        }).catch(() => {
+            if (!active) return;
+            availableTickers.current = [];
+            quoteCurrencies.current = [];
+            setSelectedTickers([]);
+            setRequestError('Ticker filters are not available');
+        });
+        return () => { active = false; };
+    }, [requestVersion]);
 
     const handleSelectedTickersOnClick = (checked, selectedTicker) => {
-        availableTickers.current.filter(ticker => ticker.tickerName===selectedTicker.tickerName)[0].checked = checked
-        if(!availableTickers.current.some(ticker=>!ticker.checked))
-            setAllChecked(true);
-        if(checked){
-            setSelectedTickers([...selectedTickers, selectedTicker.tickerName]);
-        } else {
-            setAllChecked(false);
-            selectedTickers.splice(selectedTickers.indexOf(selectedTicker.tickerName), 1);
-            setSelectedTickers([...selectedTickers]);
-        }
+        selectAllRequested.current = false;
+        selectedTicker.checked = checked;
+        setSelectedTickers(selected => checked
+            ? [...selected, selectedTicker.tickerName]
+            : selected.filter(ticker => ticker !== selectedTicker.tickerName));
     }
 
     const handleSelectAllOnClick = (checked) => {
-        [...allQuotesChecked.keys()].forEach( quoteCurrency => 
-            allQuotesChecked.set(quoteCurrency, false)
-        );
-        setAllChecked(checked);
+        selectAllRequested.current = checked;
         availableTickers.current.forEach(ticker => {
             ticker.checked = checked
         });
@@ -73,15 +80,8 @@ const TickersCheckboxDropdown = (props)=> {
     }
 
     const handleSelectAllByQuoteCurrencyOnClick = (checked, currency) => {
-        [...allQuotesChecked.keys()].forEach( quoteCurrency => {
-            quoteCurrency === currency ? allQuotesChecked.set(quoteCurrency, checked) : allQuotesChecked.set(quoteCurrency, false)
-            if(quoteCurrency === currency){
-                allQuotesChecked.set(quoteCurrency, checked);
-            }
-        });
-        setAllQuotesChecked(allQuotesChecked);
+        selectAllRequested.current = false;
         if(checked) {
-            setAllChecked(false);
             const selectedTickersByCoin = [];
             availableTickers.current.forEach( ticker => {
                 ticker.checked = false;
@@ -98,6 +98,9 @@ const TickersCheckboxDropdown = (props)=> {
 
     return(
         <>
+            {requestError && <div role="alert" className="alert alert-danger">
+                {requestError} <button type="button" onClick={() => setRequestVersion(version => version + 1)}>Retry ticker filter</button>
+            </div>}
             <div >
                 <div className="dropdown">
                     <div className="btn-group" role="group">
@@ -111,7 +114,8 @@ const TickersCheckboxDropdown = (props)=> {
                             { buttonText }
                         </button>
                         <button className= { findButtonClassName } type="button" id="findButtonId"
-                            onClick = {()=> handleOnClickFindButton(selectedTickers) }
+                            onClick = {()=> allChecked && selectAllRequested.current && props.handleOnClickFindAllButton
+                                ? props.handleOnClickFindAllButton() : handleOnClickFindButton(selectedTickers) }
                             style= { findButtonStyle }>
                             <img src={ search_svg } alt="Find" />
                         </button> 
@@ -120,11 +124,11 @@ const TickersCheckboxDropdown = (props)=> {
                             <li>
                                 <a className="dropdown-item" href="/#">
                                     <div className="form-check">
-                                        <input className="form-check-input" type="checkbox" value="" id="selectAllTickersId"
+                                        <input className="form-check-input" type="checkbox" value="" id={`${checkboxId}-all`}
                                             checked = { allChecked }
                                             onChange={(event)=>{ handleSelectAllOnClick(event.target.checked) }}
                                         />
-                                        <label className="form-check-label" htmlFor="selectAllTickersId">Select All</label>
+                                        <label className="form-check-label" htmlFor={`${checkboxId}-all`}>Select All</label>
                                     </div>
                                 </a>
                             </li>
@@ -134,11 +138,11 @@ const TickersCheckboxDropdown = (props)=> {
                                     <li key={qc}>
                                         <a className="dropdown-item" href="/#">
                                             <div className="form-check">
-                                                <input className="form-check-input" type="checkbox" value="" id={`selectAll${qc}Id`}
+                                                <input className="form-check-input" type="checkbox" value="" id={`${checkboxId}-quote-${qc}`}
                                                     checked = { allQuotesChecked.get(qc) }
                                                     onChange={(event)=>{ handleSelectAllByQuoteCurrencyOnClick(event.target.checked, qc) }}
                                                 />
-                                                <label className="form-check-label" htmlFor="selectAllUSDTId">Select All {qc}</label>
+                                                <label className="form-check-label" htmlFor={`${checkboxId}-quote-${qc}`}>Select All {qc}</label>
                                             </div>
                                         </a>
                                     </li>
@@ -171,13 +175,13 @@ const TickersCheckboxDropdown = (props)=> {
                                 <li key= { option.tickerName } >
                                     <a className="dropdown-item" href="/#">
                                         <div className="form-check">
-                                            <input className="form-check-input" type="checkbox" value="" id="checkTickerId"
+                                            <input className="form-check-input" type="checkbox" value="" id={`${checkboxId}-ticker-${option.tickerName}`}
                                                 checked = { option.checked }
                                                 onChange = { (event)=>{
                                                     handleSelectedTickersOnClick(event.target.checked, option);
                                                 }}
                                             />
-                                            <label className="form-check-label" htmlFor="checkTickerId">{ option.tickerName }</label>
+                                            <label className="form-check-label" htmlFor={`${checkboxId}-ticker-${option.tickerName}`}>{ option.tickerName }</label>
                                         </div>
                                     </a>
                                 </li>)

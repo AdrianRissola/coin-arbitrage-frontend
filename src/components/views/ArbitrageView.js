@@ -25,6 +25,8 @@ const ArbitrageView = (props)=> {
     const [marketsFilter, setMarketsFilter] = useState([]);
     const [minProfitFilter, setMinProfitFilter] = useState(0);
     const [pairCurrencies, setPairCurrencies] = useState([]);
+    const [requestError, setRequestError] = useState(null);
+    const [requestVersion, setRequestVersion] = useState(0);
     const [baseCurrencies, setBaseCurrencies] = useState([]);
     const [quoteCurrencies, setQuoteCurrencies] = useState([]);
     const [baseCurrency, setBaseCurrency]  = useState({ name: "BTC" });
@@ -38,7 +40,10 @@ const ArbitrageView = (props)=> {
 
 
     useEffect(() => {
+        let active = true;
+        setRequestError(null);
         getAllAvailableTickers().then( response => {
+            if (!active) return;
             setPairCurrencies(response.data);
             setBaseCurrencies(
                 Array.from(
@@ -73,8 +78,15 @@ const ArbitrageView = (props)=> {
                     ).values()
                 ).sort((a, b) => a.name.localeCompare(b.name))
             )
-        })
-    }, []);
+        }).catch(() => {
+            if (!active) return;
+            setPairCurrencies([]);
+            setBaseCurrencies([]);
+            setQuoteCurrencies([]);
+            setRequestError('Ticker information is not available');
+        });
+        return () => { active = false; };
+    }, [requestVersion]);
 
     const getTickerButtonsComponent = (baseCurrency, quoteCurrency) => {
         return (
@@ -106,6 +118,9 @@ const ArbitrageView = (props)=> {
 
     return(
         <>  
+            {requestError && <div role="alert" className="alert alert-danger">
+                {requestError} <button type="button" onClick={() => setRequestVersion(version => version + 1)}>Retry tickers</button>
+            </div>}
             <div className="row justify-content-center">
                 <div className="col-10">
                     <div className="btn-group position-relative overflow-auto" role="group" style={{marginTop: '10px', width:'-webkit-fill-available'}}>                        

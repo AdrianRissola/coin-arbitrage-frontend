@@ -128,18 +128,28 @@ preserving callback results, then restores its original value. No dependency
 replacement, shared React reset or component/state mock is used.
 
 Prefer roles, visible text and scoped lists/rows. Tooltip descriptions currently
-provide some radio names. Duplicate checkbox IDs and misassociated quote labels
-remain unchanged: scoped list-item queries exercise the actual input, with an
-additional case protecting the current incorrect USD-label/USDT-checkbox action.
+provide some radio names. Quote and individual ticker inputs now have unique,
+mount-scoped IDs and correctly associated labels. Regressions distinguish clicking
+the text label from clicking the checkbox square: the original USD square selected
+USD correctly, but its text label targeted USDT. Both now select the same group.
+Global and quote-group checkmarks are derived from actual ticker selections,
+including individual additions/removals and global select/clear. Quote selection
+presets retain their existing replace-selection behaviour.
 Narrow attribute queries locate non-semantic card headers and scrolling strips.
 This does not prove Bootstrap's external dropdown plugin, real pixel layout or
 browser scrolling. A per-element scrollBy spy tests only the existing API call.
 
 Characterisations include literal locale rounding, zero/string/negative profits,
 unconditional best-card filter bypass, quote-first selection and ties, in-place
-price-order effects, historical loading/empty/null behaviour, count-only
-all-tickers requests and the sort-option/primary-button mismatch. Missing
-metadata and raw-object children retain their local render failures. The
+price-order effects, historical loading/empty/null behaviour and the
+sort-option/primary-button mismatch. Historical searches no longer read cached
+ticker metadata or infer ALL from counts or cached identities. Default, individual
+and quote-group searches send explicit ticker IDs. Only the global Select All action
+can use the optional `handleOnClickFindAllButton` callback, retaining a compact
+request for large inventories. Without that callback, Find still sends the selected
+array as before. Individual/quote changes clear that global intent. Missing, malformed
+or stale cache data cannot crash the view or broaden its search. Direct raw-object
+component children retain their local render failures. The
 render-failure helper accepts only the expected error/React boundary diagnostics,
 rather than suppressing unrelated console errors. FE-01 now renders
 "No arbitrages available" for empty best data, including null/absent inputs.
@@ -147,9 +157,12 @@ A removed quote retains its selection and shows no data rather than switching
 currencies; choosing Best or receiving that quote again restores the cards.
 
 Separate guarded subprocess cases render actual Historical, MarketStatus and
-Arbitrage views under rejected responses. Historical probes require the FE-02
-error state and recovery; other view probes retain their source-specific
-unhandled failures. No global unhandled-rejection suppression is installed.
+Arbitrage views under rejected responses. All three now require a contained error
+state and recovery. Market/ticker services preserve original rejections, reject
+non-array metadata and contain import-time cache failures. Both metadata filters
+also expose retry controls, and retired requests cannot update unmounted consumers.
+No global unhandled-rejection suppression is installed; network-isolation negative
+controls remain enabled.
 
 The unchanged `src/App.test.js` scaffold's obsolete “learn react” assertion is
 outside the active profiles. Step A retains its raw Axios/Jest parse failure and
@@ -184,9 +197,10 @@ test-private copies; frozen INT fixture bytes are unchanged.
 The event adapter delegates to a document-owned DocumentFragment, not a bare
 custom EventTarget: the installed JSDOM silently swallows callback exceptions
 without an owning window. Property replacement detaches previous listeners and
-binds the real handler to the controlled socket. Native negative controls require
-the exact App malformed-JSON, missing-best and non-array-prices errors, so a
-window-less false green is rejected. The adapter models the data callbacks used
+binds the real handler to the controlled socket. Native controls now require
+malformed JSON, missing best payloads and non-array prices to be ignored, followed
+by valid data on the same subscription. Separate diagnostic controls still reject
+uncaught callback exceptions. The adapter models the data callbacks used
 by App, not native event target identity, a wire handshake or socket buffering.
 
 Initial uppercase requests, lowercase navbar requests, capital `Markets` without
@@ -195,11 +209,12 @@ acknowledgement-dependent duplicates, ticker changes, actual view/card/price
 updates, stale data, ignored channels, pause before JSON parsing, history
 loading/empty/resume and error banners. BE-07/FE-01 empty best frames use the
 normal `bestArbitrages.arbitragesData: []` envelope, remove stale cards/prices
-and recover on subsequent data without resubscribing. Event-handler and
-rejected-history failures outside this fix run in bounded subprocesses
-whose parents require matching errors and source frames in the same structured
-Jest failure (not an unrelated console warning) and natural nonzero exits, not a
-timeout or policy error. A wrong initial-request oracle is also rejected.
+and recover on subsequent data without resubscribing. Frames are validated before
+any state update: malformed envelopes, arbitrage records, price maps and market
+status cannot replace valid state. Valid empty arbitrage maps become unavailable
+rows. Rejection/recovery probes exit naturally without global exception suppression;
+the wrong initial-request oracle and diagnostic failure controls remain negative.
+Ignoring malformed input does not introduce a quote-expiry policy.
 
 FE-03 clears the market-price error banner when a matching arbitrage frame
 supplies prices or a best-arbitrage frame supplies its data array. Valid empty
@@ -273,9 +288,9 @@ as passes. Exit-zero, incomplete, all-skipped and timed-out output remain failur
 
 | Boundary | Executed standalone coverage | Not established |
 | --- | --- | --- |
-| Three REST services | 27 real-Axios request/serialization/response/import-storage cases | Actual backend HTTP/CORS or production URLs |
-| Components and views | 84 RTL/user-event cases for cards, collections, filters, sorting, loading, empty and error behaviour | Browser pixel layout, external dropdown plugins or accessibility correctness |
-| App and socket messages | 39 real-App cases for subscription strings, channel consumption, navigation, pause/resume, banners and notifications | Native socket handshake/reconnection or provider wire compatibility |
+| Three REST services | 29 real-Axios request/serialization/response/import-storage cases | Actual backend HTTP/CORS or production URLs |
+| Components and views | 103 RTL/user-event cases for cards, collections, filters, sorting, loading, empty and error behaviour | Browser pixel layout, external dropdown plugins or accessibility correctness |
+| App and socket messages | 69 real-App cases for subscription strings, channel consumption, navigation, pause/resume, banners and notifications | Native socket handshake/reconnection or provider wire compatibility |
 | Fixture lifecycle and locale | Eight cases for observed omissions, owned cleanup and fixed expectations | Automatic production cleanup or native browser resource semantics |
 | Native controls | Bootstrap/security/guard/failure controls and five result-accounting checks plus four diagnostics controls | Additional application statement coverage |
 

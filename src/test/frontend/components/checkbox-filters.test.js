@@ -128,23 +128,71 @@ test('quote input selection replaces the previous group and deselecting it clear
   expect(selected).toHaveBeenLastCalledWith([]);
 });
 
-test('an individual change does not repair the stale quote-group checkbox', async () => {
+test('individual changes clear and restore the quote-group indicator', async () => {
   installTransport();
   const selected = await mountTickerChoices();
   userEvent.click(checkbox('Select All USDT'));
   userEvent.click(checkbox('BTC-USDT'));
-  expect(checkbox('Select All USDT')).toBeChecked();
+  expect(checkbox('Select All USDT')).not.toBeChecked();
   userEvent.click(screen.getByRole('button', { name: 'Find' }));
   expect(selected).toHaveBeenLastCalledWith(['ETH-USDT']);
+  userEvent.click(checkbox('BTC-USDT'));
+  expect(checkbox('Select All USDT')).toBeChecked();
+  expect(checkbox('Select All')).not.toBeChecked();
 });
 
-test('the existing USD label targets the USDT checkbox, not its neighbouring USD input', async () => {
+test('manually completing a quote group marks it selected', async () => {
+  installTransport();
+  await mountTickerChoices();
+  userEvent.click(checkbox('ETH-USDT'));
+  expect(checkbox('Select All USDT')).toBeChecked();
+  expect(checkbox('Select All USD')).not.toBeChecked();
+});
+
+test('global selection and clearing keep quote-group indicators consistent', async () => {
+  installTransport();
+  await mountTickerChoices();
+  userEvent.click(checkbox('Select All'));
+  expect(checkbox('Select All USD')).toBeChecked();
+  expect(checkbox('Select All USDT')).toBeChecked();
+  userEvent.click(checkbox('Select All'));
+  expect(screen.getAllByRole('checkbox').every((input) => !input.checked)).toBe(true);
+});
+
+test.each(['USD', 'USDT'])(
+  'the %s text label selects its own quote group just like its checkbox',
+  async (quote) => {
+    installTransport();
+    const selected = await mountTickerChoices();
+    userEvent.click(screen.getByText(`Select All ${quote}`, { selector: 'label' }));
+    userEvent.click(screen.getByRole('button', { name: 'Find' }));
+    expect(selected).toHaveBeenLastCalledWith([`BTC-${quote}`, `ETH-${quote}`]);
+    expect(checkbox(`Select All ${quote}`)).toBeChecked();
+  }
+);
+
+test('an individual ticker label toggles that ticker rather than the first input', async () => {
   installTransport();
   const selected = await mountTickerChoices();
-  userEvent.click(screen.getByText('Select All USD', { selector: 'label' }));
+  userEvent.click(screen.getByText('ETH-USD', { selector: 'label' }));
   userEvent.click(screen.getByRole('button', { name: 'Find' }));
-  expect(selected).toHaveBeenLastCalledWith(['BTC-USDT', 'ETH-USDT']);
-  expect(checkbox('Select All USD')).not.toBeChecked();
+  expect(selected).toHaveBeenLastCalledWith(['BTC-USDT', 'ETH-USD']);
+  expect(checkbox('ETH-USD')).toBeChecked();
+  expect(checkbox('BTC-USD')).not.toBeChecked();
+});
+
+test.each([
+  ['MarketsFilter', 'markets', 'Retry market filter', 'Alpha'],
+  ['TickersFilter', 'tickers', 'Retry ticker filter', 'ETH-USD'],
+])('%s contains request rejection and allows retry', async (name, kind, retry, label) => {
+  installTransport({ [kind]: [{ reject: true }] });
+  const selected = jest.fn();
+  const Component = views[name];
+  render(<Component marketsFilter={[]} onClickFunction={selected} handleOnClickFindButton={selected} buttonText="Filter" />);
+  expect(await screen.findByRole('alert')).toHaveTextContent('not available');
+  userEvent.click(screen.getByRole('button', { name: retry }));
+  await screen.findByText(label, { selector: 'label' });
+  expect(screen.queryByRole('alert')).not.toBeInTheDocument();
 });
 
 test('empty available ticker metadata produces an empty Find payload', async () => {

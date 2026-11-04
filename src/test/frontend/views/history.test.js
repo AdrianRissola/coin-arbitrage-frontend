@@ -13,7 +13,6 @@ import {
   installTransport,
   loadViews,
   resolveResponse,
-  expectRenderFailure,
 } from '../support/ui-runtime';
 
 let views;
@@ -204,10 +203,10 @@ test('empty Find selection makes no new request and leaves current rows visible'
   ).toHaveLength(1);
 });
 
-test('the all-ticker decision uses only cached length, even when its one cached ticker differs', async () => {
+test('equal counts with different ticker identities do not broaden the request', async () => {
   seedStorage([tickers.find((ticker) => ticker.name === 'ETH-USD')]);
   const transport = installTransport({
-    history: [{ tickers: null, data: [] }],
+    history: [{ tickers: ['BTC-USDT'], data: [] }],
   });
   render(<views.HistoricalView />);
   await waitFor(() =>
@@ -215,15 +214,80 @@ test('the all-ticker decision uses only cached length, even when its one cached 
   );
   expect(
     transport.calls.find((call) => call.kind === 'historical-arbitrages').params
-  ).toEqual({ tickers: null });
+  ).toEqual({ tickers: ['BTC-USDT'] });
 });
 
-test('missing cached ticker metadata retains the local iterable render failure', () => {
-  localStorage.removeItem('availableWebsocketTickers');
-  expectRenderFailure(<views.HistoricalView />, /iterable/);
+test('cache changes cannot broaden the initial or subsequent explicit selection', async () => {
+  seedStorage([tickers.find((ticker) => ticker.name === 'BTC-USDT')]);
+  const transport = installTransport({ history: [
+    { tickers: ['BTC-USDT'], data: history() },
+    { tickers: ['BTC-USDT'], data: [] },
+  ] });
+  render(<views.HistoricalView />);
+  await ready();
+  seedStorage([tickers.find((ticker) => ticker.name === 'ETH-USD')]);
+  userEvent.click(screen.getByRole('button', { name: 'Find' }));
+  await waitFor(() => expect(screen.queryByRole('status')).not.toBeInTheDocument());
+  expect(transport.calls.filter((call) => call.kind === 'historical-arbitrages').map((call) => call.params))
+    .toEqual([{ tickers: ['BTC-USDT'] }, { tickers: ['BTC-USDT'] }]);
 });
 
-test('malformed cached JSON retains its SyntaxError instead of introducing fallback state', () => {
-  localStorage.setItem('availableWebsocketTickers', '[');
-  expectRenderFailure(<views.HistoricalView />, /JSON/);
+test('a one-ticker inventory does not turn the default ticker into an implicit ALL request', async () => {
+  const available = [tickers.find((ticker) => ticker.name === 'BTC-USDT')];
+  seedStorage(available);
+  const transport = installTransport({ tickers: [{ data: available }], history: [
+    { tickers: ['BTC-USDT'], data: [] }, { tickers: ['BTC-USDT'], data: [] },
+  ] });
+  render(<views.HistoricalView />);
+  await screen.findByText('BTC-USDT', { selector: 'label' });
+  await waitFor(() => expect(screen.queryByRole('status')).not.toBeInTheDocument());
+  userEvent.click(screen.getByRole('button', { name: 'Find' }));
+  await waitFor(() => expect(screen.queryByRole('status')).not.toBeInTheDocument());
+  expect(transport.calls.filter((call) => call.kind === 'historical-arbitrages').map((call) => call.params))
+    .toEqual([{ tickers: ['BTC-USDT'] }, { tickers: ['BTC-USDT'] }]);
 });
+
+test('a quote preset covering the inventory remains an explicit quote selection, not ALL', async () => {
+  const available = tickers.filter((ticker) => ticker.name.endsWith('-USD'));
+  seedStorage(available);
+  const transport = installTransport({ tickers: [{ data: available }], history: [
+    { tickers: ['BTC-USDT'], data: [] }, { tickers: ['BTC-USD', 'ETH-USD'], data: [] },
+  ] });
+  render(<views.HistoricalView />);
+  await screen.findByText('Select All USD', { selector: 'label' });
+  userEvent.click(tickerCheckbox('Select All USD'));
+  userEvent.click(screen.getByRole('button', { name: 'Find' }));
+  await waitFor(() => expect(screen.queryByRole('status')).not.toBeInTheDocument());
+  expect(transport.calls.filter((call) => call.kind === 'historical-arbitrages')[1].params)
+    .toEqual({ tickers: ['BTC-USD', 'ETH-USD'] });
+});
+
+test('individual changes after global Select All restore an explicit ticker request', async () => {
+  const selected = ['BTC-USD', 'ETH-USD', 'ETH-USDT', 'BTC-USDT'];
+  const transport = installTransport({ history: [
+    { tickers: ['BTC-USDT'], data: history() }, { tickers: selected, data: [] },
+  ] });
+  render(<views.HistoricalView />);
+  await ready();
+  userEvent.click(tickerCheckbox('Select All'));
+  userEvent.click(tickerCheckbox('BTC-USDT'));
+  userEvent.click(tickerCheckbox('BTC-USDT'));
+  userEvent.click(screen.getByRole('button', { name: 'Find' }));
+  await waitFor(() => expect(screen.queryByRole('status')).not.toBeInTheDocument());
+  expect(transport.calls.filter((call) => call.kind === 'historical-arbitrages')[1].params)
+    .toEqual({ tickers: selected });
+});
+
+test.each([null, '[', '{}', 'null', '"invalid"', '[null]', '[{"name":null}]'])(
+  'invalid or missing ticker cache %p does not prevent historical loading',
+  async (cached) => {
+    if (cached === null) localStorage.removeItem('availableWebsocketTickers');
+    else localStorage.setItem('availableWebsocketTickers', cached);
+    const transport = installTransport({ history: [{ tickers: ['BTC-USDT'], data: [] }] });
+    render(<views.HistoricalView />);
+    await waitFor(() => expect(screen.queryByRole('status')).not.toBeInTheDocument());
+    expect(screen.queryByRole('alert')).not.toBeInTheDocument();
+    expect(transport.calls.find((call) => call.kind === 'historical-arbitrages').params)
+      .toEqual({ tickers: ['BTC-USDT'] });
+  }
+);

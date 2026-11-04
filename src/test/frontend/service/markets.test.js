@@ -73,6 +73,16 @@ test('empty imported tickers store two empty JSON arrays', async () => {
 });
 
 test.each([
+  ['getMarkets', marketsUri],
+  ['getAllAvailableTickers', tickersUri],
+])('%s rejects non-array metadata and can recover', async (method, uri) => {
+  const lease = loadService('MarketService', [initial(), { uri, data: null }, { uri, data: [] }], 2);
+  await lease.waitForImports();
+  await expect(lease.service[method]()).rejects.toThrow(/Invalid .* metadata/);
+  await expect(lease.service[method]()).resolves.toMatchObject({ data: [] });
+});
+
+test.each([
   ['getMarkets', marketsUri, 'Axios Error in MarketService.getMarkets:'],
   [
     'getAllAvailableTickers',
@@ -80,7 +90,7 @@ test.each([
     'Axios Error in MarketService.getAllAvailableTickers:',
   ],
 ])(
-  '%s retains its logged Axios rejection and undefined result',
+  '%s logs and propagates its original Axios rejection',
   async (method, uri, message) => {
     const lease = loadService(
       'MarketService',
@@ -88,7 +98,7 @@ test.each([
       2
     );
     await lease.waitForImports();
-    await expect(lease.service[method]()).resolves.toBeUndefined();
+    await expect(lease.service[method]()).rejects.toBe(lease.errors[0]);
     expect(lease.log).toHaveBeenCalledWith(message, lease.errors[0]);
   }
 );

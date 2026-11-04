@@ -13,6 +13,64 @@ beforeAll(async () => {
   createApp = await prepareApps();
 });
 
+test.each([null, [], 42, true, 'invalid'])(
+  'a non-object frame %p is ignored and valid data still arrives',
+  async (frame) => {
+    const app = createApp();
+    await app.open();
+    const sent = app.socket.sent.slice();
+    await app.message(frame);
+    await app.message(arbitrage);
+    expect(screen.getByText('Alpha-Gamma')).toBeInTheDocument();
+    expect(app.socket.sent).toEqual(sent);
+  }
+);
+
+test.each([
+  ['non-array prices', { marketPrices: { 'BTC-USDT': {} } }],
+  ['null price row', { marketPrices: { 'BTC-USDT': [null] } }],
+  ['object message', { message: { invalid: true } }],
+  ['invalid arbitrage map', { arbitrages: { 'BTC-USDT': [] } }],
+  ['missing transactions', { arbitrages: { 'BTC-USDT': { 'Alpha-Gamma': {} } } }],
+])('malformed %s cannot replace valid arbitrage data', async (name, invalid) => {
+  const app = createApp();
+  await app.open();
+  await app.message(arbitrage);
+  const sent = app.socket.sent.slice();
+  await app.message({ ...clone(arbitrage), ...invalid });
+  expect(screen.getByText('Alpha-Gamma')).toBeInTheDocument();
+  await app.message(arbitrage);
+  expect(screen.getByRole('columnheader', { name: 'BTC Markets (3)' })).toBeInTheDocument();
+  expect(app.socket.sent).toEqual(sent);
+});
+
+test.each([undefined, null, {}, { arbitragesData: {} }, { arbitragesData: [null] },
+  { arbitragesData: [{ arbitrage: {}, marketPrices: {} }] },
+])('malformed best payload %p preserves valid cards and permits recovery', async (payload) => {
+  const app = createApp();
+  await app.open();
+  userEvent.click(screen.getByRole('link', { name: 'Best Arbitrage' }));
+  await app.message(best);
+  const sent = app.socket.sent.slice();
+  await app.message({ channel: 'bestArbitrage', ticker: 'ALL', bestArbitrages: payload });
+  expect(screen.getByText('Best Arbitrage: ETH-USD')).toBeInTheDocument();
+  await app.message(best);
+  expect(app.socket.sent).toEqual(sent);
+});
+
+test.each([{}, { connectedMarkets: [null], disconnectedMarkets: [] }])(
+  'invalid market status %p cannot replace valid connections', async (invalid) => {
+    const app = createApp();
+    await app.open();
+    userEvent.click(screen.getByRole('link', { name: 'Markets' }));
+    await app.message(markets);
+    await app.message({ channel: 'markets', markets: invalid });
+    expect(screen.getByText(/Connected: 2/)).toHaveTextContent('Disconnected: 1');
+    await app.message(markets);
+    expect(screen.getByText(/Connected: 2/)).toHaveTextContent('Disconnected: 1');
+  }
+);
+
 test.each([
   ['shared welcome', welcome],
   [
@@ -168,6 +226,17 @@ test('shared market status drives the real status view and REST metadata togethe
   expect(
     app.transport.calls.filter((call) => call.kind === 'markets')
   ).toHaveLength(1);
+});
+
+test.each([{}, { 'BTC-USDT': {} }])('empty arbitrage maps %p clear stale cards and recover', async (empty) => {
+  const app = createApp();
+  await app.open();
+  await app.message(arbitrage);
+  await app.message({ channel: 'arbitrage', ticker: 'BTC-USDT', arbitrages: empty, marketPrices: { 'BTC-USDT': [] } });
+  expect(screen.queryByText('Alpha-Gamma')).not.toBeInTheDocument();
+  expect(screen.getAllByText('NotAvailable').length).toBeGreaterThan(0);
+  await app.message(arbitrage);
+  expect(screen.getByText('Alpha-Gamma')).toBeInTheDocument();
 });
 
 test('empty best frames clear stale cards and recover on the same subscription', async () => {

@@ -18,21 +18,18 @@ const HistoricalView = (props)=> {
     const [minProfitFilter, setMinProfitFilter] = useState(0)
     const [showFilters, setShowFilters] = useState(false)
     const [historicalArbitrageOrder, setHistoricalArbitrageOrder] = useState({key: "date", value: "DESC", label: "Date"})
-    const availableTickers = [...JSON.parse(localStorage.getItem("availableWebsocketTickers"))];
     const darkMode = props.darkMode;
 
     const callGetHistoricalArbitrages = useCallback(async (tickersFilter) => {
         setHistoryError(null);
         try {
-            const {data} = await getHistoricalArbitrages(
-                availableTickers.length===tickersFilter.length ? null : tickersFilter
-            );
+            const {data} = await getHistoricalArbitrages(tickersFilter);
             setHistoricalArbitrages(data);
         } catch (error) {
             setHistoricalArbitrages([]);
             setHistoryError("Historical arbitrage service is not available");
         }
-    }, [availableTickers.length])
+    }, [])
 
     React.useEffect(() => {
         console.log('React.useEffect: callGetHistoricalArbitrages')
@@ -40,7 +37,7 @@ const HistoricalView = (props)=> {
     }, [callGetHistoricalArbitrages]);
 
     const handleOnClickFindButton = (selectedTickers) => {
-        if(selectedTickers && selectedTickers.length>0) {
+        if(selectedTickers === null || (selectedTickers && selectedTickers.length>0)) {
             setHistoricalArbitrages(null); 
             callGetHistoricalArbitrages(selectedTickers);
         };
@@ -82,6 +79,7 @@ const HistoricalView = (props)=> {
                         buildInputGroup(
                             <TickersCheckboxDropdownFilter darkMode = { darkMode }
                                 handleOnClickFindButton = { handleOnClickFindButton }
+                                handleOnClickFindAllButton = { () => handleOnClickFindButton(null) }
                                 buttonText = { "Tickers "} styleWidth = {"200px"}
                             />, 
                             "auto"
