@@ -136,7 +136,8 @@ const installSockets = () => {
           socket[`on${type}`] = null;
         });
         socket.clearOwnedListeners();
-        if (socket.readyState !== socket.CLOSED) socket.close();
+        if (socket.readyState === socket.CONNECTING || socket.readyState === socket.OPEN)
+          socket.close();
         socket.finishClose();
       });
       window.WebSocket = original;
@@ -172,7 +173,9 @@ const prepareApps = async () => {
       React.createElement(
         notifications.SnackbarProvider,
         { autoHideDuration: 1000, maxSnack: 5 },
-        React.createElement(App)
+        options.strict
+          ? React.createElement(React.StrictMode, null, React.createElement(App))
+          : React.createElement(App)
       );
     let mounted;
     const context = {

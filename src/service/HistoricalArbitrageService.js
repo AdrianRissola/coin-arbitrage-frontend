@@ -15,14 +15,17 @@ const getHistoricalArbitrages = async (tickers) => {
         (response) => {
         console.log(`HistoricalArbitrageService.getHistoricalArbitrages(${tickers}):`, response.data)
         return response;
-    }).catch(e => console.log("Axios Error in HistoricalArbitrageService.getHistoricalArbitrages:", e));
+    }).catch(e => {
+        console.log("Axios Error in HistoricalArbitrageService.getHistoricalArbitrages:", e);
+        throw e;
+    });
 }
 
 getHistoricalArbitrages(["BTC-USDT"]).then(
     response => {
         localStorage.setItem('historicalArbitrages', JSON.stringify(response.data));
     }
-);
+).catch(() => null);
 
 
 export { getHistoricalArbitrages }

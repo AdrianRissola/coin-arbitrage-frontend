@@ -100,14 +100,16 @@ are not validated.
 
 ## Characterisations And Remaining Gaps
 
-All three production REST modules remain unchanged. Tests preserve GET paths,
-literal slash concatenation and import-time endpoint capture; ticker array,
-null and omitted query forms; response identity/data; logged undefined-return
-catch behaviour and both import-time cache writers.
+Tests preserve GET paths, literal slash concatenation and import-time endpoint
+capture; ticker array, null and omitted query forms; response identity/data and
+both import-time cache writers. FE-02 makes historical requests log and reject
+with the original error, while the import-time cache writer contains that
+rejection and leaves cached data unchanged. The historical view stops loading,
+removes stale rows, displays a generic error and permits Find to retry.
 
-Historical/Market import rejection still produces an unhandled `.data` follow-up
-TypeError in production code. Separate subprocess controls assert that exact
-existing failure without suppressing unhandled rejections in the main suite.
+Market import rejection still produces an unhandled `.data` follow-up TypeError.
+Historical import/view/App subprocess controls instead require successful error
+handling and natural zero exits; unrelated failure controls remain enabled.
 
 ## Component And View Profile
 
@@ -145,9 +147,9 @@ A removed quote retains its selection and shows no data rather than switching
 currencies; choosing Best or receiving that quote again restores the cards.
 
 Separate guarded subprocess cases render actual Historical, MarketStatus and
-Arbitrage views under rejected responses. Their parents require the current
-unhandled follow-up error and production view location, not a generic failure.
-They do not add error banners, fallbacks or unhandled-rejection suppression.
+Arbitrage views under rejected responses. Historical probes require the FE-02
+error state and recovery; other view probes retain their source-specific
+unhandled failures. No global unhandled-rejection suppression is installed.
 
 The unchanged `src/App.test.js` scaffold's obsolete “learn react” assertion is
 outside the active profiles. Step A retains its raw Axios/Jest parse failure and
@@ -199,15 +201,22 @@ whose parents require matching errors and source frames in the same structured
 Jest failure (not an unrelated console warning) and natural nonzero exits, not a
 timeout or policy error. A wrong initial-request oracle is also rejected.
 
-Open/close events do not themselves rerender App. Notifications observe status
-on a subsequent render; a closed socket is replaced during that render before a
-CLOSED notification can appear. There is no claimed autonomous reconnect or
-unsubscribe. History can still cause a render-triggered reconnect to resend the
-last request while consumption remains paused.
+FE-03 clears the market-price error banner when a matching arbitrage frame
+supplies prices or a best-arbitrage frame supplies its data array. Valid empty
+price/best arrays also clear it. Unrelated ticker/channel messages do not clear
+a still-unrecovered error; missing-price messages retain their existing behaviour.
 
-App unmount does not close its module-scoped socket or detach handlers.
-Same-module remount reuses an open socket/status, does not resubscribe and starts
-with fresh component data. These are asserted before test-owned cleanup.
+FE-04 creates sockets and attaches handlers together in a mount-owned effect.
+Callbacks read the latest committed subscription/menu state and ignore retired
+sockets. Unmount detaches all property handlers and closes an open/connecting
+socket; remount opens and subscribes a fresh connection with fresh component
+data. Controlled cases cover StrictMode effect replay, same-module concurrent
+mounts and captured callbacks after unmount, before test-owned cleanup.
+
+Open/close events do not themselves rerender App. Notifications run in effects
+rather than rendering. A later render or interaction can replace a closed
+socket; no autonomous reconnect loop or unsubscribe protocol is added. History
+can still cause that reconnect while message consumption remains paused.
 RTL unmounts all trees, test-owned scopes cancel notification/transition timers, adapters verify
 completed/consumed plans and restore, and socket leases explicitly remove
 handlers, close controlled instances and restore the original guarded global.
@@ -223,8 +232,9 @@ cleanup and every deadline escalation branch are still unvalidated.
 listener-free default. Each child has explicit UTC, en-US locale variables and
 fixed numeric/date expectations rather than relying on the host defaults.
 
-Actual App unmount omissions are asserted before `cleanupApps`. The test-only
-cleanup API unmounts actual trees, detaches property and direct socket listeners,
+Actual App socket closing and handler detachment are asserted before
+`cleanupApps`. The test-only cleanup API unmounts actual trees, detaches property
+and direct socket listeners,
 closes controlled sockets and restores nested guarded globals in reverse order.
 Listener registration tracks type/callback/capture identity, including duplicate
 registration. Cleanup is idempotent and late dispatched events cannot recreate

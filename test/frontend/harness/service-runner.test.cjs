@@ -2,6 +2,17 @@ const test = require('node:test');
 const assert = require('node:assert/strict');
 const probe = require('./probe.cjs');
 
+['history-import-rejection', 'history-view-rejection'].forEach((name) => {
+  test(`${name} contains failure and exits naturally`, () => {
+    const result = probe(name);
+    assert.equal(result.status, 0, result.output);
+    assert.equal(result.report.success, true, result.output);
+    assert.equal(result.report.stages[0].passedTests, 1);
+    assert.equal(result.report.stages[0].timedOut, false);
+    assert.ok(!result.output.includes('FE_TEST_GUARD_BLOCKED'), result.output);
+  });
+});
+
 [
   'caught-fetch',
   'caught-xhr',
@@ -17,7 +28,6 @@ const probe = require('./probe.cjs');
   });
 });
 [
-  ['history-import-rejection', 'HistoricalArbitrageService'],
   ['markets-import-rejection', 'MarketService'],
 ].forEach(([name, service]) => {
   test(`${service} import rejection retains its current unhandled follow-up failure`, () => {
@@ -34,7 +44,6 @@ const probe = require('./probe.cjs');
   });
 });
 [
-  ['history-view-rejection', 'HistoricalView'],
   ['market-status-rejection', 'MarketStatusView'],
   ['arbitrage-view-rejection', 'ArbitrageView'],
 ].forEach(([name, view]) => {

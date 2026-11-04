@@ -12,6 +12,7 @@ import TickersCheckboxDropdownFilter from "../filters/TickersCheckboxDropdownFil
 
 const HistoricalView = (props)=> {
     const [historicalArbitrages, setHistoricalArbitrages] = useState(null);
+    const [historyError, setHistoryError] = useState(null);
     const [marketFilter, setMarketFilter] = useState("");
     const [marketsFilter, setMarketsFilter] = useState([]);
     const [minProfitFilter, setMinProfitFilter] = useState(0)
@@ -21,10 +22,16 @@ const HistoricalView = (props)=> {
     const darkMode = props.darkMode;
 
     const callGetHistoricalArbitrages = useCallback(async (tickersFilter) => {
-        const {data} = await getHistoricalArbitrages(
-            availableTickers.length===tickersFilter.length ? null : tickersFilter
-        );
-        setHistoricalArbitrages(data);
+        setHistoryError(null);
+        try {
+            const {data} = await getHistoricalArbitrages(
+                availableTickers.length===tickersFilter.length ? null : tickersFilter
+            );
+            setHistoricalArbitrages(data);
+        } catch (error) {
+            setHistoricalArbitrages([]);
+            setHistoryError("Historical arbitrage service is not available");
+        }
     }, [availableTickers.length])
 
     React.useEffect(() => {
@@ -155,6 +162,7 @@ const HistoricalView = (props)=> {
                 </div>
             </div>
             { getSearchAndFilters() }
+            {historyError ? <div role="alert" className="alert alert-danger">{historyError}</div> : null}
             {
                 !historicalArbitrages ?
                 <div className="row justify-content-center">

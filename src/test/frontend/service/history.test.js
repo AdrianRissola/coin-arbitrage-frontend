@@ -72,7 +72,7 @@ test.each([
   }
 );
 
-test('a direct historical rejection is logged and resolves undefined without rewriting cached import data', async () => {
+test('a direct historical rejection is logged and propagated without rewriting cached import data', async () => {
   const lease = loadService(
     'HistoricalArbitrageService',
     [initial(), { uri: `${base}${path}`, reject: true }],
@@ -81,7 +81,7 @@ test('a direct historical rejection is logged and resolves undefined without rew
   await lease.waitForImports();
   await expect(
     lease.service.getHistoricalArbitrages(null)
-  ).resolves.toBeUndefined();
+  ).rejects.toBe(lease.errors[0]);
   expect(lease.log).toHaveBeenCalledWith(
     'Axios Error in HistoricalArbitrageService.getHistoricalArbitrages:',
     lease.errors[0]

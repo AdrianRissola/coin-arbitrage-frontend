@@ -8,9 +8,10 @@ beforeAll(async () => {
   views = await loadViews();
 });
 
-test('actual historical view retains the unhandled rejected-request follow-up', async () => {
+test('actual historical view contains rejection and stops loading', async () => {
   seedStorage();
   installTransport({ history: [{ tickers: ['BTC-USDT'], reject: true }] });
   render(<views.HistoricalView />);
-  await screen.findByText('ETH-USD', { selector: 'label' });
+  expect(await screen.findByRole('alert')).toHaveTextContent('Historical arbitrage service is not available');
+  expect(screen.queryByRole('status')).not.toBeInTheDocument();
 });
