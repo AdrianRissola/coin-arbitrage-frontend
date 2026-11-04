@@ -5,6 +5,8 @@ import { getMarkets } from '../../service/MarketService';
 const MarketsCheckboxDropdown = (props)=> {
     const availableMarkets = useRef([]);
     const [check, setCheck] = useState(true);
+    const [requestError, setRequestError] = useState(null);
+    const [requestVersion, setRequestVersion] = useState(0);
     const marketsFilter = props.marketsFilter;
     const buttonText = props.buttonText;
     const onClickFunction = props.onClickFunction;
@@ -15,7 +17,10 @@ const MarketsCheckboxDropdown = (props)=> {
     } : { backgroundColor: null, color: null };
 
     React.useEffect(() => {
+        let active = true;
+        setRequestError(null);
         getMarkets().then( response => {
+            if (!active) return;
             availableMarkets.current = response.data
             .sort((m1, m2) => (m1.name > m2.name) ? 1 : ((m2.name > m1.name) ? -1 : 0))
             .map(market =>  {
@@ -24,9 +29,17 @@ const MarketsCheckboxDropdown = (props)=> {
                     checked: true,
                 }
             });
+            setCheck(true);
             onClickFunction(availableMarkets.current.map(market=>market.marketName));
-        })
-    }, [onClickFunction]);
+        }).catch(() => {
+            if (!active) return;
+            availableMarkets.current = [];
+            setCheck(false);
+            onClickFunction([]);
+            setRequestError('Market filters are not available');
+        });
+        return () => { active = false; };
+    }, [onClickFunction, requestVersion]);
 
     const handleSelectedMarketsOnClick = (checked, selectedMarket) => {
         availableMarkets.current.filter(market => market.marketName===selectedMarket.marketName)[0].checked = checked
@@ -55,6 +68,9 @@ const MarketsCheckboxDropdown = (props)=> {
 
     return(
         <>
+            {requestError && <div role="alert" className="alert alert-danger">
+                {requestError} <button type="button" onClick={() => setRequestVersion(version => version + 1)}>Retry market filter</button>
+            </div>}
             <div className="dropdown">
                 <button className= {buttonClassName} type="button" id="dropdownMenuButton"
                     data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style={ buttonStyle }>

@@ -10,6 +10,8 @@ const TickersCheckboxDropdown = (props)=> {
     const availableTickers = useRef([]);
     
     const [selectedTickers, setSelectedTickers] = useState([defaultSelectecdTicker]);
+    const [requestError, setRequestError] = useState(null);
+    const [requestVersion, setRequestVersion] = useState(0);
     const allChecked = availableTickers.current.length > 0 && availableTickers.current.every(ticker => ticker.checked);
     const allQuotesChecked = new Map(quoteCurrencies.current.map(quote => {
         const group = availableTickers.current.filter(ticker => ticker.tickerName.split('-')[1] === quote);
@@ -33,7 +35,10 @@ const TickersCheckboxDropdown = (props)=> {
 
 
     useEffect(() => {
+        let active = true;
+        setRequestError(null);
         getAllAvailableTickers().then( response => {
+            if (!active) return;
             availableTickers.current = response.data.map(ticker => ticker.name).sort().map(ticker => {
                 return {
                     tickerName: ticker,
@@ -42,9 +47,15 @@ const TickersCheckboxDropdown = (props)=> {
             });
             quoteCurrencies.current = Array.from(new Set(response.data.map(bc => bc.name.split('-')[1]))).sort();
             setSelectedTickers([...availableTickers.current.filter(ticker=>ticker.checked).map(ticker=>ticker.tickerName)]);
-
-        })
-    }, []);
+        }).catch(() => {
+            if (!active) return;
+            availableTickers.current = [];
+            quoteCurrencies.current = [];
+            setSelectedTickers([]);
+            setRequestError('Ticker filters are not available');
+        });
+        return () => { active = false; };
+    }, [requestVersion]);
 
     const handleSelectedTickersOnClick = (checked, selectedTicker) => {
         selectedTicker.checked = checked;
@@ -82,6 +93,9 @@ const TickersCheckboxDropdown = (props)=> {
 
     return(
         <>
+            {requestError && <div role="alert" className="alert alert-danger">
+                {requestError} <button type="button" onClick={() => setRequestVersion(version => version + 1)}>Retry ticker filter</button>
+            </div>}
             <div >
                 <div className="dropdown">
                     <div className="btn-group" role="group">

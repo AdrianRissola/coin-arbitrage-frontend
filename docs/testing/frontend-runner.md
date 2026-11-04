@@ -151,9 +151,12 @@ A removed quote retains its selection and shows no data rather than switching
 currencies; choosing Best or receiving that quote again restores the cards.
 
 Separate guarded subprocess cases render actual Historical, MarketStatus and
-Arbitrage views under rejected responses. Historical probes require the FE-02
-error state and recovery; other view probes retain their source-specific
-unhandled failures. No global unhandled-rejection suppression is installed.
+Arbitrage views under rejected responses. All three now require a contained error
+state and recovery. Market/ticker services preserve original rejections, reject
+non-array metadata and contain import-time cache failures. Both metadata filters
+also expose retry controls, and retired requests cannot update unmounted consumers.
+No global unhandled-rejection suppression is installed; network-isolation negative
+controls remain enabled.
 
 The unchanged `src/App.test.js` scaffold's obsolete “learn react” assertion is
 outside the active profiles. Step A retains its raw Axios/Jest parse failure and

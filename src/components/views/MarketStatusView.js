@@ -75,16 +75,23 @@ const GetMarketsInfo = (markets, darkMode) => {
 
 const MarketStatusView = (props)=> {
     const [markets, setMarkets] = useState([])
+    const [requestError, setRequestError] = useState(null);
+    const [requestVersion, setRequestVersion] = useState(0);
     const darkMode = props.darkMode
     const marketStatus = props.marketStatus;
 
     React.useEffect(() => {
-        getMarkets().then(
-            response => {
-                setMarkets(response.data.sort((m1, m2) => (m1.name > m2.name) ? 1 : ((m2.name > m1.name) ? -1 : 0)))
-            }
-        );
-    }, []);
+        let active = true;
+        setRequestError(null);
+        getMarkets().then(response => {
+            if (active) setMarkets(response.data.sort((m1, m2) => m1.name.localeCompare(m2.name)));
+        }).catch(() => {
+            if (!active) return;
+            setMarkets([]);
+            setRequestError('Market information is not available');
+        });
+        return () => { active = false; };
+    }, [requestVersion]);
 
 
     return(
@@ -96,6 +103,9 @@ const MarketStatusView = (props)=> {
                     </h1>
                 </div>
             </div>
+            {requestError && <div role="alert" className="alert alert-danger">
+                {requestError} <button type="button" onClick={() => setRequestVersion(version => version + 1)}>Retry markets</button>
+            </div>}
             <div style={{display: "flex", flexWrap: "wrap", justifyContent: "center"}}>
                 <div className="col-12 col-sm-12 col-m-6 col-lg-6 col-xl-6" 
                     style={{display: "flex", flexDirection: "row", flexWrap: "wrap", justifyContent: "center"}}> 

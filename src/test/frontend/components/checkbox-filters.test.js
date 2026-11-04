@@ -181,6 +181,20 @@ test('an individual ticker label toggles that ticker rather than the first input
   expect(checkbox('BTC-USD')).not.toBeChecked();
 });
 
+test.each([
+  ['MarketsFilter', 'markets', 'Retry market filter', 'Alpha'],
+  ['TickersFilter', 'tickers', 'Retry ticker filter', 'ETH-USD'],
+])('%s contains request rejection and allows retry', async (name, kind, retry, label) => {
+  installTransport({ [kind]: [{ reject: true }] });
+  const selected = jest.fn();
+  const Component = views[name];
+  render(<Component marketsFilter={[]} onClickFunction={selected} handleOnClickFindButton={selected} buttonText="Filter" />);
+  expect(await screen.findByRole('alert')).toHaveTextContent('not available');
+  userEvent.click(screen.getByRole('button', { name: retry }));
+  await screen.findByText(label, { selector: 'label' });
+  expect(screen.queryByRole('alert')).not.toBeInTheDocument();
+});
+
 test('empty available ticker metadata produces an empty Find payload', async () => {
   installTransport({ tickers: [{ data: [] }] });
   const selected = jest.fn();
