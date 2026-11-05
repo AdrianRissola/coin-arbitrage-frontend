@@ -13,6 +13,7 @@ const getHistoricalArbitrages = async (tickers) => {
         }  
     }).then(
         (response) => {
+        if (!Array.isArray(response.data)) throw new TypeError('Invalid historical arbitrages response');
         console.log(`HistoricalArbitrageService.getHistoricalArbitrages(${tickers}):`, response.data)
         return response;
     }).catch(e => {

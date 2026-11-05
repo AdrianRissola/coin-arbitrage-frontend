@@ -72,6 +72,25 @@ test.each([
   }
 );
 
+test.each([null, {}, 'invalid'])(
+  'a %p response rejects as invalid without writing the cache',
+  async (invalid) => {
+    const lease = loadService(
+      'HistoricalArbitrageService',
+      [initial(), { uri: `${base}${path}`, data: invalid }],
+      1
+    );
+    await lease.waitForImports();
+    await expect(
+      lease.service.getHistoricalArbitrages(null)
+    ).rejects.toThrow(TypeError);
+    expect(lease.writes).toHaveLength(1);
+    expect(localStorage.getItem('historicalArbitrages')).toBe(
+      JSON.stringify(history)
+    );
+  }
+);
+
 test('a direct historical rejection is logged and propagated without rewriting cached import data', async () => {
   const lease = loadService(
     'HistoricalArbitrageService',
