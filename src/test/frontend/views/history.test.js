@@ -95,13 +95,17 @@ test('an empty array removes loading but does not add a count heading or invente
   expect(screen.queryByText(/No arbitrages available/)).not.toBeInTheDocument();
 });
 
-test('a null response keeps the existing loading state after the response settles', async () => {
-  const pending = deferred();
-  installTransport({ history: [{ tickers: ['BTC-USDT'], deferred: pending }] });
-  render(<views.HistoricalView />);
-  await resolveResponse(pending, null);
-  expect(screen.getByRole('status')).toHaveTextContent('Loading...');
-});
+test.each([null, {}, 'invalid'])(
+  'a %p response settles into the error state instead of loading forever',
+  async (invalid) => {
+    const pending = deferred();
+    installTransport({ history: [{ tickers: ['BTC-USDT'], deferred: pending }] });
+    render(<views.HistoricalView />);
+    await resolveResponse(pending, invalid);
+    expect(await screen.findByRole('alert')).toHaveTextContent('not available');
+    expect(screen.queryByRole('status')).not.toBeInTheDocument();
+  }
+);
 
 test('Refine reveals real filters and exact minimum boundaries change observable historical rows', async () => {
   const transport = installTransport({

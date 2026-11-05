@@ -141,8 +141,10 @@ browser scrolling. A per-element scrollBy spy tests only the existing API call.
 
 Characterisations include literal locale rounding, zero/string/negative profits,
 unconditional best-card filter bypass, quote-first selection and ties, in-place
-price-order effects, historical loading/empty/null behaviour and the
-sort-option/primary-button mismatch. Historical searches no longer read cached
+price-order effects, historical loading/empty behaviour and the
+sort-option/primary-button mismatch. Historical responses that are not arrays
+reject as invalid: the view settles into its existing error state rather than
+loading forever, and the import-time cache write is skipped. Historical searches no longer read cached
 ticker metadata or infer ALL from counts or cached identities. Default, individual
 and quote-group searches send explicit ticker IDs. Only the global Select All action
 can use the optional `handleOnClickFindAllButton` callback, retaining a compact
