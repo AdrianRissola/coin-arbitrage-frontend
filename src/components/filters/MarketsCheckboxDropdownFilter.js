@@ -1,8 +1,9 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useId } from "react";
 import { getMarkets } from '../../service/MarketService';
 
 
 const MarketsCheckboxDropdown = (props)=> {
+    const checkboxId = useId();
     const availableMarkets = useRef([]);
     const [check, setCheck] = useState(true);
     const [requestError, setRequestError] = useState(null);
@@ -80,11 +81,11 @@ const MarketsCheckboxDropdown = (props)=> {
                     <li>
                         <a className="dropdown-item" href="/#">
                             <div className="form-check">
-                                <input className="form-check-input" type="checkbox" value="" id="selectAllMarketsId"
+                                <input className="form-check-input" type="checkbox" value="" id={`${checkboxId}-all`}
                                     checked = { check }
                                     onChange={(event)=>{ handleSelectAllOnClick(event.target.checked) }}
                                 />
-                                <label className="form-check-label" htmlFor="selectAllMarketsId">Select All</label>
+                                <label className="form-check-label" htmlFor={`${checkboxId}-all`}>Select All</label>
                             </div>
                         </a>
                     </li>
@@ -93,13 +94,13 @@ const MarketsCheckboxDropdown = (props)=> {
                         <li key= { option.marketName }>
                             <a className="dropdown-item" href="/#">
                                 <div className="form-check">
-                                    <input className="form-check-input" type="checkbox" value="" id="checkMarketId"
+                                    <input className="form-check-input" type="checkbox" value="" id={`${checkboxId}-market-${option.marketName}`}
                                         checked = { option.checked }
                                         onChange = {(event)=>{
                                             handleSelectedMarketsOnClick(event.target.checked, option);
                                         }}
                                     />
-                                    <label className="form-check-label" htmlFor="checkMarketId">{ option.marketName }</label>
+                                    <label className="form-check-label" htmlFor={`${checkboxId}-market-${option.marketName}`}>{ option.marketName }</label>
                                 </div>
                             </a>
                         </li>)
