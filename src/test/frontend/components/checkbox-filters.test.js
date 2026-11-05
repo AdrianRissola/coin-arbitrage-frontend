@@ -60,6 +60,16 @@ test('market select-all off hides pair cards but not the unconditional best card
   expect(checkbox('Select All')).not.toBeChecked();
 });
 
+test('a market text label toggles its own checkbox, not the first market', async () => {
+  installTransport();
+  render(<MarketHarness />);
+  await screen.findByText('Alpha-Gamma');
+  userEvent.click(screen.getByText('Beta', { selector: 'label' }));
+  expect(checkbox('Beta')).not.toBeChecked();
+  expect(checkbox('Alpha')).toBeChecked();
+  expect(screen.getAllByRole('table')).toHaveLength(2);
+});
+
 test('selecting all markets again restores all rendered pairs', async () => {
   installTransport();
   render(<MarketHarness />);

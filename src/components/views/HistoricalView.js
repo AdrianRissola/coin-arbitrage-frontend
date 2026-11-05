@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useRef } from "react";
 import { getHistoricalArbitrages } from "../../service/HistoricalArbitrageService"
 import ArbitrageList from "../ArbitrageList";
 import helper from "../../helper";
@@ -20,12 +20,16 @@ const HistoricalView = (props)=> {
     const [historicalArbitrageOrder, setHistoricalArbitrageOrder] = useState({key: "date", value: "DESC", label: "Date"})
     const darkMode = props.darkMode;
 
+    const requestVersion = useRef(0);
     const callGetHistoricalArbitrages = useCallback(async (tickersFilter) => {
+        const version = ++requestVersion.current;
         setHistoryError(null);
         try {
             const {data} = await getHistoricalArbitrages(tickersFilter);
+            if (version !== requestVersion.current) return;
             setHistoricalArbitrages(data);
         } catch (error) {
+            if (version !== requestVersion.current) return;
             setHistoricalArbitrages([]);
             setHistoryError("Historical arbitrage service is not available");
         }
@@ -44,16 +48,9 @@ const HistoricalView = (props)=> {
     }
 
     const handleSelectedHistoricalArbitrageOrderOnClick = (selectedHistoricalArbitrageOrder) => {
-        if(selectedHistoricalArbitrageOrder.field) {
-          if(historicalArbitrageOrder.field!==selectedHistoricalArbitrageOrder.field) 
+        if(historicalArbitrageOrder.key !== selectedHistoricalArbitrageOrder.key
+            || historicalArbitrageOrder.value !== selectedHistoricalArbitrageOrder.value)
             setHistoricalArbitrageOrder(selectedHistoricalArbitrageOrder)
-          } else {
-            setHistoricalArbitrageOrder(historicalArbitrageOrder)
-          }
-    }
-
-    const handleSelectedHistoricalArbitrageOrderOnClickk = (selectedHistoricalArbitrageOrder) => {
-        setHistoricalArbitrageOrder(selectedHistoricalArbitrageOrder)  
     }
 
     const buildInputGroup = (component, width, marginRight) => {
@@ -135,7 +132,7 @@ const HistoricalView = (props)=> {
                         buildInputGroup(
                             <SplitButtonComboBox darkMode = { darkMode } 
                                 optionOnClickFunction = { handleSelectedHistoricalArbitrageOrderOnClick }
-                                buttonOnClickFunction = { handleSelectedHistoricalArbitrageOrderOnClickk }
+                                buttonOnClickFunction = { handleSelectedHistoricalArbitrageOrderOnClick }
                                 currentSelection = { historicalArbitrageOrder } buttonText = { "Order By: "}
                                 options = { 
                                     [{key: "profitPercentage", value: "DESC", label: "Profit %"}, {key: "date", value: "DESC", label: "Date"}]

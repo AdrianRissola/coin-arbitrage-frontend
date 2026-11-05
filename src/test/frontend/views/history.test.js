@@ -130,7 +130,7 @@ test('Refine reveals real filters and exact minimum boundaries change observable
   ).toHaveLength(1);
 });
 
-test('sort option changes its button label but not rows until the primary direction button is clicked', async () => {
+test('sort option applies its ordering immediately and the primary button toggles direction', async () => {
   installTransport({ history: [{ tickers: ['BTC-USDT'], data: history() }] });
   const { container } = render(<views.HistoricalView />);
   await ready();
@@ -139,7 +139,7 @@ test('sort option changes its button label but not rows until the primary direct
   expect(
     screen.getByRole('button', { name: 'Order By: Profit % ↑' })
   ).toBeInTheDocument();
-  expect(headers(container)).toEqual(['ETH-USD', 'BTC-USD', 'BTC-USDT']);
+  expect(headers(container)).toEqual(['ETH-USD', 'BTC-USDT', 'BTC-USD']);
   userEvent.click(screen.getByRole('button', { name: 'Order By: Profit % ↑' }));
   expect(headers(container)).toEqual(['BTC-USD', 'BTC-USDT', 'ETH-USD']);
   userEvent.click(screen.getByRole('button', { name: 'Order By: Profit % ↓' }));
@@ -205,6 +205,22 @@ test('empty Find selection makes no new request and leaves current rows visible'
   expect(
     transport.calls.filter((call) => call.kind === 'historical-arbitrages')
   ).toHaveLength(1);
+});
+
+test('a slower older response cannot overwrite a newer search result', async () => {
+  const pending = deferred();
+  installTransport({ history: [
+    { tickers: ['BTC-USDT'], deferred: pending },
+    { tickers: ['ETH-USD'], data: history().slice(0, 1) },
+  ] });
+  render(<views.HistoricalView />);
+  await screen.findByText('ETH-USD', { selector: 'label' });
+  userEvent.click(tickerCheckbox('BTC-USDT'));
+  userEvent.click(tickerCheckbox('ETH-USD'));
+  userEvent.click(screen.getByRole('button', { name: 'Find' }));
+  expect(await screen.findByRole('heading', { name: 'Arbitrage Found: 1' })).toBeInTheDocument();
+  await resolveResponse(pending, history());
+  expect(screen.getByRole('heading', { name: 'Arbitrage Found: 1' })).toBeInTheDocument();
 });
 
 test('equal counts with different ticker identities do not broaden the request', async () => {
