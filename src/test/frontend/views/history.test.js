@@ -130,7 +130,7 @@ test('Refine reveals real filters and exact minimum boundaries change observable
   ).toHaveLength(1);
 });
 
-test('sort option changes its button label but not rows until the primary direction button is clicked', async () => {
+test('sort option applies its ordering immediately and the primary button toggles direction', async () => {
   installTransport({ history: [{ tickers: ['BTC-USDT'], data: history() }] });
   const { container } = render(<views.HistoricalView />);
   await ready();
@@ -139,7 +139,7 @@ test('sort option changes its button label but not rows until the primary direct
   expect(
     screen.getByRole('button', { name: 'Order By: Profit % ↑' })
   ).toBeInTheDocument();
-  expect(headers(container)).toEqual(['ETH-USD', 'BTC-USD', 'BTC-USDT']);
+  expect(headers(container)).toEqual(['ETH-USD', 'BTC-USDT', 'BTC-USD']);
   userEvent.click(screen.getByRole('button', { name: 'Order By: Profit % ↑' }));
   expect(headers(container)).toEqual(['BTC-USD', 'BTC-USDT', 'ETH-USD']);
   userEvent.click(screen.getByRole('button', { name: 'Order By: Profit % ↓' }));

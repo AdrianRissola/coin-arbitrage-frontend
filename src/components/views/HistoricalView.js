@@ -44,16 +44,9 @@ const HistoricalView = (props)=> {
     }
 
     const handleSelectedHistoricalArbitrageOrderOnClick = (selectedHistoricalArbitrageOrder) => {
-        if(selectedHistoricalArbitrageOrder.field) {
-          if(historicalArbitrageOrder.field!==selectedHistoricalArbitrageOrder.field) 
+        if(historicalArbitrageOrder.key !== selectedHistoricalArbitrageOrder.key
+            || historicalArbitrageOrder.value !== selectedHistoricalArbitrageOrder.value)
             setHistoricalArbitrageOrder(selectedHistoricalArbitrageOrder)
-          } else {
-            setHistoricalArbitrageOrder(historicalArbitrageOrder)
-          }
-    }
-
-    const handleSelectedHistoricalArbitrageOrderOnClickk = (selectedHistoricalArbitrageOrder) => {
-        setHistoricalArbitrageOrder(selectedHistoricalArbitrageOrder)  
     }
 
     const buildInputGroup = (component, width, marginRight) => {
@@ -135,7 +128,7 @@ const HistoricalView = (props)=> {
                         buildInputGroup(
                             <SplitButtonComboBox darkMode = { darkMode } 
                                 optionOnClickFunction = { handleSelectedHistoricalArbitrageOrderOnClick }
-                                buttonOnClickFunction = { handleSelectedHistoricalArbitrageOrderOnClickk }
+                                buttonOnClickFunction = { handleSelectedHistoricalArbitrageOrderOnClick }
                                 currentSelection = { historicalArbitrageOrder } buttonText = { "Order By: "}
                                 options = { 
                                     [{key: "profitPercentage", value: "DESC", label: "Profit %"}, {key: "date", value: "DESC", label: "Date"}]
