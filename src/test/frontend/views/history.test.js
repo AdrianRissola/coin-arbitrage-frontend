@@ -207,6 +207,22 @@ test('empty Find selection makes no new request and leaves current rows visible'
   ).toHaveLength(1);
 });
 
+test('a slower older response cannot overwrite a newer search result', async () => {
+  const pending = deferred();
+  installTransport({ history: [
+    { tickers: ['BTC-USDT'], deferred: pending },
+    { tickers: ['ETH-USD'], data: history().slice(0, 1) },
+  ] });
+  render(<views.HistoricalView />);
+  await screen.findByText('ETH-USD', { selector: 'label' });
+  userEvent.click(tickerCheckbox('BTC-USDT'));
+  userEvent.click(tickerCheckbox('ETH-USD'));
+  userEvent.click(screen.getByRole('button', { name: 'Find' }));
+  expect(await screen.findByRole('heading', { name: 'Arbitrage Found: 1' })).toBeInTheDocument();
+  await resolveResponse(pending, history());
+  expect(screen.getByRole('heading', { name: 'Arbitrage Found: 1' })).toBeInTheDocument();
+});
+
 test('equal counts with different ticker identities do not broaden the request', async () => {
   seedStorage([tickers.find((ticker) => ticker.name === 'ETH-USD')]);
   const transport = installTransport({

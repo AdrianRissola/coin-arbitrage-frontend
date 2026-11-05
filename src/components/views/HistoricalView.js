@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useRef } from "react";
 import { getHistoricalArbitrages } from "../../service/HistoricalArbitrageService"
 import ArbitrageList from "../ArbitrageList";
 import helper from "../../helper";
@@ -20,12 +20,16 @@ const HistoricalView = (props)=> {
     const [historicalArbitrageOrder, setHistoricalArbitrageOrder] = useState({key: "date", value: "DESC", label: "Date"})
     const darkMode = props.darkMode;
 
+    const requestVersion = useRef(0);
     const callGetHistoricalArbitrages = useCallback(async (tickersFilter) => {
+        const version = ++requestVersion.current;
         setHistoryError(null);
         try {
             const {data} = await getHistoricalArbitrages(tickersFilter);
+            if (version !== requestVersion.current) return;
             setHistoricalArbitrages(data);
         } catch (error) {
+            if (version !== requestVersion.current) return;
             setHistoricalArbitrages([]);
             setHistoryError("Historical arbitrage service is not available");
         }
