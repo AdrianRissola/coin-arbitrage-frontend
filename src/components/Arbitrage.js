@@ -54,16 +54,20 @@ const Arbitrage = (props)=> {
                             <td align="center" >{displayedArbitrage.transactions[0].type}</td>             
                             <td >{displayedArbitrage.transactions[0].market}</td>
                             <td align="center" style={{color:greenHex}} title="Ask">
-                                { displayedArbitrage.transactions[0].price.toLocaleString(navigator.language, {maximumSignificantDigits:7}) }
-                                <span style={{fontSize:"70%", opacity:0.65}}> · ask</span>
+                                <span style={{whiteSpace:"nowrap"}}>
+                                    { displayedArbitrage.transactions[0].price.toLocaleString(navigator.language, {maximumSignificantDigits:7}) }
+                                    <span style={{fontSize:"70%", opacity:0.65}}> · ask</span>
+                                </span>
                             </td>
                         </tr>
                         <tr>
                             <td align="center">{displayedArbitrage.transactions[1].type}</td>
                             <td>{displayedArbitrage.transactions[1].market}</td>
                             <td align="center" style={{color:greenHex}} title="Bid">
-                                { displayedArbitrage.transactions[1].price.toLocaleString(navigator.language, {maximumSignificantDigits:7}) }
-                                <span style={{fontSize:"70%", opacity:0.65}}> · bid</span>
+                                <span style={{whiteSpace:"nowrap"}}>
+                                    { displayedArbitrage.transactions[1].price.toLocaleString(navigator.language, {maximumSignificantDigits:7}) }
+                                    <span style={{fontSize:"70%", opacity:0.65}}> · bid</span>
+                                </span>
                             </td>
                         </tr>
                     </tbody>
