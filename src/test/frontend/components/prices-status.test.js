@@ -27,13 +27,16 @@ test('prices expose bid/ask/last columns, count and incoming order', () => {
     screen.getByRole('columnheader', { name: 'BTC Markets (3)' })
   ).toBeInTheDocument();
   expect(
-    screen.getByRole('columnheader', { name: 'Bid (USDT)' })
+    screen.getByRole('columnheader', { name: 'Prices (USDT)' })
   ).toBeInTheDocument();
   expect(
-    screen.getByRole('columnheader', { name: 'Ask (USDT)' })
+    screen.getByRole('columnheader', { name: 'Bid' })
   ).toBeInTheDocument();
   expect(
-    screen.getByRole('columnheader', { name: 'Last (USDT)' })
+    screen.getByRole('columnheader', { name: 'Ask' })
+  ).toBeInTheDocument();
+  expect(
+    screen.getByRole('columnheader', { name: 'Last' })
   ).toBeInTheDocument();
 });
 

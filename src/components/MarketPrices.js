@@ -39,7 +39,7 @@ const MarketPrices = (props) => {
                     <table className="table" style={{ color: textColor }}>
                         <thead>
                             <tr>
-                                <th className="text-center" style={{ fontSize: "18px" }}>Prices</th>
+                                <th className="text-center" style={{ fontSize: "18px" }}>Prices ({quoteCurrency})</th>
                                 <th>
                                     <div className="form-check">
                                         <input className="form-check-input" type="checkbox" value="" id="flexCheckDefault"
@@ -53,9 +53,9 @@ const MarketPrices = (props) => {
                             </tr>
                             <tr>
                                 <th>{ticker.split('-')[0]} Markets ({props.marketPrices.length})</th>
-                                <th>Bid ({quoteCurrency})</th>
-                                <th>Ask ({quoteCurrency})</th>
-                                <th>Last ({quoteCurrency})</th>
+                                <th>Bid</th>
+                                <th>Ask</th>
+                                <th>Last</th>
                             </tr>
                         </thead>
                         <tbody>

@@ -48,7 +48,7 @@ const Arbitrage = (props)=> {
                         <tr>
                             <td align="center" style={{width: "100px"}}>Operation</td>
                             <td align="center" style={{width: "80px"}}>Market</td>
-                            <td align="center" >Price (Ask/Bid)</td>
+                            <td align="center" >Price</td>
                         </tr>
                         <tr>
                             <td align="center" >{displayedArbitrage.transactions[0].type}</td>             
