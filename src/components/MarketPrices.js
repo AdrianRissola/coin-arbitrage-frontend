@@ -1,29 +1,51 @@
 import { useState } from "react";
 import { marketPricesCardStyle } from "../styleUtil";
+import helper from "../helper";
 
 const greenHex = "#0ecb81"
+const mutedStyle = { fontSize: "75%", opacity: 0.65 };
+const badgeStyle = { ...mutedStyle, color: "#f0b90b", marginLeft: "0.35rem" };
 
-const MarketPrices = (props)=> {
+const formatPrice = value =>
+    value === null || value === undefined || value === ""
+        ? "—"
+        : value.toLocaleString(navigator.language, { maximumSignificantDigits: 7 });
+
+const MarketPrices = (props) => {
     const [order, setOrder] = useState(false);
-    const ticker = props.ticker  || 'coin-coin'
-    const marketPrices = order ? props.marketPrices.sort((a,b)=>a.price - b.price) : props.marketPrices
+    const ticker = props.ticker || 'coin-coin'
     const styles = marketPricesCardStyle(props.darkMode)
     const textColor = props.darkMode ? "white" : "black";
+    const quoteCurrency = ticker.split('-')[1];
 
-    return(
+    const rows = (props.marketPrices ? [...props.marketPrices] : [])
+        .map(marketPrice => ({
+            ...marketPrice,
+            group: marketPrice.connected === false ? 2 : marketPrice.stale ? 1 : 0,
+        }))
+        .sort((a, b) =>
+            (a.group - b.group) ||
+            (order
+                ? (a.ask ?? a.price ?? Infinity) - (b.ask ?? b.price ?? Infinity)
+                : 0));
+
+    const statusBadge = row =>
+        row.connected === false ? "disconnected" : row.stale ? "stale" : null;
+
+    return (
         <div className={styles.cardClassName} style={styles.cardStyle}>
             <div className={styles.cardBodyClassName}>
-                { props.marketPrices ?
-                    <table className="table" style={{ color: textColor}}>
+                {props.marketPrices ?
+                    <table className="table" style={{ color: textColor }}>
                         <thead>
                             <tr>
-                                <th className="text-center" style={{fontSize:"18px"}}>Prices</th>
+                                <th className="text-center" style={{ fontSize: "18px" }}>Prices</th>
                                 <th>
                                     <div className="form-check">
                                         <input className="form-check-input" type="checkbox" value="" id="flexCheckDefault"
-                                            onClick={ evt => {setOrder(evt.target.checked)} }
+                                            onClick={evt => { setOrder(evt.target.checked) }}
                                         />
-                                        <label style={{fontSize:"18px"}}>
+                                        <label style={{ fontSize: "18px" }}>
                                             &#x2191;&#x2193;
                                         </label>
                                     </div>
@@ -31,28 +53,44 @@ const MarketPrices = (props)=> {
                             </tr>
                             <tr>
                                 <th>{ticker.split('-')[0]} Markets ({props.marketPrices.length})</th>
-                                <th>Price ({ticker.split('-')[1]})</th>
+                                <th>Bid ({quoteCurrency})</th>
+                                <th>Ask ({quoteCurrency})</th>
+                                <th>Last ({quoteCurrency})</th>
                             </tr>
                         </thead>
                         <tbody>
-                            {
-                                marketPrices.map(marketPrice => {
-                                    return (
-                                        <tr key={marketPrice.market}>
-                                            <td style={{ textAlign:"left", fontWeight: 'bold' }}>{ marketPrice.market }</td>
-                                            <td style={{ color:greenHex, textAlign:"right", fontWeight: 'bold' }} title={marketPrice.price}>
-                                                { marketPrice.price.toLocaleString(navigator.language, {maximumSignificantDigits:7}) }
-                                            </td>
-                                        </tr>
-                                    );
-                                })
-                            }
+                            {rows.map(marketPrice => {
+                                const badge = statusBadge(marketPrice);
+                                const age = helper.ageLabel(marketPrice.timestamp);
+                                return (
+                                    <tr key={marketPrice.market}
+                                        style={{ opacity: badge ? 0.55 : 1 }}
+                                        title={age ? `${marketPrice.market} quote: ${age}` : marketPrice.market}>
+                                        <td style={{ textAlign: "left", fontWeight: 'bold' }}>
+                                            {marketPrice.market}
+                                            {badge ? <span style={badgeStyle}>{badge}</span> : null}
+                                            {age ? <span style={mutedStyle}> ({age})</span> : null}
+                                        </td>
+                                        <td style={{ color: greenHex, textAlign: "right", fontWeight: 'bold' }}
+                                            title={marketPrice.bid}>
+                                            {formatPrice(marketPrice.bid)}
+                                        </td>
+                                        <td style={{ color: "#f6465d", textAlign: "right", fontWeight: 'bold' }}
+                                            title={marketPrice.ask}>
+                                            {formatPrice(marketPrice.ask)}
+                                        </td>
+                                        <td style={{ textAlign: "right", fontWeight: 'bold' }}
+                                            title={marketPrice.price}>
+                                            {formatPrice(marketPrice.price)}
+                                        </td>
+                                    </tr>
+                                );
+                            })}
                         </tbody>
                     </table>
-                    : null
-                }
+                    : null}
             </div>
-        </div>      
+        </div>
     )
 }
 
