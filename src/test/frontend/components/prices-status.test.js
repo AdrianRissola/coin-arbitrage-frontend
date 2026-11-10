@@ -46,11 +46,11 @@ test('stale and aged quotes are badged, dimmed and annotated', () => {
   render(<MarketPrices ticker="BTC-USDT" marketPrices={rows} />);
   const table = screen.getByRole('table');
   expect(within(table).getByText('stale')).toBeInTheDocument();
-  expect(within(table).getByText(/s ago\)/)).toBeInTheDocument();
   const staleRow = within(table)
     .getAllByRole('row')
     .find(row => row.textContent.includes('Gamma'));
   expect(staleRow).toHaveStyle({ opacity: '0.55' });
+  expect(staleRow).toHaveAttribute('title', expect.stringContaining('ago'));
 });
 
 test('checking price order sorts by ask; unchecking restores incoming order', () => {
