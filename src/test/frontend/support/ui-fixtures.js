@@ -22,7 +22,7 @@ const history = () => [
       { type: 'SELL', market: 'Gamma', pair: 'ETH-USD', price: 100 },
     ],
     profitPerUnit: 50,
-    profitPercentage: 50,
+    profitPercentage: 100,
     date: '2024-01-03T03:04:05.000Z',
   },
   {
@@ -32,7 +32,7 @@ const history = () => [
       { type: 'SELL', market: 'Beta', pair: 'BTC-USD', price: 100 },
     ],
     profitPerUnit: 20,
-    profitPercentage: 20,
+    profitPercentage: 25,
     date: '2024-01-02T03:04:05.000Z',
   },
 ];

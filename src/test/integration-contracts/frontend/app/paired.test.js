@@ -27,7 +27,7 @@ test('actual App and real views consume the selected owned paired flow increment
       { timeout: 6000 }
     );
     expect(await screen.findByText('Alpha-Gamma')).toBeInTheDocument();
-    expect(screen.getAllByText('36% USDT')).toHaveLength(2);
+    expect(screen.getAllByText('56.3% USDT')).toHaveLength(2);
     expect(screen.getByRole('columnheader', { name: 'BTC Markets (3)' })).toBeInTheDocument();
     expect(ui.sockets).toHaveLength(1);
     const socket = ui.sockets[0];
@@ -92,7 +92,7 @@ test('actual App and real views consume the selected owned paired flow increment
     expect(socket.sent.map(JSON.parse)).toContainEqual(
       fixture('requests').websocket.navbar
     );
-    expect(screen.getAllByText('36% USDT')).toHaveLength(2);
+    expect(screen.getAllByText('56.3% USDT')).toHaveLength(2);
     await runSelectedFlow('ticker', async () => {
       socket.holdTicker = 'btc-usdt';
       await waitFor(() => expect(socket.held.length).toBeGreaterThan(0), {
@@ -105,7 +105,7 @@ test('actual App and real views consume the selected owned paired flow increment
         { name: 'ETH-USD Arbitrage' },
         { timeout: 6000 }
       );
-      expect(screen.getAllByText('37.5% USD')).toHaveLength(2);
+      expect(screen.getAllByText('60% USD')).toHaveLength(2);
       expect(socket.sent.map(JSON.parse)).toContainEqual({
         channel: 'arbitrage',
         ticker: 'ETH-USD',
@@ -114,7 +114,7 @@ test('actual App and real views consume the selected owned paired flow increment
       expect(released.length).toBeGreaterThan(0);
       expect(screen.getByRole('heading', { name: 'ETH-USD Arbitrage' })).toBeInTheDocument();
       expect(screen.queryByRole('heading', { name: 'BTC-USDT Arbitrage' })).not.toBeInTheDocument();
-      expect(screen.getAllByText('37.5% USD')).toHaveLength(2);
+      expect(screen.getAllByText('60% USD')).toHaveLength(2);
       observations.staleDelivery = {
         source: 'unchanged genuine native MessageEvent delayed until selected-pair UI update',
         released: released.map(JSON.parse),
@@ -124,7 +124,7 @@ test('actual App and real views consume the selected owned paired flow increment
     await runSelectedFlow('best', async () => {
       userEvent.click(screen.getByRole('link', { name: 'Best Arbitrage' }));
       await screen.findByText('Best Arbitrage: ETH-USD', {}, { timeout: 6000 });
-      expect(screen.getByText('37.5% USD')).toBeInTheDocument();
+      expect(screen.getByText('60% USD')).toBeInTheDocument();
       expect(screen.getByRole('columnheader', { name: 'ETH Markets (3)' })).toBeInTheDocument();
       expect(socket.sent.map(JSON.parse)).toContainEqual(
         fixture('requests').websocket.best
@@ -145,7 +145,7 @@ test('actual App and real views consume the selected owned paired flow increment
       userEvent.click(screen.getByText('USDT', { selector: 'label' }));
       expect(screen.getByRole('heading', { name: 'Best USDT Arbitrage' })).toBeInTheDocument();
       expect(screen.getByText('Best Arbitrage: BTC-USDT')).toBeInTheDocument();
-      expect(screen.getByText('36% USDT')).toBeInTheDocument();
+      expect(screen.getByText('56.3% USDT')).toBeInTheDocument();
       observations.completed.push('best');
     });
     await runSelectedFlow('markets', async () => {

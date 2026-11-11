@@ -32,7 +32,7 @@ test('best view selects highest percentage and quote controls update real cards 
   const data = bestProps();
   render(<views.BestArbitrageView {...data} />);
   expect(screen.getByText('Best Arbitrage: ETH-USD')).toBeInTheDocument();
-  expect(screen.getByText('50% USD')).toBeInTheDocument();
+  expect(screen.getByText('100% USD')).toBeInTheDocument();
   expect(
     screen.getByRole('columnheader', { name: 'ETH Markets (2)' })
   ).toBeInTheDocument();
@@ -59,12 +59,12 @@ test('quote filtering takes the first supplied quote record rather than recalcul
   expect(screen.getByText('Best Arbitrage: ETH-USD')).toBeInTheDocument();
   userEvent.click(screen.getAllByText('USD', { selector: 'label' })[0]);
   expect(screen.getByText('Best Arbitrage: BTC-USD')).toBeInTheDocument();
-  expect(screen.getByText('20% USD')).toBeInTheDocument();
+  expect(screen.getByText('25% USD')).toBeInTheDocument();
 });
 
 test('equal maximum percentages choose the later supplied record', () => {
   const records = history().slice(0, 2);
-  records[1].profitPercentage = 36;
+  records[1].profitPercentage = 56.25;
   render(<views.BestArbitrageView {...bestProps()} bestArbitrage={records} />);
   expect(screen.getByText('Best Arbitrage: ETH-USD')).toBeInTheDocument();
 });

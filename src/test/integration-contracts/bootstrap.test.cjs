@@ -82,12 +82,12 @@ nodeTest('literal financial fixtures are internally consistent, not provider val
 	);
 	assert.deepEqual(
 		arbitrages.map(a => a.profitPercentage),
-		[36, 20, 20]
+		[56.25, 25, 25]
 	);
 	arbitrages.forEach(a => {
 		const [buy, sell] = a.transactions;
 		assert.equal(a.profitPerUnit, sell.price - buy.price);
-		assert.equal(a.profitPercentage, (100 * (sell.price - buy.price)) / sell.price);
+		assert.equal(a.profitPercentage, (100 * (sell.price - buy.price)) / buy.price);
 	});
 	assert.deepEqual(
 		Object.values(fixtures['ws-arbitrage.json'].arbitrages['BTC-USDT']),

@@ -18,7 +18,7 @@ afterEach(() => language.mockRestore());
 
 test('the real arbitrage card displays the independent literal percentage', () => {
   render(<Arbitrage header="BTC-USDT" arbitrage={opportunity()} />);
-  expect(screen.getByText('36% USDT')).toBeInTheDocument();
+  expect(screen.getByText('56.3% USDT')).toBeInTheDocument();
 });
 
 test('full card exposes BUY/SELL fields, literal unit profit and supplied secondary heading', () => {
@@ -126,7 +126,7 @@ test('mini card renders its own operation layout and omits the full unit-profit 
     screen.getByText('BUY - Alpha').textContent,
     screen.getByText('SELL - Gamma').textContent,
   ]).toEqual(['BUY - Alpha', 'SELL - Gamma']);
-  expect(screen.getByText('36% USDT')).toBeInTheDocument();
+  expect(screen.getByText('56.3% USDT')).toBeInTheDocument();
   expect(screen.queryByText('Profit / BTC:')).not.toBeInTheDocument();
 });
 

@@ -1,4 +1,4 @@
 [
-  {"_id":"000000000000000000000001","transactions":[{"_id":"000000000000000000000101","type":"BUY","market":"Alpha","pair":"BTC-USDT","price":80},{"_id":"000000000000000000000102","type":"SELL","market":"Gamma","pair":"BTC-USDT","price":125}],"profitPerUnit":45,"profitPercentage":36,"date":"2024-01-02T03:04:05.000Z","__v":0},
-  {"_id":"000000000000000000000002","transactions":[{"_id":"000000000000000000000201","type":"BUY","market":"Alpha","pair":"ETH-USDT","price":80},{"_id":"000000000000000000000202","type":"SELL","market":"Gamma","pair":"ETH-USDT","price":100}],"profitPerUnit":20,"profitPercentage":20,"date":"2024-01-01T03:04:05.000Z","__v":0}
+  {"_id":"000000000000000000000001","transactions":[{"_id":"000000000000000000000101","type":"BUY","market":"Alpha","pair":"BTC-USDT","price":80},{"_id":"000000000000000000000102","type":"SELL","market":"Gamma","pair":"BTC-USDT","price":125}],"profitPerUnit":45,"profitPercentage":56.25,"date":"2024-01-02T03:04:05.000Z","__v":0},
+  {"_id":"000000000000000000000002","transactions":[{"_id":"000000000000000000000201","type":"BUY","market":"Alpha","pair":"ETH-USDT","price":80},{"_id":"000000000000000000000202","type":"SELL","market":"Gamma","pair":"ETH-USDT","price":100}],"profitPerUnit":20,"profitPercentage":25,"date":"2024-01-01T03:04:05.000Z","__v":0}
 ]
