@@ -2,7 +2,7 @@
   "ticker":"ALL",
   "channel":"bestArbitrage",
   "bestArbitrages":{"arbitragesData":[
-    {"arbitrage":{"transactions":[{"type":"BUY","market":"Alpha","pair":"BTC-USDT","price":80},{"type":"SELL","market":"Gamma","pair":"BTC-USDT","price":125}],"profitPerUnit":45,"profitPercentage":36,"date":"2024-01-02T03:04:05.000Z"},"marketPrices":{"BTC-USDT":[{"market":"Alpha","price":80},{"market":"Beta","price":100},{"market":"Gamma","price":125}]}},
-    {"arbitrage":{"transactions":[{"type":"BUY","market":"Alpha","pair":"ETH-USD","price":50},{"type":"SELL","market":"Gamma","pair":"ETH-USD","price":80}],"profitPerUnit":30,"profitPercentage":37.5,"date":"2024-01-02T03:04:05.000Z"},"marketPrices":{"ETH-USD":[{"market":"Alpha","price":50},{"market":"Beta","price":60},{"market":"Gamma","price":80}]}}
+    {"arbitrage":{"transactions":[{"type":"BUY","market":"Alpha","pair":"BTC-USDT","price":80},{"type":"SELL","market":"Gamma","pair":"BTC-USDT","price":125}],"profitPerUnit":45,"profitPercentage":36,"date":"2024-01-02T03:04:05.000Z"},"marketPrices":{"BTC-USDT":[{"market":"Alpha","price":77,"bid":79,"ask":80,"timestamp":0},{"market":"Beta","price":105,"bid":100,"ask":100,"timestamp":0},{"market":"Gamma","price":130,"bid":125,"ask":126,"timestamp":0}]}},
+    {"arbitrage":{"transactions":[{"type":"BUY","market":"Alpha","pair":"ETH-USD","price":50},{"type":"SELL","market":"Gamma","pair":"ETH-USD","price":80}],"profitPerUnit":30,"profitPercentage":37.5,"date":"2024-01-02T03:04:05.000Z"},"marketPrices":{"ETH-USD":[{"market":"Alpha","price":48,"bid":49,"ask":50,"timestamp":0},{"market":"Beta","price":62,"bid":59,"ask":60,"timestamp":0},{"market":"Gamma","price":78,"bid":80,"ask":81,"timestamp":0}]}}
   ]}
 }

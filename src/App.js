@@ -23,9 +23,11 @@ const isArbitrage = value => isRecord(value) && Array.isArray(value.transactions
     && typeof transaction.type === 'string' && Number.isFinite(transaction.price))
   && Number.isFinite(value.profitPercentage) && Number.isFinite(value.profitPerUnit)
   && typeof value.date === 'string' && (value.message == null || typeof value.message === 'string');
+const isOptionalPrice = value => value == null || Number.isFinite(value);
 const isPriceMap = value => isRecord(value) && Object.entries(value).every(([ticker, rows]) =>
   isTicker(ticker) && Array.isArray(rows) && rows.every(row => isRecord(row)
-    && typeof row.market === 'string' && Number.isFinite(row.price)));
+    && typeof row.market === 'string' && isOptionalPrice(row.price)
+    && isOptionalPrice(row.bid) && isOptionalPrice(row.ask)));
 const isValidFrame = response => {
   if (response.message != null && typeof response.message !== 'string') return false;
   if ((response.channel === 'arbitrage' || response.channel === 'bestArbitrage') && typeof response.ticker !== 'string') return false;

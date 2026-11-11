@@ -26,7 +26,7 @@ const MarketPrices = (props) => {
         .sort((a, b) =>
             (a.group - b.group) ||
             (order
-                ? (a.ask ?? a.price ?? Infinity) - (b.ask ?? b.price ?? Infinity)
+                ? (a.ask ?? Infinity) - (b.ask ?? Infinity)
                 : 0));
 
     const statusBadge = row =>

@@ -1,4 +1,4 @@
-import { screen } from '@testing-library/react';
+import { screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { prepareApps } from '../support/app-runtime';
 import { clone } from '../support/ui-fixtures';
@@ -147,6 +147,24 @@ test('missing later prices preserve the previous table alongside the supplied me
   expect(
     screen.getByRole('columnheader', { name: 'BTC Markets (3)' })
   ).toBeInTheDocument();
+});
+
+test('a market with no Last but valid Bid/Ask is accepted and displays both sides', async () => {
+  const app = createApp();
+  await app.open();
+  const frame = clone(arbitrage);
+  frame.marketPrices['BTC-USDT'][0].price = null;
+  await app.message(frame);
+  const table = screen.getAllByRole('table').at(-1);
+  const alpha = within(table)
+    .getAllByRole('row')
+    .find(row => row.textContent.includes('Alpha'));
+  expect(within(alpha).getAllByRole('cell').map(cell => cell.textContent)).toEqual([
+    'Alpha',
+    '79',
+    '80',
+    '—',
+  ]);
 });
 
 test('an empty price object retains the old table without entering the missing-price message branch', async () => {
