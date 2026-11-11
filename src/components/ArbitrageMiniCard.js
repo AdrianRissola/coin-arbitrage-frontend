@@ -37,10 +37,14 @@ const ArbitrageMiniCard = (props)=> {
         <div className={styles.cardClassName} style={styles.cardStyle}>
             { getHeader(header, header2) }
             <div className={styles.cardBodyClassName} style={{paddingTop:"0px"}}>
-                <table className="table" style={{ color: textColor}}>
+                <table className="table" style={{ color: textColor, width: "100%", tableLayout: "fixed" }}>
+                    <colgroup>
+                        <col style={{ width: "65%" }} />
+                        <col style={{ width: "35%" }} />
+                    </colgroup>
                     <thead>
                         <tr>
-                            <th style={{paddingTop:"0px"}}></th><th style={{paddingTop:"0px"}}></th><th style={{paddingTop:"0px"}}></th>
+                            <th style={{paddingTop:"0px"}}></th><th style={{paddingTop:"0px"}}></th>
                         </tr>
                     </thead>
                     <tbody>

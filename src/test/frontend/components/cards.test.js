@@ -29,6 +29,10 @@ test('full card exposes BUY/SELL fields, literal unit profit and supplied second
       arbitrage={opportunity()}
     />
   );
+  expect(screen.getAllByRole('table')[0]).toHaveStyle({
+    tableLayout: 'fixed',
+    width: '100%',
+  });
   const rows = within(screen.getByRole('table')).getAllByRole('row');
   expect(
     rows.slice(2, 4).map((row) =>
@@ -44,6 +48,16 @@ test('full card exposes BUY/SELL fields, literal unit profit and supplied second
   expect(screen.getByTitle('Bid')).toBeInTheDocument();
   expect(screen.getByText(/computed .* ago/)).toBeInTheDocument();
   expect(screen.getByText('2024-01-02 03:04:05')).toBeInTheDocument();
+});
+
+test('long exchange names stay on one line in the card market column', () => {
+  const data = opportunity();
+  data.transactions[0].market = 'Crypto.com';
+  render(<Arbitrage header="BTC-USDT" arbitrage={data} />);
+  expect(screen.getByText('Crypto.com')).toHaveStyle({
+    whiteSpace: 'nowrap',
+    fontSize: '0.95rem',
+  });
 });
 
 test('real significant-digit rounding retains raw numeric titles', () => {
@@ -104,6 +118,10 @@ test('mini card renders its own operation layout and omits the full unit-profit 
   render(
     <MiniCard header="Mini" header2="Secondary" arbitrage={opportunity()} />
   );
+  expect(screen.getByRole('table')).toHaveStyle({
+    tableLayout: 'fixed',
+    width: '100%',
+  });
   expect([
     screen.getByText('BUY - Alpha').textContent,
     screen.getByText('SELL - Gamma').textContent,

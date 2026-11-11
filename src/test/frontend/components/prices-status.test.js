@@ -18,6 +18,10 @@ const priceRows = () =>
 
 test('prices expose bid/ask/last columns, count and incoming order', () => {
   render(<MarketPrices ticker="BTC-USDT" marketPrices={prices()} />);
+  expect(screen.getByRole('table')).toHaveStyle({
+    tableLayout: 'fixed',
+    width: '100%',
+  });
   expect(priceRows()).toEqual([
     ['Gamma', '124.5', '125.5', '125'],
     ['Alpha', '79.5', '80.5', '80'],

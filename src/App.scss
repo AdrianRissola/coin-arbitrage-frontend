@@ -1,1 +1,35 @@
-@import url(https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha2/dist/css/bootstrap.min.css)
+@import url(https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha2/dist/css/bootstrap.min.css);
+
+.arbitrage-page-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 400px;
+  align-items: start;
+  gap: 1rem;
+}
+
+.arbitrage-card-grid {
+  min-width: 0;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-content: start;
+}
+
+.arbitrage-prices-panel {
+  min-width: 0;
+  width: 400px;
+  max-width: 100%;
+  align-self: start;
+}
+
+@media (max-width: 900px) {
+  .arbitrage-page-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .arbitrage-prices-panel {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+  }
+}

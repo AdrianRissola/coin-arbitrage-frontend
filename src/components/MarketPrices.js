@@ -34,10 +34,16 @@ const MarketPrices = (props) => {
 
     return (
         <div className={styles.cardClassName}
-            style={{ ...styles.cardStyle, width: "fit-content", maxWidth: "100%" }}>
+            style={{ ...styles.cardStyle, width: "400px", maxWidth: "100%" }}>
             <div className={styles.cardBodyClassName}>
                 {props.marketPrices ?
-                    <table className="table table-sm" style={{ color: textColor }}>
+                    <table className="table table-sm" style={{ color: textColor, width: "100%", tableLayout: "fixed", fontSize: "0.8rem" }}>
+                        <colgroup>
+                            <col style={{ width: "40%" }} />
+                            <col style={{ width: "20%" }} />
+                            <col style={{ width: "20%" }} />
+                            <col style={{ width: "20%" }} />
+                        </colgroup>
                         <thead>
                             <tr>
                                 <th colSpan={3} className="text-center" style={{ fontSize: "18px", whiteSpace: "nowrap" }}>Prices ({quoteCurrency})</th>
@@ -54,9 +60,9 @@ const MarketPrices = (props) => {
                             </tr>
                             <tr>
                                 <th style={{ whiteSpace: "nowrap" }}>{ticker.split('-')[0]} Markets ({props.marketPrices.length})</th>
-                                <th>Bid</th>
-                                <th>Ask</th>
-                                <th>Last</th>
+                                <th style={{ whiteSpace: "nowrap" }}>Bid</th>
+                                <th style={{ whiteSpace: "nowrap" }}>Ask</th>
+                                <th style={{ whiteSpace: "nowrap" }}>Last</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -71,15 +77,15 @@ const MarketPrices = (props) => {
                                             {marketPrice.market}
                                             {badge ? <span style={badgeStyle}>{badge}</span> : null}
                                         </td>
-                                        <td style={{ color: greenHex, textAlign: "right", fontWeight: 'bold' }}
+                                        <td style={{ color: greenHex, textAlign: "right", fontWeight: 'bold', whiteSpace: "nowrap" }}
                                             title={marketPrice.bid}>
                                             {formatPrice(marketPrice.bid)}
                                         </td>
-                                        <td style={{ color: "#f6465d", textAlign: "right", fontWeight: 'bold' }}
+                                        <td style={{ color: "#f6465d", textAlign: "right", fontWeight: 'bold', whiteSpace: "nowrap" }}
                                             title={marketPrice.ask}>
                                             {formatPrice(marketPrice.ask)}
                                         </td>
-                                        <td style={{ textAlign: "right", fontWeight: 'bold' }}
+                                        <td style={{ textAlign: "right", fontWeight: 'bold', whiteSpace: "nowrap" }}
                                             title={marketPrice.price}>
                                             {formatPrice(marketPrice.price)}
                                         </td>

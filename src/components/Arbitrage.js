@@ -38,7 +38,12 @@ const Arbitrage = (props)=> {
         <div className={styles.cardClassName} style={styles.cardStyle}>
             { getHeader(header, header2) }
             <div className={styles.cardBodyClassName} style={{paddingTop:"0px"}}>
-                <table className="table" style={{ color: textColor}}>
+                <table className="table" style={{ color: textColor, width: "100%", tableLayout: "fixed" }}>
+                    <colgroup>
+                        <col style={{ width: "32%" }} />
+                        <col style={{ width: "30%" }} />
+                        <col style={{ width: "38%" }} />
+                    </colgroup>
                     <thead>
                         <tr>
                             <th style={{paddingTop:"0px"}}></th><th style={{paddingTop:"0px"}}></th><th style={{paddingTop:"0px"}}></th>
@@ -46,13 +51,13 @@ const Arbitrage = (props)=> {
                     </thead>
                     <tbody>
                         <tr>
-                            <td align="center" style={{width: "100px"}}>Operation</td>
-                            <td align="center" style={{width: "80px"}}>Market</td>
-                            <td align="center" >Price</td>
+                            <td align="center" style={{whiteSpace:"nowrap"}}>Operation</td>
+                            <td align="center" style={{whiteSpace:"nowrap"}}>Market</td>
+                            <td align="center" style={{whiteSpace:"nowrap"}}>Price</td>
                         </tr>
                         <tr>
                             <td align="center" >{displayedArbitrage.transactions[0].type}</td>             
-                            <td >{displayedArbitrage.transactions[0].market}</td>
+                            <td style={{whiteSpace:"nowrap", fontSize:"0.95rem"}}>{displayedArbitrage.transactions[0].market}</td>
                             <td align="center" style={{color:greenHex, whiteSpace:"nowrap"}} title="Ask">
                                 { displayedArbitrage.transactions[0].price.toLocaleString(navigator.language, {maximumSignificantDigits:7}) }
                                 <span style={{fontSize:"70%", opacity:0.65}}> · ask</span>
@@ -60,7 +65,7 @@ const Arbitrage = (props)=> {
                         </tr>
                         <tr>
                             <td align="center">{displayedArbitrage.transactions[1].type}</td>
-                            <td>{displayedArbitrage.transactions[1].market}</td>
+                            <td style={{whiteSpace:"nowrap", fontSize:"0.95rem"}}>{displayedArbitrage.transactions[1].market}</td>
                             <td align="center" style={{color:greenHex, whiteSpace:"nowrap"}} title="Bid">
                                 { displayedArbitrage.transactions[1].price.toLocaleString(navigator.language, {maximumSignificantDigits:7}) }
                                 <span style={{fontSize:"70%", opacity:0.65}}> · bid</span>
