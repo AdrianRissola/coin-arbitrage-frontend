@@ -33,7 +33,8 @@ const MarketPrices = (props) => {
         row.connected === false ? "disconnected" : row.stale ? "stale" : null;
 
     return (
-        <div className={styles.cardClassName} style={styles.cardStyle}>
+        <div className={styles.cardClassName}
+            style={{ ...styles.cardStyle, width: "fit-content", maxWidth: "100%" }}>
             <div className={styles.cardBodyClassName}>
                 {props.marketPrices ?
                     <table className="table table-sm" style={{ color: textColor }}>
