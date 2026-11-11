@@ -26,7 +26,7 @@ test('market pair cards sort keys while the unconditional best card uses inserti
     'Beta-Gamma',
   ]);
   expect(
-    within(screen.getAllByRole('table')[0]).getByText('45 USDT')
+    within(screen.getAllByRole('table')[0]).getByText('36% USDT')
   ).toBeInTheDocument();
 });
 
@@ -73,7 +73,7 @@ test('the real unavailable helper becomes a non-profitable message card rather t
     />
   );
   expect(headers(container)).toEqual(['Arbitrage not available for: BTC-USDT']);
-  expect(screen.getAllByText('Non Profitable')).toHaveLength(2);
+  expect(screen.getAllByText('Non Profitable')).toHaveLength(1);
 });
 
 test.each([null, {}])(

@@ -1,5 +1,5 @@
 const marketPricesCardClassName = "card text-#{color} bg-#{mode} mb-3"
-const marketPricesCardStyle = {borderRadius: "20px", lineHeight:"2"}
+const marketPricesCardStyle = {borderRadius: "20px", lineHeight:"2", overflowX: "auto"}
 const marketPricesCardBodyClassName = "card-body"
 
 exports.marketPricesCardStyle = (isDarkMode) => { 

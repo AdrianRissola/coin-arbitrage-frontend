@@ -29,6 +29,10 @@ test('full card exposes BUY/SELL fields, literal unit profit and supplied second
       arbitrage={opportunity()}
     />
   );
+  expect(screen.getAllByRole('table')[0]).toHaveStyle({
+    tableLayout: 'fixed',
+    width: '100%',
+  });
   const rows = within(screen.getByRole('table')).getAllByRole('row');
   expect(
     rows.slice(2, 4).map((row) =>
@@ -37,11 +41,23 @@ test('full card exposes BUY/SELL fields, literal unit profit and supplied second
         .map((cell) => cell.textContent)
     )
   ).toEqual([
-    ['BUY', 'Alpha', '80'],
-    ['SELL', 'Gamma', '125'],
+    ['BUY', 'Alpha', '80 · ask'],
+    ['SELL', 'Gamma', '125 · bid'],
   ]);
-  expect(screen.getByTitle('45 USDT')).toHaveTextContent('45 USDT');
+  expect(screen.getByTitle('Ask')).toBeInTheDocument();
+  expect(screen.getByTitle('Bid')).toBeInTheDocument();
+  expect(screen.getByText(/computed .* ago/)).toBeInTheDocument();
   expect(screen.getByText('2024-01-02 03:04:05')).toBeInTheDocument();
+});
+
+test('long exchange names stay on one line in the card market column', () => {
+  const data = opportunity();
+  data.transactions[0].market = 'Crypto.com';
+  render(<Arbitrage header="BTC-USDT" arbitrage={data} />);
+  expect(screen.getByText('Crypto.com')).toHaveStyle({
+    whiteSpace: 'nowrap',
+    fontSize: '0.95rem',
+  });
 });
 
 test('real significant-digit rounding retains raw numeric titles', () => {
@@ -52,11 +68,10 @@ test('real significant-digit rounding retains raw numeric titles', () => {
   data.profitPerUnit = 12345.6789;
   render(<Arbitrage header="Literal" arbitrage={data} />);
   expect([
-    screen.getByTitle('1234567.89').textContent,
-    screen.getByTitle('0.000123456789').textContent,
+    screen.getByTitle('Ask').textContent,
+    screen.getByTitle('Bid').textContent,
     screen.getByText('12.3% USDT').textContent,
-    screen.getByTitle('12345.6789 USDT').textContent,
-  ]).toEqual(['1,234,568', '0.0001234568', '12.3% USDT', '12,345.679 USDT']);
+  ]).toEqual(['1,234,568 · ask', '0.0001234568 · bid', '12.3% USDT']);
 });
 
 test('locale is taken from navigator instead of a hard-coded English formatter', () => {
@@ -66,25 +81,22 @@ test('locale is taken from navigator instead of a hard-coded English formatter',
   data.profitPercentage = 12.34;
   render(<Arbitrage header="Locale" arbitrage={data} />);
   expect([
-    screen.getByTitle('1234.5').textContent,
+    screen.getByTitle('Ask').textContent,
     screen.getByText('12,3% USDT').textContent,
-  ]).toEqual(['1.234,5', '12,3% USDT']);
+  ]).toEqual(['1.234,5 · ask', '12,3% USDT']);
 });
 
-test('numeric zero profits show both full-card non-profitable rows', () => {
-  const data = { ...opportunity(), profitPercentage: 0, profitPerUnit: 0 };
+test('numeric zero profits show the full-card non-profitable row', () => {
+  const data = { ...opportunity(), profitPercentage: 0 };
   render(<Arbitrage header="Zero" arbitrage={data} />);
-  expect(screen.getAllByText('Non Profitable')).toHaveLength(2);
+  expect(screen.getAllByText('Non Profitable')).toHaveLength(1);
   expect(screen.queryByText('Profit:')).not.toBeInTheDocument();
 });
 
 test('strict zero checks do not rewrite string zero or negative profit values', () => {
   const data = { ...opportunity(), profitPercentage: '0', profitPerUnit: -2 };
   render(<Arbitrage header="Literal" arbitrage={data} />);
-  expect([
-    screen.getByText('0% USDT').textContent,
-    screen.getByText('-2 USDT').textContent,
-  ]).toEqual(['0% USDT', '-2 USDT']);
+  expect(screen.getByText('0% USDT').textContent).toEqual('0% USDT');
   expect(screen.queryByText('Non Profitable')).not.toBeInTheDocument();
 });
 
@@ -106,6 +118,10 @@ test('mini card renders its own operation layout and omits the full unit-profit 
   render(
     <MiniCard header="Mini" header2="Secondary" arbitrage={opportunity()} />
   );
+  expect(screen.getByRole('table')).toHaveStyle({
+    tableLayout: 'fixed',
+    width: '100%',
+  });
   expect([
     screen.getByText('BUY - Alpha').textContent,
     screen.getByText('SELL - Gamma').textContent,

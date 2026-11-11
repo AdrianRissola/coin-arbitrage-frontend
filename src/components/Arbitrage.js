@@ -1,4 +1,5 @@
 import { arbitrageCardStyle } from '../styleUtil'
+import helper from '../helper';
 import pushpin from "../../src/pushpin_u1F4CC_icon_24x24.png";
 
 const greenHex = "#0ecb81"
@@ -37,7 +38,12 @@ const Arbitrage = (props)=> {
         <div className={styles.cardClassName} style={styles.cardStyle}>
             { getHeader(header, header2) }
             <div className={styles.cardBodyClassName} style={{paddingTop:"0px"}}>
-                <table className="table" style={{ color: textColor}}>
+                <table className="table" style={{ color: textColor, width: "100%", tableLayout: "fixed" }}>
+                    <colgroup>
+                        <col style={{ width: "32%" }} />
+                        <col style={{ width: "30%" }} />
+                        <col style={{ width: "38%" }} />
+                    </colgroup>
                     <thead>
                         <tr>
                             <th style={{paddingTop:"0px"}}></th><th style={{paddingTop:"0px"}}></th><th style={{paddingTop:"0px"}}></th>
@@ -45,22 +51,24 @@ const Arbitrage = (props)=> {
                     </thead>
                     <tbody>
                         <tr>
-                            <td align="center" style={{width: "100px"}}>Operation</td>
-                            <td align="center" style={{width: "80px"}}>Market</td>
-                            <td align="center" >Price</td>
+                            <td align="center" style={{whiteSpace:"nowrap"}}>Operation</td>
+                            <td align="center" style={{whiteSpace:"nowrap"}}>Market</td>
+                            <td align="center" style={{whiteSpace:"nowrap"}}>Price</td>
                         </tr>
                         <tr>
                             <td align="center" >{displayedArbitrage.transactions[0].type}</td>             
-                            <td >{displayedArbitrage.transactions[0].market}</td>
-                            <td align="center" style={{color:greenHex}} title={displayedArbitrage.transactions[0].price}>
+                            <td style={{whiteSpace:"nowrap", fontSize:"0.95rem"}}>{displayedArbitrage.transactions[0].market}</td>
+                            <td align="center" style={{color:greenHex, whiteSpace:"nowrap"}} title="Ask">
                                 { displayedArbitrage.transactions[0].price.toLocaleString(navigator.language, {maximumSignificantDigits:7}) }
+                                <span style={{fontSize:"70%", opacity:0.65}}> · ask</span>
                             </td>
                         </tr>
                         <tr>
                             <td align="center">{displayedArbitrage.transactions[1].type}</td>
-                            <td>{displayedArbitrage.transactions[1].market}</td>
-                            <td align="center" style={{color:greenHex}} title={displayedArbitrage.transactions[1].price}>
+                            <td style={{whiteSpace:"nowrap", fontSize:"0.95rem"}}>{displayedArbitrage.transactions[1].market}</td>
+                            <td align="center" style={{color:greenHex, whiteSpace:"nowrap"}} title="Bid">
                                 { displayedArbitrage.transactions[1].price.toLocaleString(navigator.language, {maximumSignificantDigits:7}) }
+                                <span style={{fontSize:"70%", opacity:0.65}}> · bid</span>
                             </td>
                         </tr>
                     </tbody>
@@ -82,23 +90,15 @@ const Arbitrage = (props)=> {
                                 </>
                             }
                         </tr>
-                        <tr>
-                            {
-                                displayedArbitrage.profitPerUnit === 0 ?
-                                <td style = {{fontWeight: 'bold', textAlign:"center",color:'red'}} colSpan="3">
-                                    Non Profitable
+                        {
+                            displayedArbitrage.date ?
+                            <tr>
+                                <td style = {{textAlign:"center", fontSize:"75%", opacity:0.65}} colSpan="3" title={displayedArbitrage.date}>
+                                    computed {helper.ageLabel(Date.parse(displayedArbitrage.date))}
                                 </td>
-                                :
-                                <>
-                                    <td style = {{fontWeight: 'bold', textAlign:"center", fontSize:"90%"}} colSpan="2" title={`${ticker.split('-')[1]} profit per ${ticker.split('-')[0]} unit`}>
-                                        Profit / {ticker.split('-')[0]}:
-                                    </td>
-                                    <td style = {{fontWeight: 'bold', textAlign:"center", fontSize:"90%"}} colSpan="1" title={displayedArbitrage.profitPerUnit + ' ' + ticker.split('-')[1]}>
-                                        <span style={{color:greenHex}}>{displayedArbitrage.profitPerUnit.toLocaleString(navigator.language,{maximumSignificantDigits: 8})} {ticker.split('-')[1]}</span>
-                                    </td>
-                                </>
-                            }
-                        </tr>
+                            </tr>
+                            : null
+                        }
                     </tfoot>
                 </table>
             </div>

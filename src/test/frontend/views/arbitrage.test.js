@@ -50,6 +50,13 @@ test('real view resolves metadata into filters, ticker choices, cards and a pric
     'Alpha-Gamma',
     'Beta-Gamma',
   ]);
+  expect(
+    screen.getByRole('region', { name: 'Arbitrage opportunities' })
+  ).toBeInTheDocument();
+  expect(
+    within(screen.getByRole('complementary', { name: 'Market prices' }))
+      .getByRole('table')
+  ).toBeInTheDocument();
   expect(screen.getAllByRole('table')).toHaveLength(5);
   expect(transport.calls.map((call) => call.kind).sort()).toEqual([
     'available-tickers',

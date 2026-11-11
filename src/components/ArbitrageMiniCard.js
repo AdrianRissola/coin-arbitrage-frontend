@@ -37,23 +37,29 @@ const ArbitrageMiniCard = (props)=> {
         <div className={styles.cardClassName} style={styles.cardStyle}>
             { getHeader(header, header2) }
             <div className={styles.cardBodyClassName} style={{paddingTop:"0px"}}>
-                <table className="table" style={{ color: textColor}}>
+                <table className="table" style={{ color: textColor, width: "100%", tableLayout: "fixed" }}>
+                    <colgroup>
+                        <col style={{ width: "65%" }} />
+                        <col style={{ width: "35%" }} />
+                    </colgroup>
                     <thead>
                         <tr>
-                            <th style={{paddingTop:"0px"}}></th><th style={{paddingTop:"0px"}}></th><th style={{paddingTop:"0px"}}></th>
+                            <th style={{paddingTop:"0px"}}></th><th style={{paddingTop:"0px"}}></th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr>
                             <td >{displayedArbitrage.transactions[0].type} - {displayedArbitrage.transactions[0].market}</td>
-                            <td align="center" style={{color:greenHex}} title={displayedArbitrage.transactions[0].price}>
+                            <td align="center" style={{color:greenHex, whiteSpace:"nowrap"}} title="Ask">
                                 { displayedArbitrage.transactions[0].price.toLocaleString(navigator.language, {maximumSignificantDigits:7}) }
+                                <span style={{fontSize:"70%", opacity:0.65}}> · ask</span>
                             </td>
                         </tr>
                         <tr>
                             <td>{displayedArbitrage.transactions[1].type} - {displayedArbitrage.transactions[1].market}</td>
-                            <td align="center" style={{color:greenHex}} title={displayedArbitrage.transactions[1].price}>
+                            <td align="center" style={{color:greenHex, whiteSpace:"nowrap"}} title="Bid">
                                 { displayedArbitrage.transactions[1].price.toLocaleString(navigator.language, {maximumSignificantDigits:7}) }
+                                <span style={{fontSize:"70%", opacity:0.65}}> · bid</span>
                             </td>
                         </tr>
                     </tbody>

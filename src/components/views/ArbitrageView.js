@@ -211,9 +211,8 @@ const ArbitrageView = (props)=> {
                 </div>
             </div>
             <RowFilter filters = { getArbitrageFilters() }/>
-            <div style={{display: "flex", flexWrap: "wrap", justifyContent: "center"}}>
-                <div className="col-sm-6 col-m-7 col-lg-8 col-xl-9" 
-                    style={{display: "flex", flexDirection: "row", flexWrap: "wrap", justifyContent: "center"}}> 
+            <div className="arbitrage-page-grid">
+                <section className="arbitrage-card-grid" aria-label="Arbitrage opportunities">
                     <MarketsArbitrage
                         arbitrages = {arbitrages}
                         marketFilter = {marketFilter}
@@ -221,12 +220,10 @@ const ArbitrageView = (props)=> {
                         minProfitFilter = {minProfitFilter}
                         darkMode = {darkMode}
                     />
-                </div>
-                <div className="col-sm-6, col-m-5 col-lg-4 col-xl-3" 
-                    style={{ display: "flex", flexDirection: "row", flexWrap: "nowrap", 
-                    alignContent: "stretch", justifyContent: "center", alignItems: "baseline"}}>
+                </section>
+                <aside className="arbitrage-prices-panel" aria-label="Market prices">
                     <MarketPrices ticker={ticker} marketPrices={marketPrices} darkMode = {darkMode}/>
-                </div>
+                </aside>
             </div>
         </>
     )

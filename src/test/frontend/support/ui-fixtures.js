@@ -3,9 +3,9 @@ const markets = require('../../fixtures/contracts/v1/markets.json');
 const arbitrages = require('../../fixtures/contracts/v1/arbitrages.json');
 const clone = (value) => JSON.parse(JSON.stringify(value));
 const prices = () => [
-  { market: 'Gamma', price: 125 },
-  { market: 'Alpha', price: 80 },
-  { market: 'Beta', price: 100 },
+  { market: 'Gamma', bid: 124.5, ask: 125.5, price: 125 },
+  { market: 'Alpha', bid: 79.5, ask: 80.5, price: 80 },
+  { market: 'Beta', bid: 99.5, ask: 100.5, price: 100, connected: false },
 ];
 const opportunity = () => clone(arbitrages[0]);
 const pairMap = () => ({
