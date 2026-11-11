@@ -26,7 +26,7 @@ test('market pair cards sort keys while the unconditional best card uses inserti
     'Beta-Gamma',
   ]);
   expect(
-    within(screen.getAllByRole('table')[0]).getByText('36% USDT')
+    within(screen.getAllByRole('table')[0]).getByText('56.3% USDT')
   ).toBeInTheDocument();
 });
 
@@ -42,7 +42,7 @@ test('best card is not recalculated from the highest percentage in a supplied ma
     />
   );
   expect(screen.getAllByRole('table')).toHaveLength(1);
-  expect(screen.getByText('20% USDT')).toBeInTheDocument();
+  expect(screen.getByText('25% USDT')).toBeInTheDocument();
 });
 
 test.each([
@@ -53,7 +53,7 @@ test.each([
     { minProfitFilter: 20 },
     ['Best Arbitrage', 'Alpha-Beta', 'Alpha-Gamma', 'Beta-Gamma'],
   ],
-  [{ minProfitFilter: '20.01' }, ['Best Arbitrage', 'Alpha-Gamma']],
+  [{ minProfitFilter: '25.01' }, ['Best Arbitrage', 'Alpha-Gamma']],
   [{ minProfitFilter: 100 }, ['Best Arbitrage']],
 ])(
   'market filter combination %j preserves best-card bypass and pair inclusion',

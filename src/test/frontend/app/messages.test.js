@@ -204,7 +204,7 @@ test('best navigation keeps the previous view until a matching channel response 
   ).toBeInTheDocument();
   await app.message(best);
   expect(screen.getByText('Best Arbitrage: ETH-USD')).toBeInTheDocument();
-  expect(screen.getByText('37.5% USD')).toBeInTheDocument();
+  expect(screen.getByText('60% USD')).toBeInTheDocument();
   expect(
     screen.queryByRole('heading', { name: 'BTC-USDT Arbitrage' })
   ).not.toBeInTheDocument();

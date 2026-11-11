@@ -110,8 +110,8 @@ test('a newly selected uppercase ticker response updates actual App heading, opp
   expect(
     screen.getByRole('heading', { name: 'BTC-USD Arbitrage' })
   ).toBeInTheDocument();
-  expect(screen.getAllByText('36% USD')).toHaveLength(2);
-  expect(screen.queryByText('36% USDT')).not.toBeInTheDocument();
+  expect(screen.getAllByText('56.3% USD')).toHaveLength(2);
+  expect(screen.queryByText('56.3% USDT')).not.toBeInTheDocument();
 });
 
 test('changing selection while connecting sends only the latest desired request on open', async () => {

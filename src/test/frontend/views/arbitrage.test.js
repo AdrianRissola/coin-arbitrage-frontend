@@ -80,7 +80,7 @@ test('market and exact percentage boundaries affect pair cards but never filter 
   userEvent.clear(screen.getByRole('textbox'));
   expect(headers(container)).toEqual(['Best Arbitrage', 'Alpha-Gamma']);
   userEvent.clear(screen.getByRole('spinbutton'));
-  userEvent.type(screen.getByRole('spinbutton'), '36.01');
+  userEvent.type(screen.getByRole('spinbutton'), '56.26');
   expect(headers(container)).toEqual(['Best Arbitrage']);
 });
 

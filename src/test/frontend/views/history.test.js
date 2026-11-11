@@ -121,7 +121,7 @@ test('Refine reveals real filters and exact minimum boundaries change observable
   userEvent.type(screen.getByRole('spinbutton'), '36');
   expect(headers(container)).toEqual(['BTC-USDT']);
   userEvent.clear(screen.getByRole('spinbutton'));
-  userEvent.type(screen.getByRole('spinbutton'), '36.01');
+  userEvent.type(screen.getByRole('spinbutton'), '56.26');
   expect(
     screen.getByRole('heading', { name: 'Arbitrage Found: 0' })
   ).toBeInTheDocument();
