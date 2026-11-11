@@ -1,13 +1,24 @@
 const test = require('node:test');
 const assert = require('node:assert/strict');
+const crypto = require('node:crypto');
+const fs = require('node:fs');
+const path = require('node:path');
 const { createAuthorization } = require('../support/transport.cjs');
+
+const manifestPath = path.resolve(
+  __dirname,
+  '../../../src/test/fixtures/contracts/v1/manifest.json'
+);
+const fixtureDigest = crypto
+  .createHash('sha256')
+  .update(fs.readFileSync(manifestPath))
+  .digest('hex');
 
 const context = {
   protocolVersion: 1,
   runId: 'f1_policy',
   token: 'a'.repeat(64),
-  fixtureDigest:
-    'f49812d1adc8d6e7efd83620db6f63d08c9b35884a217bbcb4189b31f2009e28',
+  fixtureDigest,
   backendRevision: 'b8d1a6e685b7be0a5ec5ec93d2f652707e724e17',
   frontendRevision: '2c731ce387e3b4e0bbe5b0f2278c2e0eea7ada9b',
   restEndpoint: 'http://127.0.0.1:44220/',
