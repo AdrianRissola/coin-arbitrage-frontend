@@ -36,7 +36,7 @@ const MarketPrices = (props) => {
         <div className={styles.cardClassName} style={styles.cardStyle}>
             <div className={styles.cardBodyClassName}>
                 {props.marketPrices ?
-                    <table className="table" style={{ color: textColor }}>
+                    <table className="table table-sm" style={{ color: textColor }}>
                         <thead>
                             <tr>
                                 <th colSpan={3} className="text-center" style={{ fontSize: "18px", whiteSpace: "nowrap" }}>Prices ({quoteCurrency})</th>
